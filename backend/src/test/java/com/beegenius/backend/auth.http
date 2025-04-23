@@ -8,3 +8,61 @@ Content-Type: application/json
   "lastName": "Doe",
   "password": "secret123"
 }
+
+### Add Post
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "Primul post",
+  "content": "Salutare tuturor! Acesta este primul post.",
+  "tags": ["LAW"],
+  "date": "2025-04-22T18:00:00Z",
+  "user": {
+    "id": "67fe66f37eaa19442708ca43"
+  }
+}
+
+###
+
+### Get All Posts
+GET http://localhost:8080/api/posts
+
+###
+
+### Search Post by Title
+GET http://localhost:8080/api/posts/search?title=primul
+
+###
+
+### Filter Post by Tag
+GET http://localhost:8080/api/posts/filter?tag=LAW
+
+###
+
+POST http://localhost:8080/api/replies/to-post/6807ce689126c428944c0b73
+Content-Type: application/json
+
+{
+  "content": "Foarte tare postarea!",
+  "user": {
+    "id": "67fe6668b3b5e66421d57732"
+  }
+}
+
+###
+POST http://localhost:8080/api/replies/to-reply/6807d6de6855bf6f0ebee3c2
+Content-Type: application/json
+
+{
+"content": "Fix asta voiam să zic și eu!",
+"user": {
+"id": "67fe6668b3b5e66421d57732"
+}
+}
+
+
+###
+
+### Get All Replies
+GET http://localhost:8080/api/replies
