@@ -3,8 +3,20 @@ POST http://localhost:8080/api/auth/signup
 Content-Type: application/json
 
 {
-  "firstName": "John",
-  "email": "john_@examplee.com",
+  "firstName": "Bibi",
+  "email": "bibi_@examplee.com",
+  "lastName": "Doe",
+  "password": "secret123"
+}
+
+
+### Login request
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "firstName": "Bibi",
+  "email": "bibi_@examplee.com",
   "lastName": "Doe",
   "password": "secret123"
 }

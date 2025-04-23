@@ -1,0 +1,52 @@
+### ADD MATERIAL
+POST http://localhost:8080/api/materials
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="name"
+
+Prelegere Java Avansat
+
+--boundary
+Content-Disposition: form-data; name="description"
+
+Description
+
+--boundary
+Content-Disposition: form-data; name="type"
+
+PDF
+
+--boundary
+Content-Disposition: form-data; name="tags"
+
+COMPUTER_SCIENCE
+--boundary
+Content-Disposition: form-data; name="file"; filename="ISS Seminar1.pdf"
+Content-Type: application/pdf
+
+< ./ISS Seminar1.pdf
+
+--boundary
+Content-Disposition: form-data; name="userId"
+
+67fe66f37eaa19442708ca43
+--boundary
+
+### GET all materials
+GET http://localhost:8080/api/materials
+
+### DELETE material
+DELETE http://localhost:8080/api/materials/6808b7a63c77895336626f24
+
+### FILTER
+GET http://localhost:8080/api/materials/filter?tag=COMPUTER_SCIENCE
+
+### SEARCH
+GET http://localhost:8080/api/materials/search?name=Prelegere Java Avansat
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=6808b8423c77895336626f25&rating=4.5
+
+### Update Material
+PUT http://localhost:8080/api/materials/update?materialId=6808b8423c77895336626f25&description=Nou&tags=LAW
