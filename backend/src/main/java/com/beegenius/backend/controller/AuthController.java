@@ -18,4 +18,10 @@ public class AuthController {
         User createdUser = userService.signup(user);
         return ResponseEntity.ok(createdUser);
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<User> login(@RequestBody User user) {
+        User logedUser = userService.login(user.getEmail(), user.getPassword());
+        return ResponseEntity.ok(logedUser);
+    }
 }
