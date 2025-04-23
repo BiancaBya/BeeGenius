@@ -1,0 +1,38 @@
+### Add Book
+POST http://localhost:8080/api/books
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="title"
+
+Cartea TA
+--boundary
+Content-Disposition: form-data; name="author"
+
+Anonim
+--boundary
+Content-Disposition: form-data; name="tags"
+
+LAW
+--boundary
+Content-Disposition: form-data; name="imageFile"; filename="poza.jpg"
+Content-Type: image/jpeg
+
+< ./cat_2.jpeg
+--boundary
+Content-Disposition: form-data; name="userId"
+
+67fe66f37eaa19442708ca43
+--boundary--
+
+### GET all books
+GET http://localhost:8080/api/books
+
+### FILTER
+GET http://localhost:8080/api/books/filter?tag=COMPUTER_SCIENCE
+
+### SEARCH
+GET http://localhost:8080/api/books/search?title=Meaa
+
+### DELETE
+DELETE http://localhost:8080/api/books/6808a85f58911d6f176ea912
