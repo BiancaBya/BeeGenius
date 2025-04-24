@@ -3,6 +3,7 @@ package com.beegenius.backend.controller;
 import com.beegenius.backend.model.User;
 import com.beegenius.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +21,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody User user) {
-        User logedUser = userService.login(user.getEmail(), user.getPassword());
+    public ResponseEntity<User> login(@RequestParam String email, @RequestParam String password) {
+        User logedUser = userService.login(email, password);
         return ResponseEntity.ok(logedUser);
     }
+
 }
