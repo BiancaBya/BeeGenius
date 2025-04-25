@@ -27,11 +27,11 @@ Content-Type: application/json
 
 {
   "title": "Primul post",
-  "content": "Salutare tuturor! Acesta este primul post.",
-  "tags": ["LAW"],
+  "content": "Multe Reply",
+  "tags": ["COMPUTER_SCIENCE"],
   "date": "2025-04-22T18:00:00Z",
   "user": {
-    "id": "67fe66f37eaa19442708ca43"
+    "id": "680a75720349e52db7c7b36f"
   }
 }
 
@@ -39,6 +39,9 @@ Content-Type: application/json
 
 ### Get All Posts
 GET http://localhost:8080/api/posts
+
+###
+DELETE http://localhost:8080/api/posts/6807ce689126c428944c0b73
 
 ###
 
@@ -52,18 +55,18 @@ GET http://localhost:8080/api/posts/filter?tag=LAW
 
 ###
 
-POST http://localhost:8080/api/replies/to-post/6807ce689126c428944c0b73
+POST http://localhost:8080/api/replies/to-post/680b591ea34bba30fd396797
 Content-Type: application/json
 
 {
   "content": "Foarte tare postarea!",
   "user": {
-    "id": "67fe6668b3b5e66421d57732"
+    "id": "680a7b050349e52db7c7b370"
   }
 }
 
 ###
-POST http://localhost:8080/api/replies/to-reply/6807d6de6855bf6f0ebee3c2
+POST http://localhost:8080/api/replies/to-reply/680b591ea34bba30fd396797
 Content-Type: application/json
 
 {

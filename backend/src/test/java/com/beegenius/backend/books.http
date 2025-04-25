@@ -5,11 +5,11 @@ Content-Type: multipart/form-data; boundary=boundary
 --boundary
 Content-Disposition: form-data; name="title"
 
-Cartea TA
+New Book
 --boundary
 Content-Disposition: form-data; name="author"
 
-Anonim
+Bibi
 --boundary
 Content-Disposition: form-data; name="tags"
 
@@ -22,7 +22,7 @@ Content-Type: image/jpeg
 --boundary
 Content-Disposition: form-data; name="userId"
 
-67fe66f37eaa19442708ca43
+680a75720349e52db7c7b36f
 --boundary--
 
 ### GET all books
@@ -35,5 +35,5 @@ GET http://localhost:8080/api/books/filter?tag=COMPUTER_SCIENCE
 GET http://localhost:8080/api/books/search?title=Meaa
 
 ### DELETE
-DELETE http://localhost:8080/api/books/6808a85f58911d6f176ea912
+DELETE http://localhost:8080/api/books/680b5a03cb51032cb5b0bdc1
 
