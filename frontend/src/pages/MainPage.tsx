@@ -284,7 +284,7 @@ const MainPage = () => {
                     <div>
                         <MenuItems>
                             <MenuItem onClick={() => navigate('/userprofile')}>Profile</MenuItem>
-                            <MenuItem>Materials</MenuItem>
+                            <MenuItem onClick={() => navigate('/materials')}>Materials</MenuItem>
                             <MenuItem>Forum</MenuItem>
                             <MenuItem>Books</MenuItem>
                             <MenuItem onClick={()=> navigate('/mainpage')}>Home</MenuItem>
