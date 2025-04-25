@@ -123,7 +123,7 @@ export default function SignupPage() {
                 return;
             }
             sessionStorage.setItem('user', JSON.stringify(data));
-            navigate('/', { replace: true });
+            navigate('/mainpage', { replace: true });
         } catch (err) {
             // notifyError(`Signup failed: ${err.message}`);
         }
