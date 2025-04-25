@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import styled, {createGlobalStyle} from 'styled-components';
 import LoginBg from '../assets/background.jpg';
 import {useNavigate} from "react-router-dom";
+import {UserDTO} from "../dto/UserDTO";
 
 
 
@@ -123,8 +124,10 @@ export default function LoginPage() {
                 return;
             }
 
-            sessionStorage.setItem('user', JSON.stringify(data));
-            // navigate('/signup');
+            const user = data as UserDTO;
+
+            sessionStorage.setItem('user', JSON.stringify(user));
+            navigate('/mainpage');
         } catch (err) {
             // notifyError(`Login failed: ${err.message}`);
         }

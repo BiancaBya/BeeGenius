@@ -3,6 +3,7 @@ import styled, { createGlobalStyle } from 'styled-components';
 import BeeIcon from '../assets/Logo_cropped.png';
 import BeeText from '../assets/LogoText.png';
 import { TiStarFullOutline, TiStarHalfOutline, TiStarOutline } from "react-icons/ti";
+import {useNavigate} from "react-router-dom";
 
 const GlobalStyle = createGlobalStyle`
     @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
@@ -235,6 +236,8 @@ const renderStars = (rating: number) => {
 };
 
 const MainPage = () => {
+    const navigate = useNavigate();
+
     const [showMenu, setShowMenu] = useState(false);
     const [materials, setMaterials] = useState([]);
     const [posts, setPosts] = useState([]);
@@ -280,13 +283,14 @@ const MainPage = () => {
                 <Sidebar open={showMenu}>
                     <div>
                         <MenuItems>
-                            <MenuItem>Profile</MenuItem>
+                            <MenuItem onClick={() => navigate('/userprofile')}>Profile</MenuItem>
                             <MenuItem>Materials</MenuItem>
                             <MenuItem>Forum</MenuItem>
                             <MenuItem>Books</MenuItem>
+                            <MenuItem onClick={()=> navigate('/mainpage')}>Home</MenuItem>
                         </MenuItems>
                     </div>
-                    <Logout>Log Out</Logout>
+                    <Logout onClick={() => navigate('/')}>Log Out</Logout>
                 </Sidebar>
 
                 <Container>
