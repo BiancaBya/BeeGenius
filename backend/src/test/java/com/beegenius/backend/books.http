@@ -5,24 +5,24 @@ Content-Type: multipart/form-data; boundary=boundary
 --boundary
 Content-Disposition: form-data; name="title"
 
-New Book
+Ancient History
 --boundary
 Content-Disposition: form-data; name="author"
 
-Bibi
+Vijay Kumar Singh
 --boundary
 Content-Disposition: form-data; name="tags"
 
-LAW
+HISTORY
 --boundary
-Content-Disposition: form-data; name="imageFile"; filename="poza.jpg"
+Content-Disposition: form-data; name="imageFile"; filename="hist.jpeg"
 Content-Type: image/jpeg
 
-< ./cat_2.jpeg
+< ./HIST_book_2.jpeg
 --boundary
 Content-Disposition: form-data; name="userId"
 
-680a75720349e52db7c7b36f
+680f6bd9aa1cdd62c8277da1
 --boundary--
 
 ### GET all books
