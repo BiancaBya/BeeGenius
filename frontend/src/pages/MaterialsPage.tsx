@@ -1,118 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
-import { useNavigate } from 'react-router-dom';
-import BeeIcon from '../assets/Logo_cropped.png';
-import BeeText from '../assets/LogoText.png';
+import Header from '../components/Header';
+import Menu from '../components/Menu';
 import pdfIcon from '../assets/pdf.png';
 import docxIcon from '../assets/docx.png';
 import pngIcon from '../assets/png.png';
-import {
-    TiStarFullOutline,
-    TiStarHalfOutline,
-    TiStarOutline,
-} from 'react-icons/ti';
+import { TiStarFullOutline, TiStarHalfOutline, TiStarOutline } from 'react-icons/ti';
 import { FiSearch } from 'react-icons/fi';
 
 const GlobalStyle = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
-
-  body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Josefin Sans', sans-serif;
-    background-color: #fcf6e8;
-  }
-`;
-
-const Header = styled.div`
-    height: 70px;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1100;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #f7dca0;
-    padding: 15px 40px;
-    border-bottom: 2px solid #000;
-`;
-const LogoContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-`;
-const LogoImage = styled.img`
-    height: 50px;
-    object-fit: contain;
-`;
-const MenuButton = styled.button`
-    background: #fff;
-    border: 2px solid #000;
-    border-radius: 10px;
-    padding: 8px 20px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    margin: 0 70px;
-`;
-const Sidebar = styled.div<{ open: boolean }>`
-    width: 250px;
-    background: #f7dca0;
-    height: calc(100vh - 70px);
-    border-left: 2px solid #000;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    position: fixed;
-    top: 102px;
-    right: ${props => (props.open ? '0' : '-250px')};
-    transition: right 0.3s ease-in-out;
-    z-index: 1000;
-`;
-const MenuItems = styled.div`
-    display: flex;
-    flex-direction: column;
-    padding: 30px 20px;
-    gap: 30px;
-    font-size: 1.4rem;
-    font-weight: 500;
-    border-bottom: 2px solid #000;
-`;
-const MenuItem = styled.div`
-    cursor: pointer;
-    &:hover { text-decoration: underline; }
-`;
-const Logout = styled.div`
-    padding: 20px;
-    font-size: 1.3rem;
-    font-weight: bold;
-    border-top: 2px solid #000;
-    text-align: center;
-    cursor: pointer;
-    margin-bottom: 40px;
+    @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Josefin Sans', sans-serif;
+        background-color: #fcf6e8;
+    }
 `;
 
 const Container = styled.div`
     padding: 110px 40px;
-`;
-
-const SearchSort = styled.div`
-    display: flex;
-    gap: 16px;
-    margin-bottom: 24px;
-`;
-
-const SortButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 12px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 10px;
-  background: #d5d0c4;
-  cursor: pointer;
 `;
 
 const MaterialCard = styled.div`
@@ -125,66 +32,75 @@ const MaterialCard = styled.div`
     align-items: flex-start;
     gap: 20px;
 `;
+
 const FileIcon = styled.img`
     width: 60px;
     height: 60px;
     object-fit: contain;
 `;
+
 const CardContent = styled.div`
     flex: 1;
     display: flex;
     flex-direction: column;
 `;
+
 const MaterialTitle = styled.div`
     font-size: 1.3rem;
     font-weight: 600;
 `;
+
 const Description = styled.div`
     margin: 8px 0;
     font-size: 0.95rem;
     color: #222;
     line-height: 1.4;
 `;
+
 const InfoRow = styled.div`
     display: flex;
     align-self: end;
     gap: 10px;
     flex-wrap: wrap;
 `;
+
 const Tag = styled.span<{ color: string }>`
-  background: ${props => props.color};
-  color: #fff;
-  border-radius: 15px;
-  padding: 4px 12px;
-  font-size: 0.9rem;
-  font-weight: 600;
+    background: ${props => props.color};
+    color: #fff;
+    border-radius: 15px;
+    padding: 4px 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
 `;
+
 const Stars = styled.div`
-  display: flex;
-  font-size: 1.8rem;
-  color: #ffc107;
+    display: flex;
+    font-size: 1.8rem;
+    color: #ffc107;
 `;
+
 const Posted = styled.div`
-  font-size: 0.9rem;
-  margin-top: 12px;
-  align-self: flex-end;
+    font-size: 0.9rem;
+    margin-top: 12px;
+    align-self: flex-end;
 `;
+
 const UserBadge = styled.span`
-  background: #4c7ea1;
-  color: #fff;
-  padding: 2px 8px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  margin-left: 6px;
+    background: #4c7ea1;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-left: 6px;
 `;
 
 const PostedAndTags = styled.div`
     display: flex;
     flex: 1;
-    flex-direction: column;  
-    gap: 80px;                
+    flex-direction: column;
+    gap: 80px;
     font-size: 0.9rem;
-    margin-top: 0px;
+    margin-top: 0;
     align-self: flex-end;
 `;
 
@@ -243,7 +159,6 @@ const Underline = styled.div`
     margin: 10px 0 30px;
 `;
 
-
 const getTagColor = (tag: string) => {
     switch (tag) {
         case 'LAW': return '#f48c06';
@@ -254,6 +169,7 @@ const getTagColor = (tag: string) => {
         default: return '#6c757d';
     }
 };
+
 const renderStars = (rating: number) => {
     const full = Math.floor(rating);
     const half = rating % 1 >= 0.25 && rating % 1 < 0.75;
@@ -268,7 +184,6 @@ const renderStars = (rating: number) => {
 };
 
 export const MaterialsPage: React.FC = () => {
-    const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState<boolean>(false);
     const [materials, setMaterials] = useState<any[]>([]);
     const [search, setSearch] = useState<string>('');
@@ -277,7 +192,6 @@ export const MaterialsPage: React.FC = () => {
     useEffect(() => {
         fetchMaterials();
     }, []);
-
 
     const fetchMaterials = () => {
         fetch('http://localhost:8080/api/materials')
@@ -316,24 +230,8 @@ export const MaterialsPage: React.FC = () => {
     return (
         <>
             <GlobalStyle />
-            <Header>
-                <LogoContainer>
-                    <LogoImage src={BeeIcon} alt="Bee" />
-                    <LogoImage src={BeeText} alt="BeeGenius" />
-                </LogoContainer>
-                <MenuButton onClick={() => setShowMenu(o => !o)}>Menu</MenuButton>
-            </Header>
-            <Sidebar open={showMenu}>
-                <MenuItems>
-                    <MenuItem onClick={() => navigate('/userprofile')}>Profile</MenuItem>
-                    <MenuItem onClick={() => navigate('/materials')}>Materials</MenuItem>
-                    <MenuItem onClick={() => navigate('/forum')}>Forum</MenuItem>
-                    <MenuItem onClick={() => navigate('/books')}>Books</MenuItem>
-                    <MenuItem onClick={() => navigate('/mainpage')}>Home</MenuItem>
-                </MenuItems>
-                <Logout onClick={() => navigate('/')}>Log Out</Logout>
-            </Sidebar>
-
+            <Header toggleMenu={() => setShowMenu(o => !o)} />
+            <Menu open={showMenu} />
             <Container>
                 <Toolbar>
                     <Title>Materials</Title>
@@ -357,23 +255,16 @@ export const MaterialsPage: React.FC = () => {
                         <option value="BIOLOGY">Biology</option>
                         <option value="HISTORY">History</option>
                     </TagFilter>
-
                 </Toolbar>
                 <Underline />
-
                 {filtered.map((mat, i) => {
-                    const avg = mat.nrRatings > 0
-                        ? mat.rating / mat.nrRatings
-                        : 0;
-
+                    const avg = mat.nrRatings > 0 ? mat.rating / mat.nrRatings : 0;
                     return (
                         <MaterialCard key={i}>
                             <FileIcon src={pickIcon(mat.path)} alt={mat.path} />
                             <CardContent>
                                 <MaterialTitle>{mat.name}</MaterialTitle>
-                                <Description>
-                                    {mat.description}
-                                </Description>
+                                <Description>{mat.description}</Description>
                                 <Stars>{renderStars(avg)}</Stars>
                             </CardContent>
                             <PostedAndTags>
