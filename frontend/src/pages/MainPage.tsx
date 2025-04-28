@@ -202,6 +202,17 @@ const BookAuthor = styled.div`
   color: #333;
 `;
 
+interface Material {
+    name: string;
+    description?: string;
+    type: string;
+    path: string;
+    rating: number;
+    nrRatings: number;
+    tags?: string[];
+    user?: { name: string };
+}
+
 
 
 const getTagColor = (tag: string) => {
@@ -239,7 +250,7 @@ const MainPage = () => {
     const navigate = useNavigate();
 
     const [showMenu, setShowMenu] = useState(false);
-    const [materials, setMaterials] = useState([]);
+    const [materials, setMaterials] = useState<Material[]>([]);
     const [posts, setPosts] = useState([]);
     const [books, setBooks] = useState([]);
 
@@ -294,8 +305,12 @@ const MainPage = () => {
                 </Sidebar>
 
                 <Container>
-                    <Title>Latest materials</Title>
-                    {materials.map((mat: any, i: number) => {
+                    <Title>Highest Rated</Title>
+                    {materials.sort((a, b) => {
+                        const avgA = a.nrRatings > 0 ? a.rating / a.nrRatings : 0;
+                        const avgB = b.nrRatings > 0 ? b.rating / b.nrRatings : 0;
+                        return avgB - avgA;                       // descending: highest‐rated first
+                    }).slice(0, 5).map((mat: any, i: number) => {
                         const averageRating = mat.nrRatings > 0 ? mat.rating / mat.nrRatings : 0;
                         return (
                             <MaterialCard key={i}>

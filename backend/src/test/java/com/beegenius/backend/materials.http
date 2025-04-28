@@ -26,7 +26,7 @@ COMPUTER_SCIENCE, LAW
 Content-Disposition: form-data; name="file"; filename="ISS Seminar1.pdf"
 Content-Type: application/pdf
 
-< ./ISS Seminar1.pdf
+< ./Seminar.pdf
 
 --boundary
 Content-Disposition: form-data; name="userId"
@@ -154,7 +154,7 @@ Content-Disposition: form-data; name="userId"
 GET http://localhost:8080/api/materials
 
 ### DELETE material
-DELETE http://localhost:8080/api/materials/6808b8423c77895336626f25
+DELETE http://localhost:8080/api/materials/680f6e6022aa6870f0ad91be
 
 ### FILTER
 GET http://localhost:8080/api/materials/filter?tag=COMPUTER_SCIENCE
@@ -163,7 +163,274 @@ GET http://localhost:8080/api/materials/filter?tag=COMPUTER_SCIENCE
 GET http://localhost:8080/api/materials/search?name=Prelegere Java Avansat
 
 ### Add Rating
-PUT http://localhost:8080/api/materials/rating?materialId=680b4f125520a75510580edc&rating=3
+PUT http://localhost:8080/api/materials/rating?materialId=680f701022aa6870f0ad91cb&rating=4
 
 ### Update Material
 PUT http://localhost:8080/api/materials/update?materialId=6808b8423c77895336626f25&description=Nou&tags=LAW
+
+
+
+###
+POST http://localhost:8080/api/materials
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="name"
+
+Medical Research Lab Environment
+
+--boundary
+Content-Disposition: form-data; name="description"
+
+Documentary-style photograph of a biotech research lab.
+Captures instruments, reagents, and workstation layouts.
+Includes researcher safety protocols in frame.
+Great for grant proposals and lab overviews.
+
+--boundary
+Content-Disposition: form-data; name="type"
+
+JPG
+
+--boundary
+Content-Disposition: form-data; name="tags"
+
+MEDICINE, COMPUTER_SCIENCE
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="img.jpg"
+Content-Type: image/jpg
+
+< ./image.jpg
+
+--boundary
+Content-Disposition: form-data; name="userId"
+
+680f6b4322aa6870f0ad91b3
+
+--boundary--
+
+
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6eb822aa6870f0ad91bf&rating=1.1
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6eb822aa6870f0ad91bf&rating=1.8
+
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6ee522aa6870f0ad91c0&rating=3.2
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6ee522aa6870f0ad91c0&rating=3.9
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6ee522aa6870f0ad91c0&rating=3.5
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6f2c22aa6870f0ad91c1&rating=4.1
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6f2c22aa6870f0ad91c1&rating=4.8
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6f2c22aa6870f0ad91c1&rating=4.3
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6f2c22aa6870f0ad91c1&rating=4.7
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6f4b22aa6870f0ad91c2&rating=1.5
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6f4b22aa6870f0ad91c2&rating=1.9
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6f4b22aa6870f0ad91c2&rating=3.3
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6f4b22aa6870f0ad91c2&rating=4.2
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6f4b22aa6870f0ad91c2&rating=4.9
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6f5c22aa6870f0ad91c3&rating=1.2
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6f5c22aa6870f0ad91c3&rating=2.8
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6f5c22aa6870f0ad91c3&rating=3.5
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6f5c22aa6870f0ad91c3&rating=3.9
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6f5c22aa6870f0ad91c3&rating=4.1
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6f5c22aa6870f0ad91c3&rating=4.6
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6f7722aa6870f0ad91c4&rating=3.7
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6f7722aa6870f0ad91c4&rating=4.4
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6f9622aa6870f0ad91c5&rating=1.3
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6f9622aa6870f0ad91c5&rating=1.9
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6fb122aa6870f0ad91c6&rating=3.1
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6fb122aa6870f0ad91c6&rating=3.6
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6fb122aa6870f0ad91c6&rating=3.8
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6fc322aa6870f0ad91c7&rating=4.2
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6fc322aa6870f0ad91c7&rating=4.5
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6fc322aa6870f0ad91c7&rating=4.1
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6fc322aa6870f0ad91c7&rating=4.9
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6fdd22aa6870f0ad91c8&rating=1.4
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6fdd22aa6870f0ad91c8&rating=2.0
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6fdd22aa6870f0ad91c8&rating=3.4
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6fdd22aa6870f0ad91c8&rating=4.3
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6fdd22aa6870f0ad91c8&rating=4.7
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6fec22aa6870f0ad91c9&rating=1.5
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6fec22aa6870f0ad91c9&rating=2.2
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6fec22aa6870f0ad91c9&rating=3.3
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6fec22aa6870f0ad91c9&rating=3.7
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6fec22aa6870f0ad91c9&rating=4.0
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6fec22aa6870f0ad91c9&rating=4.8
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6ff822aa6870f0ad91ca&rating=3.9
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f6ff822aa6870f0ad91ca&rating=4.5
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f701022aa6870f0ad91cb&rating=1.2
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f701022aa6870f0ad91cb&rating=1.7
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f701d22aa6870f0ad91cc&rating=3.3
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f701d22aa6870f0ad91cc&rating=3.5
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f701d22aa6870f0ad91cc&rating=3.9
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f702c22aa6870f0ad91cd&rating=4.0
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f702c22aa6870f0ad91cd&rating=4.6
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f702c22aa6870f0ad91cd&rating=4.2
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f702c22aa6870f0ad91cd&rating=4.9
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f704022aa6870f0ad91ce&rating=1.6
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f704022aa6870f0ad91ce&rating=2.1
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f704022aa6870f0ad91ce&rating=3.2
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f704022aa6870f0ad91ce&rating=4.4
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f704022aa6870f0ad91ce&rating=4.8
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f704e22aa6870f0ad91cf&rating=1.0
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f704e22aa6870f0ad91cf&rating=2.5
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f704e22aa6870f0ad91cf&rating=3.4
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f704e22aa6870f0ad91cf&rating=3.8
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f704e22aa6870f0ad91cf&rating=4.3
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f704e22aa6870f0ad91cf&rating=4.7
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f706e22aa6870f0ad91d0&rating=3.8
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f706e22aa6870f0ad91d0&rating=4.2
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70a622aa6870f0ad91d1&rating=1.4
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70a622aa6870f0ad91d1&rating=1.9
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70bc22aa6870f0ad91d2&rating=3.0
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70bc22aa6870f0ad91d2&rating=3.4
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70bc22aa6870f0ad91d2&rating=3.7
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70ce22aa6870f0ad91d3&rating=4.1
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70ce22aa6870f0ad91d3&rating=4.5
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70ce22aa6870f0ad91d3&rating=4.2
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70ce22aa6870f0ad91d3&rating=4.8
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70d922aa6870f0ad91d4&rating=1.7
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70d922aa6870f0ad91d4&rating=2.3
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70d922aa6870f0ad91d4&rating=3.6
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70d922aa6870f0ad91d4&rating=4.0
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70d922aa6870f0ad91d4&rating=4.9
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70e722aa6870f0ad91d5&rating=1.3
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70e722aa6870f0ad91d5&rating=2.6
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70e722aa6870f0ad91d5&rating=3.1
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70e722aa6870f0ad91d5&rating=3.8
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70e722aa6870f0ad91d5&rating=4.4
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70e722aa6870f0ad91d5&rating=4.7
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70f722aa6870f0ad91d6&rating=3.5
+
+### Add Rating
+PUT http://localhost:8080/api/materials/rating?materialId=680f70f722aa6870f0ad91d6&rating=4.3

@@ -309,8 +309,8 @@ export const MaterialsPage: React.FC = () => {
         const ext = name.split('.').pop()?.toLowerCase();
         if (ext === 'pdf') return pdfIcon;
         if (ext === 'docx') return docxIcon;
-        if (ext === 'png') return pngIcon;
-        return docxIcon;
+        if (ext === 'png' || ext === 'jpg') return pngIcon;
+        return pngIcon;
     };
 
     return (
