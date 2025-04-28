@@ -1,0 +1,1123 @@
+### Add Post
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "New post",
+  "content": "Multe Reply",
+  "tags": ["COMPUTER_SCIENCE"],
+  "date": "2025-04-27T18:00:00Z",
+  "user": {
+    "id": "680a75720349e52db7c7b36f"
+  }
+}
+
+###
+
+### Get All Posts
+GET http://localhost:8080/api/posts
+
+###
+DELETE http://localhost:8080/api/posts/6807ce689126c428944c0b73
+
+###
+
+### Search Post by Title
+GET http://localhost:8080/api/posts/search?title=primul
+
+###
+
+### Filter Post by Tag
+GET http://localhost:8080/api/posts/filter?tag=LAW
+
+###
+
+POST http://localhost:8080/api/replies/to-post/680b591ea34bba30fd396797
+Content-Type: application/json
+
+{
+  "content": "Foarte tare postarea!",
+  "user": {
+    "id": "680a7b050349e52db7c7b370"
+  }
+}
+
+###
+POST http://localhost:8080/api/replies/to-reply/680b591ea34bba30fd396797
+Content-Type: application/json
+
+{
+  "content": "Fix asta voiam să zic și eu!",
+  "user": {
+    "id": "67fe6668b3b5e66421d57732"
+  }
+}
+
+
+###
+
+### Get All Replies
+GET http://localhost:8080/api/replies
+
+
+### Postare 1
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+
+{
+  "title": "Exploring Machine Learning",
+  "content": "A beginner's guide to understanding machine learning algorithms and their applications.",
+  "tags": ["COMPUTER_SCIENCE"],
+  "date": "2025-04-20T10:00:00Z",
+  "user": {"id": "680f6b0225d4821da43d2fb2"}
+}
+
+###
+### Postare 1
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "Exploring Machine Learning",
+  "content": "A beginner's guide to understanding machine learning algorithms and their applications.",
+  "tags": ["COMPUTER_SCIENCE"],
+  "date": "2025-04-20T10:00:00Z",
+  "user": {"id": "680f6b0225d4821da43d2fb2"}
+}
+
+### Postare 2
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "The Evolution of Legal Systems",
+  "content": "A historical overview of how legal systems evolved from ancient to modern times.",
+  "tags": ["LAW", "HISTORY"],
+  "date": "2025-04-21T12:15:00Z",
+  "user": {"id": "680f6b4322aa6870f0ad91b3"}
+}
+
+### Postare 3
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "Advances in Cancer Treatment",
+  "content": "Exploring the latest technologies and methodologies in the fight against cancer.",
+  "tags": ["MEDICINE", "BIOLOGY"],
+  "date": "2025-04-22T15:45:00Z",
+  "user": {"id": "680f6b6daa1cdd62c8277d9c"}
+}
+
+### Postare 4
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "The Renaissance Period",
+  "content": "A deep dive into the cultural, political, and artistic developments of the Renaissance.",
+  "tags": ["HISTORY"],
+  "date": "2025-04-23T09:30:00Z",
+  "user": {"id": "680f6b7922aa6870f0ad91b4"}
+}
+
+### Postare 5
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "CRISPR and Genetic Engineering",
+  "content": "How CRISPR technology is revolutionizing genetic research and therapy.",
+  "tags": ["BIOLOGY", "MEDICINE"],
+  "date": "2025-04-24T11:20:00Z",
+  "user": {"id": "680f6b7faa1cdd62c8277d9d"}
+}
+
+### Postare 6
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "Artificial Intelligence in Law",
+  "content": "How AI is changing the way law firms and courts operate.",
+  "tags": ["LAW", "COMPUTER_SCIENCE"],
+  "date": "2025-04-25T14:50:00Z",
+  "user": {"id": "680f6b9222aa6870f0ad91b5"}
+}
+
+### Postare 7
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "The Human Genome Project",
+  "content": "An overview of the milestones and implications of decoding the human genome.",
+  "tags": ["BIOLOGY"],
+  "date": "2025-04-26T17:00:00Z",
+  "user": {"id": "680f6b91aa1cdd62c8277d9e"}
+}
+
+### Postare 8
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "Blockchain and Law",
+  "content": "The implications of blockchain technology on contract law and legal enforcement.",
+  "tags": ["LAW", "COMPUTER_SCIENCE"],
+  "date": "2025-04-27T08:40:00Z",
+  "user": {"id": "680f6ba6c3cd3a414b1abed2"}
+}
+
+### Postare 9
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "History of Ancient Civilizations",
+  "content": "Examining the technological and societal advances of ancient civilizations.",
+  "tags": ["HISTORY", "BIOLOGY"],
+  "date": "2025-04-28T10:10:00Z",
+  "user": {"id": "680f6bb0aa1cdd62c8277d9f"}
+}
+
+### Postare 10
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "Telemedicine: The Future of Healthcare",
+  "content": "Understanding how telemedicine is making healthcare more accessible globally.",
+  "tags": ["MEDICINE", "COMPUTER_SCIENCE"],
+  "date": "2025-04-29T13:25:00Z",
+  "user": {"id": "680f6bb422aa6870f0ad91b6"}
+}
+
+
+### Postare 2
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "Basics of Contract Law",
+  "content": "Contracts are legally binding agreements. Let's explore the fundamentals.",
+  "tags": ["LAW"],
+  "date": "2025-04-25T09:15:00Z",
+  "user": {
+    "id": "680f6b9aadcd6c8277d9d7"
+  }
+}
+
+### Postare 3
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "Medical Innovations of 2025",
+  "content": "This year has brought incredible innovations in robotic surgeries and vaccines.",
+  "tags": ["MEDICINE"],
+  "date": "2025-04-24T17:45:00Z",
+  "user": {
+    "id": "680f6c0822aa6870f0ad9b1b"
+  }
+}
+
+### Postare 4
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "The Structure of DNA",
+  "content": "An introduction to the molecular structure and discovery of DNA.",
+  "tags": ["BIOLOGY"],
+  "date": "2025-04-23T13:00:00Z",
+  "user": {
+    "id": "680f6c5422aa6870f0ad9b1d"
+  }
+}
+
+### Postare 5
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "Ancient Civilizations and Their Innovations",
+  "content": "From the wheel to the plow, ancient history is full of remarkable inventions.",
+  "tags": ["HISTORY"],
+  "date": "2025-04-22T10:20:00Z",
+  "user": {
+    "id": "680f6bc4e3cd3a414b1abed3"
+  }
+}
+
+### Postare 6
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "Ethical Hacking Explained",
+  "content": "How white hat hackers work to improve cybersecurity.",
+  "tags": ["COMPUTER_SCIENCE"],
+  "date": "2025-04-21T15:30:00Z",
+  "user": {
+    "id": "680f6c0aaldcd6c8277d9d9"
+  }
+}
+
+### Postare 7
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "Medical Ethics in Modern Healthcare",
+  "content": "Discussing patient rights, informed consent, and bioethics in medicine.",
+  "tags": ["MEDICINE"],
+  "date": "2025-04-20T08:00:00Z",
+  "user": {
+    "id": "680f6bbaaldcd6c8277d9df"
+  }
+}
+
+### Postare 8
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "Introduction to Evolutionary Biology",
+  "content": "Exploring natural selection and adaptation across species.",
+  "tags": ["BIOLOGY"],
+  "date": "2025-04-19T11:30:00Z",
+  "user": {
+    "id": "680f6c1722aa6870f0ad9b1c"
+  }
+}
+
+### Postare 9
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "The Renaissance Period",
+  "content": "An overview of art, science, and culture during the Renaissance.",
+  "tags": ["HISTORY"],
+  "date": "2025-04-18T16:45:00Z",
+  "user": {
+    "id": "680f6bee22aa6870f0ad9b19"
+  }
+}
+
+### Postare 10
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "Intellectual Property Rights",
+  "content": "Understanding copyright, patents, and their importance in LAW.",
+  "tags": ["LAW"],
+  "date": "2025-04-17T12:00:00Z",
+  "user": {
+    "id": "680f6b6c3cd3a414b1abed2"
+  }
+}
+
+
+### Postare 11
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "AI in Medicine and Biology",
+  "content": "Artificial Intelligence is increasingly used in diagnostics and biological research.",
+  "tags": ["COMPUTER_SCIENCE", "MEDICINE", "BIOLOGY"],
+  "date": "2025-04-28T10:00:00Z",
+  "user": {
+    "id": "680f6bc4e3cd3a414b1abed3"
+  }
+}
+
+### Postare 12
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "The Legal Challenges of Genetic Engineering",
+  "content": "Exploring how law adapts to rapid advances in genetics and biotechnology.",
+  "tags": ["LAW", "BIOLOGY"],
+  "date": "2025-04-27T17:00:00Z",
+  "user": {
+    "id": "680f6bbaaldcd6c8277d9df"
+  }
+}
+
+### Postare 13
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "Historic Advances in Medical Science",
+  "content": "A journey through historical milestones that shaped modern healthcare.",
+  "tags": ["HISTORY", "MEDICINE"],
+  "date": "2025-04-26T19:30:00Z",
+  "user": {
+    "id": "680f6c5422aa6870f0ad9b1d"
+  }
+}
+
+
+### Reply 1 la Understanding Neural Networks
+POST http://localhost:8080/api/replies/to-post/680f6ce5aa1cdd62c8277da2
+Content-Type: application/json
+
+{
+  "content": "Explicație foarte clară despre rețele neuronale!",
+  "user": {
+    "id": "680f6bdaacd6c628277d9d7"
+  }
+}
+
+### Reply 2 la Basics of Contract Law
+POST http://localhost:8080/api/replies/to-post/680f6ce9aa1cdd62c8277da3
+Content-Type: application/json
+
+{
+  "content": "Îmi place cum ai simplificat noțiunile de drept.",
+  "user": {
+    "id": "680f6bb0aac1dc6c628277d9f"
+  }
+}
+
+### Reply 3 la Medical Innovations of 2025
+POST http://localhost:8080/api/replies/to-post/680f6cebaa1cdd62c8277da4
+Content-Type: application/json
+
+{
+  "content": "Foarte interesante inovațiile!",
+  "user": {
+    "id": "680f6c0822aa687f0ad9b1b"
+  }
+}
+
+### Reply 4 la The Structure of DNA
+POST http://localhost:8080/api/replies/to-post/680f6cedaa1cdd62c8277da5
+Content-Type: application/json
+
+{
+  "content": "Articol foarte bine explicat, felicitări!",
+  "user": {
+    "id": "680f6b6c3cd34a14b1abde3"
+  }
+}
+
+### Reply 5 la Ancient Civilizations and Their Innovations
+POST http://localhost:8080/api/replies/to-post/680f6cf0aa1cdd62c8277da6
+Content-Type: application/json
+
+{
+  "content": "Mi-a plăcut partea despre Egipt!",
+  "user": {
+    "id": "680f6cba0aad1dc6d628277d9f"
+  }
+}
+
+### Reply 6 la Ethical Hacking Explained
+POST http://localhost:8080/api/replies/to-post/680f6cf2aa1cdd62c8277da7
+Content-Type: application/json
+
+{
+  "content": "Foarte util pentru începători!",
+  "user": {
+    "id": "680f6bd6aac1dc6d628277dab"
+  }
+}
+
+### Reply 7 la Medical Ethics in Modern Healthcare
+POST http://localhost:8080/api/replies/to-post/680f6cf4aa1cdd62c8277da8
+Content-Type: application/json
+
+{
+  "content": "Etica medicală devine tot mai importantă!",
+  "user": {
+    "id": "680f6be022aa687f0ad9b1b"
+  }
+}
+
+### Reply 8 la Introduction to Evolutionary Biology
+POST http://localhost:8080/api/replies/to-post/680f6cf6aa1cdd62c8277da9
+Content-Type: application/json
+
+{
+  "content": "Super interesantă teoria selecției naturale.",
+  "user": {
+    "id": "680f6c1722aa687f0ad9b1c"
+  }
+}
+
+### Reply 9 la The Renaissance Period
+POST http://localhost:8080/api/replies/to-post/680f6cf8aa1cdd62c8277daa
+Content-Type: application/json
+
+{
+  "content": "Epoca Renașterii este fascinantă!",
+  "user": {
+    "id": "680f6be022aa687f0ad9b1b"
+  }
+}
+
+### Reply 10 la AI in Medicine and Biology (cu mai multe taguri)
+POST http://localhost:8080/api/replies/to-post/680f6d1faa1cdd62c8277dac
+Content-Type: application/json
+
+{
+  "content": "Combinația AI și medicină promite multe!",
+  "user": {
+    "id": "680f6b6c3cd34a14b1abde3"
+  }
+}
+
+
+
+
+
+### Reply la postare
+POST http://localhost:8080/api/replies/to-post/680f6ce5aa1cdd62c8277da2
+Content-Type: application/json
+
+{
+  "content": "Informații foarte bine structurate, mulțumesc!",
+  "user": { "id": "680f6b9aa1cd6d628277d9f9" }
+}
+
+### Reply la postare
+POST http://localhost:8080/api/replies/to-post/680f6ce9aa1cdd62c8277da3
+Content-Type: application/json
+
+{
+  "content": "Am înțeles mai bine contractele, super explicație!",
+  "user": { "id": "680f6ba0a1cd6d628277d9fd" }
+}
+
+### Reply la postare
+POST http://localhost:8080/api/replies/to-post/680f6cebaa1cdd62c8277da4
+Content-Type: application/json
+
+{
+  "content": "Inovațiile medicale chiar schimbă lumea!",
+  "user": { "id": "680f6c08a22a687f0ad9b1b" }
+}
+
+### Reply la postare
+POST http://localhost:8080/api/replies/to-post/680f6cedaa1cdd62c8277da5
+Content-Type: application/json
+
+{
+  "content": "Structura ADN-ului fascinantă!",
+  "user": { "id": "680f6c5422aa687f0ad9b1d" }
+}
+
+### Reply la postare
+POST http://localhost:8080/api/replies/to-post/680f6cf2aa1cdd62c8277da7
+Content-Type: application/json
+
+{
+  "content": "Mi-a plăcut exemplul cu hackerii etici!",
+  "user": { "id": "680f6cba0a1cd6d628277d9f9" }
+}
+
+### Reply la postare
+POST http://localhost:8080/api/replies/to-post/680f6cf4aa1cdd62c8277da8
+Content-Type: application/json
+
+{
+  "content": "Etica medicală e un subiect extrem de important.",
+  "user": { "id": "680f6ba0a1cd6d628277d9fd" }
+}
+
+### Reply la postare
+POST http://localhost:8080/api/replies/to-post/680f6cf6aa1cdd62c8277da9
+Content-Type: application/json
+
+{
+  "content": "Selecția naturală explicată clar!",
+  "user": { "id": "680f6cf1722aa687f0ad9b1c" }
+}
+
+### Reply la postare
+POST http://localhost:8080/api/replies/to-post/680f6cf8aa1cdd62c8277daa
+Content-Type: application/json
+
+{
+  "content": "Perioada Renașterii m-a inspirat!",
+  "user": { "id": "680f6c08a22a687f0ad9b1b" }
+}
+
+### Reply la postare
+POST http://localhost:8080/api/replies/to-post/680f6cfaaa1cdd62c8277dab
+Content-Type: application/json
+
+{
+  "content": "Drepturile intelectuale sunt foarte importante azi!",
+  "user": { "id": "680f6b6c3cd3a414b1abed3" }
+}
+
+### Reply la postare
+POST http://localhost:8080/api/replies/to-post/680f6d1faa1cdd62c8277dac
+Content-Type: application/json
+
+{
+  "content": "Inteligența Artificială chiar revoluționează medicina!",
+  "user": { "id": "680f6b6c3cd3a414b1abed3" }
+}
+
+
+
+### Reply la alte reply-uri:
+
+```http
+### Reply la reply
+POST http://localhost:8080/api/replies/to-reply/680f6e0eaa1cdd62c8277daf
+Content-Type: application/json
+
+{
+  "content": "Exact așa cred și eu despre rețele neuronale!",
+  "user": { "id": "680f6b9aa1cd6d628277d9f9" }
+}
+
+### Reply la reply
+POST http://localhost:8080/api/replies/to-reply/680f6e1faa1cdd62c8277db0
+Content-Type: application/json
+
+{
+  "content": "Și mie mi s-a părut simplificată super bine!",
+  "user": { "id": "680f6ba0a1cd6d628277d9fd" }
+}
+
+### Reply la reply
+POST http://localhost:8080/api/replies/to-reply/680f6e33aa1cdd62c8277db1
+Content-Type: application/json
+
+{
+  "content": "Mai aștept și alte postări de genul!",
+  "user": { "id": "680f6c08a22a687f0ad9b1b" }
+}
+
+### Reply la reply
+POST http://localhost:8080/api/replies/to-reply/680f6e43aa1cdd62c8277db2
+Content-Type: application/json
+
+{
+  "content": "Felicitări pentru claritatea explicației!",
+  "user": { "id": "680f6b6c3cd3a414b1abed3" }
+}
+
+### Reply la reply
+POST http://localhost:8080/api/replies/to-reply/680f6e51aa1cdd62c8277db3
+Content-Type: application/json
+
+{
+  "content": "Egiptul Antic a fost fascinant!",
+  "user": { "id": "680f6ba0a1cd6d628277d9fd" }
+}
+
+### Reply la reply
+POST http://localhost:8080/api/replies/to-reply/680f6e63aa1cdd62c8277db4
+Content-Type: application/json
+
+{
+  "content": "Tutorial perfect pentru începători!",
+  "user": { "id": "680f6b6daac1cd6d628277dab" }
+}
+
+### Reply la reply
+POST http://localhost:8080/api/replies/to-reply/680f6e75aa1cdd62c8277db5
+Content-Type: application/json
+
+{
+  "content": "Etica medicală este mai relevantă ca niciodată!",
+  "user": { "id": "680f6c08a22a687f0ad9b1b" }
+}
+
+### Reply la reply
+POST http://localhost:8080/api/replies/to-reply/680f6e84aa1cdd62c8277db6
+Content-Type: application/json
+
+{
+  "content": "Selecția naturală este fascinantă!",
+  "user": { "id": "680f6cf1722aa687f0ad9b1c" }
+}
+
+### Reply la reply
+POST http://localhost:8080/api/replies/to-reply/680f6e97aa1cdd62c8277db7
+Content-Type: application/json
+
+{
+  "content": "Renașterea a schimbat lumea complet!",
+  "user": { "id": "680f6c08a22a687f0ad9b1b" }
+}
+
+### Reply la reply
+POST http://localhost:8080/api/replies/to-reply/680f6ea4aa1cdd62c8277db8
+Content-Type: application/json
+
+{
+  "content": "AI-ul în medicină va salva vieți!",
+  "user": { "id": "680f6b6c3cd3a414b1abed3" }
+}
+
+
+
+
+
+
+### Reply 1 la Exploring Machine Learning
+POST http://localhost:8080/api/replies/to-post/680f7400aa1cdd62c8277dcd
+Content-Type: application/json
+
+{
+  "content": "Foarte utilă introducerea în machine learning, felicitări!",
+  "user": {
+    "id": "680f6b4322aa6870f0ad91b3"
+  }
+}
+
+### Reply 2 la The Evolution of Legal Systems
+POST http://localhost:8080/api/replies/to-post/680f744faa1cdd62c8277dce
+Content-Type: application/json
+
+{
+  "content": "Interesant cum dreptul a evoluat de-a lungul istoriei!",
+  "user": {
+    "id": "680f6b6daa1cdd62c8277d9c"
+  }
+}
+
+### Reply 3 la Advances in Cancer Treatment
+POST http://localhost:8080/api/replies/to-post/680f7451aa1cdd62c8277dcf
+Content-Type: application/json
+
+{
+  "content": "Inovațiile în tratarea cancerului sunt impresionante!",
+  "user": {
+    "id": "680f6b9222aa6870f0ad91b5"
+  }
+}
+
+### Reply 4 la The Renaissance Period
+POST http://localhost:8080/api/replies/to-post/680f7453aa1cdd62c8277dd0
+Content-Type: application/json
+
+{
+  "content": "Renașterea a schimbat complet fața Europei!",
+  "user": {
+    "id": "680f6bb0aa1cdd62c8277d9f"
+  }
+}
+
+### Reply 5 la CRISPR and Genetic Engineering
+POST http://localhost:8080/api/replies/to-post/680f7454aa1cdd62c8277dd1
+Content-Type: application/json
+
+{
+  "content": "CRISPR este cu adevărat o revoluție în biologie!",
+  "user": {
+    "id": "680f6b7faa1cdd62c8277d9d"
+  }
+}
+
+### Reply 6 la Artificial Intelligence in Law
+POST http://localhost:8080/api/replies/to-post/680f7456aa1cdd62c8277dd2
+Content-Type: application/json
+
+{
+  "content": "AI va schimba radical profesia de avocat!",
+  "user": {
+    "id": "680f6b91aa1cdd62c8277d9e"
+  }
+}
+
+### Reply 7 la The Human Genome Project
+POST http://localhost:8080/api/replies/to-post/680f7458aa1cdd62c8277dd3
+Content-Type: application/json
+
+{
+  "content": "Proiectul genomului uman a deschis drumuri noi în medicină!",
+  "user": {
+    "id": "680f6c0dc3cd3a414b1abed4"
+  }
+}
+
+### Reply 8 la Blockchain and Law
+POST http://localhost:8080/api/replies/to-post/680f745aaa1cdd62c8277dd4
+Content-Type: application/json
+
+{
+  "content": "Foarte interesantă perspectiva blockchain-ului asupra dreptului!",
+  "user": {
+    "id": "680f6c5422aa6870f0ad91bd"
+  }
+}
+
+### Reply 9 la History of Ancient Civilizations
+POST http://localhost:8080/api/replies/to-post/680f745baa1cdd62c8277dd5
+Content-Type: application/json
+
+{
+  "content": "Civilizațiile antice sunt o sursă de inspirație și azi!",
+  "user": {
+    "id": "680f6bee22aa6870f0ad91b9"
+  }
+}
+
+### Reply 10 la Telemedicine: The Future of Healthcare
+POST http://localhost:8080/api/replies/to-post/680f745daa1cdd62c8277dd6
+Content-Type: application/json
+
+{
+  "content": "Telemedicina aduce medicina mai aproape de oameni!",
+  "user": {
+    "id": "680f6bf4c3cd3a414b1abed3"
+  }
+}
+
+
+
+
+
+
+### Reply 11 la Exploring Machine Learning
+POST http://localhost:8080/api/replies/to-post/680f7400aa1cdd62c8277dcd
+Content-Type: application/json
+
+{
+  "content": "Îmi place cum ai explicat bazele începătorilor!",
+  "user": {
+    "id": "680f6b6daa1cdd62c8277d9c"
+  }
+}
+
+### Reply 12 la The Evolution of Legal Systems
+POST http://localhost:8080/api/replies/to-post/680f744faa1cdd62c8277dce
+Content-Type: application/json
+
+{
+  "content": "Foarte bine structurată analiza evoluției dreptului.",
+  "user": {
+    "id": "680f6b7922aa6870f0ad91b4"
+  }
+}
+
+### Reply 13 la Advances in Cancer Treatment
+POST http://localhost:8080/api/replies/to-post/680f7451aa1cdd62c8277dcf
+Content-Type: application/json
+
+{
+  "content": "Este incredibil cât de mult a evoluat tratamentul cancerului!",
+  "user": {
+    "id": "680f6c0822aa6870f0ad91bb"
+  }
+}
+
+### Reply 14 la The Renaissance Period
+POST http://localhost:8080/api/replies/to-post/680f7453aa1cdd62c8277dd0
+Content-Type: application/json
+
+{
+  "content": "Perioada Renașterii a fost o explozie de creativitate.",
+  "user": {
+    "id": "680f6bfc22aa6870f0ad91ba"
+  }
+}
+
+### Reply 15 la CRISPR and Genetic Engineering
+POST http://localhost:8080/api/replies/to-post/680f7454aa1cdd62c8277dd1
+Content-Type: application/json
+
+{
+  "content": "CRISPR va schimba medicina așa cum o știm!",
+  "user": {
+    "id": "680f6ba6c3cd3a414b1abed2"
+  }
+}
+
+### Reply 16 la Artificial Intelligence in Law
+POST http://localhost:8080/api/replies/to-post/680f7456aa1cdd62c8277dd2
+Content-Type: application/json
+
+{
+  "content": "Foarte interesantă aplicarea AI în domeniul legal!",
+  "user": {
+    "id": "680f6c0dc3cd3a414b1abed4"
+  }
+}
+
+### Reply 17 la The Human Genome Project
+POST http://localhost:8080/api/replies/to-post/680f7458aa1cdd62c8277dd3
+Content-Type: application/json
+
+{
+  "content": "Un proiect care a schimbat total genetica!",
+  "user": {
+    "id": "680f6c1722aa6870f0ad91bc"
+  }
+}
+
+### Reply 18 la Blockchain and Law
+POST http://localhost:8080/api/replies/to-post/680f745aaa1cdd62c8277dd4
+Content-Type: application/json
+
+{
+  "content": "Îmi place cum ai conectat blockchain-ul cu domeniul juridic!",
+  "user": {
+    "id": "680f6c5422aa6870f0ad91bd"
+  }
+}
+
+### Reply 19 la History of Ancient Civilizations
+POST http://localhost:8080/api/replies/to-post/680f745baa1cdd62c8277dd5
+Content-Type: application/json
+
+{
+  "content": "Civilizațiile antice sunt fascinante!",
+  "user": {
+    "id": "680f6bee22aa6870f0ad91b9"
+  }
+}
+
+### Reply 20 la Telemedicine: The Future of Healthcare
+POST http://localhost:8080/api/replies/to-post/680f745daa1cdd62c8277dd6
+Content-Type: application/json
+
+{
+  "content": "Telemedicina este viitorul sănătății moderne!",
+  "user": {
+    "id": "680f6bd9aa1cdd62c8277da1"
+  }
+}
+
+
+
+
+
+
+
+
+
+### Reply to Reply 680f7524aa1cdd62c8277dd8
+POST http://localhost:8080/api/replies/to-reply/680f7524aa1cdd62c8277dd8
+Content-Type: application/json
+
+{
+  "content": "Total de acord cu ideea prezentată!",
+  "user": {
+    "id": "680f6b0225d4821da43d2fb2"
+  }
+}
+
+### Reply to Reply 680f7529aa1cdd62c8277dd9
+POST http://localhost:8080/api/replies/to-reply/680f7529aa1cdd62c8277dd9
+Content-Type: application/json
+
+{
+  "content": "Foarte bine punctat!",
+  "user": {
+    "id": "680f6b4322aa6870f0ad91b3"
+  }
+}
+
+### Reply to Reply 680f752baa1cdd62c8277dda
+POST http://localhost:8080/api/replies/to-reply/680f752baa1cdd62c8277dda
+Content-Type: application/json
+
+{
+  "content": "Și eu cred la fel!",
+  "user": {
+    "id": "680f6b6daa1cdd62c8277d9c"
+  }
+}
+
+### Reply to Reply 680f752caa1cdd62c8277ddb
+POST http://localhost:8080/api/replies/to-reply/680f752caa1cdd62c8277ddb
+Content-Type: application/json
+
+{
+  "content": "Un punct de vedere excelent!",
+  "user": {
+    "id": "680f6b7922aa6870f0ad91b4"
+  }
+}
+
+### Reply to Reply 680f7532aa1cdd62c8277ddc
+POST http://localhost:8080/api/replies/to-reply/680f7532aa1cdd62c8277ddc
+Content-Type: application/json
+
+{
+  "content": "Exact ceea ce gândeam și eu!",
+  "user": {
+    "id": "680f6b7faa1cdd62c8277d9d"
+  }
+}
+
+### Reply to Reply 680f7533aa1cdd62c8277ddd
+POST http://localhost:8080/api/replies/to-reply/680f7533aa1cdd62c8277ddd
+Content-Type: application/json
+
+{
+  "content": "Îmi place această abordare!",
+  "user": {
+    "id": "680f6b9222aa6870f0ad91b5"
+  }
+}
+
+### Reply to Reply 680f7535aa1cdd62c8277dde
+POST http://localhost:8080/api/replies/to-reply/680f7535aa1cdd62c8277dde
+Content-Type: application/json
+
+{
+  "content": "Super punct de vedere!",
+  "user": {
+    "id": "680f6b91aa1cdd62c8277d9e"
+  }
+}
+
+### Reply to Reply 680f7537aa1cdd62c8277ddf
+POST http://localhost:8080/api/replies/to-reply/680f7537aa1cdd62c8277ddf
+Content-Type: application/json
+
+{
+  "content": "Foarte bine spus!",
+  "user": {
+    "id": "680f6ba6c3cd3a414b1abed2"
+  }
+}
+
+### Reply to Reply 680f7539aa1cdd62c8277de0
+POST http://localhost:8080/api/replies/to-reply/680f7539aa1cdd62c8277de0
+Content-Type: application/json
+
+{
+  "content": "Împărtășesc aceeași părere.",
+  "user": {
+    "id": "680f6bb0aa1cdd62c8277d9f"
+  }
+}
+
+### Reply to Reply 680f753baa1cdd62c8277de1
+POST http://localhost:8080/api/replies/to-reply/680f753baa1cdd62c8277de1
+Content-Type: application/json
+
+{
+  "content": "Subscriu la această idee!",
+  "user": {
+    "id": "680f6bb422aa6870f0ad91b6"
+  }
+}
+
+### Reply to Reply 680f7572aa1cdd62c8277de2
+POST http://localhost:8080/api/replies/to-reply/680f7572aa1cdd62c8277de2
+Content-Type: application/json
+
+{
+  "content": "Foarte bine argumentat!",
+  "user": {
+    "id": "680f6bc4aa1cdd62c8277da0"
+  }
+}
+
+### Reply to Reply 680f7574aa1cdd62c8277de3
+POST http://localhost:8080/api/replies/to-reply/680f7574aa1cdd62c8277de3
+Content-Type: application/json
+
+{
+  "content": "Îmi place explicația ta.",
+  "user": {
+    "id": "680f6bc522aa6870f0ad91b7"
+  }
+}
+
+### Reply to Reply 680f7576aa1cdd62c8277de4
+POST http://localhost:8080/api/replies/to-reply/680f7576aa1cdd62c8277de4
+Content-Type: application/json
+
+{
+  "content": "Sunt de acord 100% cu tine.",
+  "user": {
+    "id": "680f6bd9aa1cdd62c8277da1"
+  }
+}
+
+### Reply to Reply 680f7578aa1cdd62c8277de5
+POST http://localhost:8080/api/replies/to-reply/680f7578aa1cdd62c8277de5
+Content-Type: application/json
+
+{
+  "content": "Excelent punctat!",
+  "user": {
+    "id": "680f6bde22aa6870f0ad91b8"
+  }
+}
+
+### Reply to Reply 680f7579aa1cdd62c8277de6
+POST http://localhost:8080/api/replies/to-reply/680f7579aa1cdd62c8277de6
+Content-Type: application/json
+
+{
+  "content": "Explicație foarte clară.",
+  "user": {
+    "id": "680f6bee22aa6870f0ad91b9"
+  }
+}
+
+### Reply to Reply 680f757baa1cdd62c8277de7
+POST http://localhost:8080/api/replies/to-reply/680f757baa1cdd62c8277de7
+Content-Type: application/json
+
+{
+  "content": "Îmi place stilul de argumentare.",
+  "user": {
+    "id": "680f6bf4c3cd3a414b1abed3"
+  }
+}
+
+### Reply to Reply 680f757daa1cdd62c8277de8
+POST http://localhost:8080/api/replies/to-reply/680f757daa1cdd62c8277de8
+Content-Type: application/json
+
+{
+  "content": "Foarte bine formulat!",
+  "user": {
+    "id": "680f6bfc22aa6870f0ad91ba"
+  }
+}
+
+### Reply to Reply 680f757faa1cdd62c8277de9
+POST http://localhost:8080/api/replies/to-reply/680f757faa1cdd62c8277de9
+Content-Type: application/json
+
+{
+  "content": "Super explicație, clar și concis!",
+  "user": {
+    "id": "680f6c0822aa6870f0ad91bb"
+  }
+}
+
+### Reply to Reply 680f7580aa1cdd62c8277dea
+POST http://localhost:8080/api/replies/to-reply/680f7580aa1cdd62c8277dea
+Content-Type: application/json
+
+{
+  "content": "Aș mai adăuga un exemplu la ideea ta.",
+  "user": {
+    "id": "680f6c0dc3cd3a414b1abed4"
+  }
+}
+
+### Reply to Reply 680f7582aa1cdd62c8277deb
+POST http://localhost:8080/api/replies/to-reply/680f7582aa1cdd62c8277deb
+Content-Type: application/json
+
+{
+  "content": "Exact ce gândeam și eu!",
+  "user": {
+    "id": "680f6c1722aa6870f0ad91bc"
+  }
+}

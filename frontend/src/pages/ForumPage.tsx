@@ -338,8 +338,12 @@ const ForumPage = () => {
                                 ))}
                             </InfoRow>
                             <PostReplies>
-                                <FaRegComment /> {post.replies?.length || 0}
+                                <FaRegComment />
+                                {post.replies ? (
+                                    post.replies.length + post.replies.reduce((acc: number, reply: any) => acc + (reply.replies?.length || 0), 0)
+                                ) : 0}
                             </PostReplies>
+
                         </ForumPostCard>
                     ))}
                 </Container>
