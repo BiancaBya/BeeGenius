@@ -1,4 +1,4 @@
-### ADD MATERIAL
+### ADD MATERIAL PDF
 POST http://localhost:8080/api/materials
 Content-Type: multipart/form-data; boundary=boundary
 
@@ -33,6 +33,122 @@ Content-Disposition: form-data; name="userId"
 
 680a75720349e52db7c7b36f
 --boundary
+
+
+### ADD MATERIAL DOCX
+POST http://localhost:8080/api/materials
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="name"
+
+Material docx Medicine
+
+--boundary
+Content-Disposition: form-data; name="description"
+
+Super Material Medicine
+
+--boundary
+Content-Disposition: form-data; name="type"
+
+DOCX
+
+--boundary
+Content-Disposition: form-data; name="tags"
+
+MEDICINE
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="document.docx"
+Content-Type: application/docx
+
+< ./docx.docx
+
+--boundary
+Content-Disposition: form-data; name="userId"
+
+680a75720349e52db7c7b36f
+--boundary
+
+
+
+### ADD MATERIAL PNG
+POST http://localhost:8080/api/materials
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="name"
+
+Material png Medicine
+
+--boundary
+Content-Disposition: form-data; name="description"
+
+Super Material Medicine poza png …
+
+--boundary
+Content-Disposition: form-data; name="type"
+
+PNG
+
+--boundary
+Content-Disposition: form-data; name="tags"
+
+MEDICINE, COMPUTER_SCIENCE
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="logo.png"
+Content-Type: image/png
+
+< ./logo.png
+
+--boundary
+Content-Disposition: form-data; name="userId"
+
+680a75720349e52db7c7b36f
+
+--boundary--
+
+
+
+### ADD MATERIAL JPG
+POST http://localhost:8080/api/materials
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="name"
+
+Material jpg LAW
+
+--boundary
+Content-Disposition: form-data; name="description"
+
+Super Material LAW poza png …
+
+--boundary
+Content-Disposition: form-data; name="type"
+
+JPG
+
+--boundary
+Content-Disposition: form-data; name="tags"
+
+LAW
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="img.jpg"
+Content-Type: image/jpg
+
+< ./image.jpg
+
+--boundary
+Content-Disposition: form-data; name="userId"
+
+680a75720349e52db7c7b36f
+
+--boundary--
+
 
 ### GET all materials
 GET http://localhost:8080/api/materials

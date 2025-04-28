@@ -269,8 +269,8 @@ const BooksPage: React.FC = () => {
                 <div>
                     <MenuItems>
                         <MenuItem onClick={() => navigate('/userprofile')}>Profile</MenuItem>
-                        <MenuItem>Materials</MenuItem>
-                        <MenuItem>Forum</MenuItem>
+                        <MenuItem onClick={() => navigate('/materials')}>Materials</MenuItem>
+                        <MenuItem onClick={() => navigate('/forum')}>Forum</MenuItem>
                         <MenuItem onClick={() => navigate('/books')}>Books</MenuItem>
                         <MenuItem onClick={() => navigate('/mainpage')}>Home</MenuItem>
                     </MenuItems>
