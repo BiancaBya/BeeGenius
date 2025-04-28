@@ -3,6 +3,7 @@ import styled, {createGlobalStyle} from 'styled-components';
 import LoginBg from '../assets/background.jpg';
 import {useNavigate} from "react-router-dom";
 import {UserDTO} from "../dto/UserDTO";
+import {notifyError} from "../utils/Notify";
 
 
 
@@ -108,28 +109,37 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!email || !password) {
+            notifyError("Please fill in all fields.");
+            return;
+        }
+
         try {
-            const url = new URL('http://localhost:8080/api/auth/login');
-            url.searchParams.append('email', email);
-            url.searchParams.append('password', password);
+            const url = new URL("http://localhost:8080/api/auth/login");
+            url.searchParams.append("email", email);
+            url.searchParams.append("password", password);
 
-            const res = await fetch(url.toString(), { method: 'POST' });
-            const data = await res.json().catch(() => null);
+            const res = await fetch(url.toString(), { method: "POST" });
 
+            // always read the raw body as text
+            const text = await res.text();
+
+            // if it’s an error status, show that text
             if (!res.ok) {
-                const msg = data?.message || res.statusText;
-                // notifyError(`Login failed: ${msg}`);
+                notifyError(`Login failed: ${text}`);
                 return;
             }
 
-            const user = data as UserDTO;
-
-            sessionStorage.setItem('user', JSON.stringify(user));
-            navigate('/mainpage');
+            // otherwise it was a success—parse the JSON user out of the text
+            const user = JSON.parse(text) as UserDTO;
+            sessionStorage.setItem("user", JSON.stringify(user));
+            navigate("/mainpage");
         } catch (err) {
-            // notifyError(`Login failed: ${err.message}`);
+            notifyError(
+                "Login failed: " + (err instanceof Error ? err.message : "Unknown error")
+            );
         }
     };
 

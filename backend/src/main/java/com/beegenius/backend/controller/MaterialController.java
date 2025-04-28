@@ -104,6 +104,15 @@ public class MaterialController {
         return ResponseEntity.ok(updated);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Material> getMaterialById(@PathVariable String id) {
+        Material material = materialService.getMaterialById(id);
+        if (material == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(material);
+    }
+
 }
 
 

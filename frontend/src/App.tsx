@@ -10,6 +10,7 @@ import BooksPage from "./pages/BooksPage";
 import ForumPage from "./pages/ForumPage";
 import BookDetailsPage from "./pages/BookDetailsPage";
 import ForumPostPage from "./pages/ForumPostPage";
+import MaterialDetailsPage from "./pages/MaterialDetailsPage";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="/forum" element={<ForumPage/>} />
             <Route path="/post/:postId" element={<ForumPostPage />} />
             <Route path="/books/:id" element={<BookDetailsPage/>} />
+            <Route path="materials/:id" element={<MaterialDetailsPage />} />
         </Routes>
       </BrowserRouter>
   );
