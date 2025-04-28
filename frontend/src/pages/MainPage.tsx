@@ -3,6 +3,7 @@ import styled, { createGlobalStyle } from 'styled-components';
 import Header from '../components/Header';
 import Menu from '../components/Menu';
 import { TiStarFullOutline, TiStarHalfOutline, TiStarOutline } from "react-icons/ti";
+import {useNavigate} from "react-router-dom";
 
 const GlobalStyle = createGlobalStyle`
     @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
@@ -32,6 +33,9 @@ const MaterialCard = styled.div`
     margin-bottom: 16px;
     display: flex;
     flex-direction: column;
+    &:hover {
+        transform: scale(1.01);
+    }
 `;
 
 const MaterialTitle = styled.div`
@@ -94,6 +98,9 @@ const BookCard = styled.div`
     padding: 20px;
     border-radius: 15px;
     text-align: center;
+    &:hover {
+        transform: scale(1.05);
+    }
 `;
 
 const BookImage = styled.img`
@@ -162,6 +169,7 @@ const MainPage = () => {
     const [materials, setMaterials] = useState<Material[]>([]);
     const [posts, setPosts] = useState([]);
     const [books, setBooks] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch('http://localhost:8080/api/materials')
@@ -219,7 +227,11 @@ const MainPage = () => {
                         .sort((a: any, b: any) => b.replies.length - a.replies.length)
                         .slice(0, 5)
                         .map((post: any, i: number) => (
-                            <MaterialCard key={`post-${i}`}>
+                            <MaterialCard
+                                key={`post-${i}`}
+                                onClick={() => navigate(`/post/${post.id}`)} // <-- ADĂUGAT
+                                style={{ cursor: 'pointer' }}
+                            >
                                 <MaterialTitle>{post.title}</MaterialTitle>
                                 <InfoRow>
                                     <span>Posted by {post.user?.name || 'Unknown'}</span>
@@ -241,7 +253,11 @@ const MainPage = () => {
                             .slice(-5)
                             .reverse()
                             .map((book: any, index: number) => (
-                                <BookCard key={index}>
+                                <BookCard
+                                    key={`book-${index}`}
+                                    onClick={() => navigate(`/books/${book.id}`)} // <-- ADĂUGAT
+                                    style={{ cursor: 'pointer' }}
+                                >
                                     <BookImage
                                         src={`http://localhost:8080/${book.photoPath.replace(/\\/g, '/')}`}
                                         alt={book.title}
