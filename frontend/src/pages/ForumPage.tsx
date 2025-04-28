@@ -1,19 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
-import BeeIcon from '../assets/Logo_cropped.png';
-import BeeText from '../assets/LogoText.png';
 import { FaRegComment } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
-
-const PostReplies = styled.div`
-    margin-top: 10px;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #555;
-`;
+import Header from '../components/Header';
+import Menu from '../components/Menu';
 
 const GlobalStyle = createGlobalStyle`
     @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
@@ -27,84 +17,6 @@ const GlobalStyle = createGlobalStyle`
 
 const Container = styled.div`
     padding: 110px 40px;
-`;
-
-const Header = styled.div`
-    height: 70px;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1100;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #f7dca0;
-    padding: 15px 40px;
-    border-bottom: 2px solid #000;
-`;
-
-const LogoContainer = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 10px;
-`;
-
-const LogoImage = styled.img`
-    height: 50px;
-    object-fit: contain;
-`;
-
-const MenuButton = styled.button`
-    background: #fff;
-    border: 2px solid #000;
-    border-radius: 10px;
-    padding: 8px 20px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    margin: 0 70px;
-`;
-
-const Sidebar = styled.div<{ open: boolean }>`
-    width: 250px;
-    background: #f7dca0;
-    height: calc(100vh - 70px);
-    border-left: 2px solid #000;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    position: fixed;
-    top: 102px;
-    right: ${props => (props.open ? '0' : '-250px')};
-    transition: right 0.3s ease-in-out;
-    z-index: 1000;
-`;
-
-const MenuItems = styled.div`
-    display: flex;
-    flex-direction: column;
-    padding: 30px 20px;
-    gap: 30px;
-    font-size: 1.4rem;
-    font-weight: 500;
-    border-bottom: 2px solid #000;
-`;
-
-const MenuItem = styled.div`
-    cursor: pointer;
-    &:hover {
-        text-decoration: underline;
-    }
-`;
-
-const Logout = styled.div`
-    padding: 20px;
-    font-size: 1.3rem;
-    font-weight: bold;
-    border-top: 2px solid #000;
-    text-align: center;
-    cursor: pointer;
-    margin-bottom: 40px;
 `;
 
 const PageWrapper = styled.div`
@@ -216,6 +128,15 @@ const TagFilter = styled.select`
     min-width: 200px;
 `;
 
+const PostReplies = styled.div`
+    margin-top: 10px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #555;
+`;
+
 const getTagColor = (tag: string) => {
     switch (tag) {
         case 'LAW': return '#f48c06';
@@ -255,7 +176,6 @@ const ForumPage = () => {
     const [allPosts, setAllPosts] = useState([]);
     const [search, setSearch] = useState('');
     const [selectedTag, setSelectedTag] = useState('');
-    const navigate = useNavigate();
 
     useEffect(() => {
         fetch('http://localhost:8080/api/posts')
@@ -277,31 +197,13 @@ const ForumPage = () => {
         <>
             <GlobalStyle />
             <PageWrapper>
-                <Header>
-                    <LogoContainer>
-                        <LogoImage src={BeeIcon} alt="Bee Icon" />
-                        <LogoImage src={BeeText} alt="BeeGenius Text" />
-                    </LogoContainer>
-                    <MenuButton onClick={() => setShowMenu(!showMenu)}>Menu</MenuButton>
-                </Header>
-
-                <Sidebar open={showMenu}>
-                    <MenuItems>
-                        <MenuItem onClick={() => navigate('/userprofile')}>Profile</MenuItem>
-                        <MenuItem onClick={() => navigate('/materials')}>Materials</MenuItem>
-                        <MenuItem onClick={() => navigate('/forum')}>Forum</MenuItem>
-                        <MenuItem onClick={() => navigate('/books')}>Books</MenuItem>
-                        <MenuItem onClick={() => navigate('/mainpage')}>Home</MenuItem>
-                    </MenuItems>
-                    <Logout onClick={() => navigate('/')}>Log Out</Logout>
-                </Sidebar>
-
+                <Header toggleMenu={() => setShowMenu(!showMenu)} />
+                <Menu open={showMenu} />
                 <Container>
                     <Toolbar>
                         <ToolbarSection>
                             <SectionTitle>Forum</SectionTitle>
                         </ToolbarSection>
-
                         <SearchBar>
                             <FiSearch />
                             <SearchInput
@@ -311,7 +213,6 @@ const ForumPage = () => {
                                 onChange={(e) => setSearch(e.target.value)}
                             />
                         </SearchBar>
-
                         <TagFilter
                             value={selectedTag}
                             onChange={(e) => setSelectedTag(e.target.value)}
@@ -324,9 +225,7 @@ const ForumPage = () => {
                             <option value="HISTORY">History</option>
                         </TagFilter>
                     </Toolbar>
-
                     <Underline />
-
                     {[...filteredPosts].reverse().map((post: any, index: number) => (
                         <ForumPostCard key={index}>
                             <PostHeader>{post.user?.name || 'Anonim'} • {post.date ? formatTimeAgo(post.date) : 'just now'}</PostHeader>
@@ -343,7 +242,6 @@ const ForumPage = () => {
                                     post.replies.length + post.replies.reduce((acc: number, reply: any) => acc + (reply.replies?.length || 0), 0)
                                 ) : 0}
                             </PostReplies>
-
                         </ForumPostCard>
                     ))}
                 </Container>
