@@ -38,4 +38,10 @@ public class PostController {
     public List<Post> filterPosts(@RequestParam String tag) {
         return postService.filterPostsByTag(tag);
     }
+
+    @GetMapping("/{id}")
+    public Post getPostById(@PathVariable String id) {
+        return postService.getPostById(id);
+    }
+
 }
