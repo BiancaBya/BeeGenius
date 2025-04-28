@@ -54,6 +54,9 @@ const ForumPostCard = styled.div`
     border-radius: 10px;
     padding: 20px;
     margin-bottom: 16px;
+    &:hover {
+        transform: scale(1.01);
+    }
 `;
 
 const PostHeader = styled.div`
