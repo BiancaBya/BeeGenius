@@ -32,4 +32,10 @@ public class PostService {
     public List<Post> filterPostsByTag(String tag) {
         return postRepository.findByTagsContaining(tag);
     }
+
+    public Post getPostById(String id) {
+        return postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
+    }
+
 }

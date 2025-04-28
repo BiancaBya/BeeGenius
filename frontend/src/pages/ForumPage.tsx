@@ -4,6 +4,7 @@ import { FaRegComment } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
 import Header from '../components/Header';
 import Menu from '../components/Menu';
+import {useNavigate} from "react-router-dom";
 
 const GlobalStyle = createGlobalStyle`
     @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
@@ -176,6 +177,7 @@ const ForumPage = () => {
     const [allPosts, setAllPosts] = useState([]);
     const [search, setSearch] = useState('');
     const [selectedTag, setSelectedTag] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch('http://localhost:8080/api/posts')
@@ -227,7 +229,11 @@ const ForumPage = () => {
                     </Toolbar>
                     <Underline />
                     {[...filteredPosts].reverse().map((post: any, index: number) => (
-                        <ForumPostCard key={index}>
+                        <ForumPostCard
+                            key={index}
+                            onClick={() => navigate(`/post/${post.id}`)} // <-- AICI
+                            style={{ cursor: 'pointer' }}
+                        >
                             <PostHeader>{post.user?.name || 'Anonim'} • {post.date ? formatTimeAgo(post.date) : 'just now'}</PostHeader>
                             <PostTitle>{post.title}</PostTitle>
                             <PostContent>{post.content}</PostContent>
