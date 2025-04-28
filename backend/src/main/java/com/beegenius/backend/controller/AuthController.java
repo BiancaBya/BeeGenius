@@ -15,15 +15,21 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<User> signup(@RequestBody User user) {
-        User createdUser = userService.signup(user);
-        return ResponseEntity.ok(createdUser);
+    public Object signup(@RequestBody User user) {
+        try {
+            return ResponseEntity.ok(userService.signup(user));
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestParam String email, @RequestParam String password) {
-        User logedUser = userService.login(email, password);
-        return ResponseEntity.ok(logedUser);
+    public Object login(@RequestParam String email, @RequestParam String password) {
+        try {
+            return ResponseEntity.ok(userService.login(email, password));
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
 }

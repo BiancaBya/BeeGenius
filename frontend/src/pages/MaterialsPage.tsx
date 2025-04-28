@@ -7,6 +7,7 @@ import docxIcon from '../assets/docx.png';
 import pngIcon from '../assets/png.png';
 import { TiStarFullOutline, TiStarHalfOutline, TiStarOutline } from 'react-icons/ti';
 import { FiSearch } from 'react-icons/fi';
+import {useNavigate} from "react-router-dom";
 
 const GlobalStyle = createGlobalStyle`
     @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
@@ -188,6 +189,7 @@ export const MaterialsPage: React.FC = () => {
     const [materials, setMaterials] = useState<any[]>([]);
     const [search, setSearch] = useState<string>('');
     const [selectedTag, setSelectedTag] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchMaterials();
@@ -260,7 +262,11 @@ export const MaterialsPage: React.FC = () => {
                 {filtered.map((mat, i) => {
                     const avg = mat.nrRatings > 0 ? mat.rating / mat.nrRatings : 0;
                     return (
-                        <MaterialCard key={i}>
+                        <MaterialCard
+                            key={mat.id || i}
+                            onClick={() => navigate(`/materials/${mat.id}`)}
+                            style={{ cursor: 'pointer' }}
+                        >
                             <FileIcon src={pickIcon(mat.path)} alt={mat.path} />
                             <CardContent>
                                 <MaterialTitle>{mat.name}</MaterialTitle>
@@ -270,12 +276,13 @@ export const MaterialsPage: React.FC = () => {
                             <PostedAndTags>
                                 <InfoRow>
                                     {mat.tags?.map((tag: string, idx: number) => (
-                                        <Tag key={idx} color={getTagColor(tag)}>{tag}</Tag>
+                                        <Tag key={idx} color={getTagColor(tag)}>
+                                            {tag}
+                                        </Tag>
                                     ))}
                                 </InfoRow>
                                 <Posted>
-                                    Posted by
-                                    <UserBadge>{mat.user?.name || 'Unknown'}</UserBadge>
+                                    Posted by <UserBadge>{mat.user?.name || 'Unknown'}</UserBadge>
                                 </Posted>
                             </PostedAndTags>
                         </MaterialCard>

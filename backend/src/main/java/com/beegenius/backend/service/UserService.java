@@ -18,7 +18,7 @@ public class UserService {
 
     public User signup(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("Email already in use");
+            throw new IllegalArgumentException("Email already in use");
         }
 
         String passwordEncoded = passwordService.hashPassword(user.getPassword());
@@ -33,7 +33,7 @@ public class UserService {
             if(passwordService.matches(password, user.get().getPassword()))
                 return user.get();
         }
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+        throw new IllegalArgumentException("Invalid credentials");
     }
 
     public User findUserById(String id) {

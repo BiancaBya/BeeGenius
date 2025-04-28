@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import LoginBg from '../assets/background.jpg';
 import {useNavigate} from "react-router-dom";
+import {notifyError, notifySuccess} from "../utils/Notify";
 
 // Import and apply Josefin Sans globally
 const GlobalStyle = createGlobalStyle`
@@ -106,8 +107,13 @@ export default function SignupPage() {
 
     const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (!name || !email || !password || !confirm) {
+            notifyError("Please fill in all fields.");
+            return;
+        }
+
         if (password !== confirm) {
-            // notifyError('Passwords do not match');
+            notifyError('Passwords do not match');
             return;
         }
         try {
@@ -116,16 +122,20 @@ export default function SignupPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, email, password })
             });
-            const data = await res.json().catch(() => null);
+
             if (!res.ok) {
-                const msg = data?.message || res.statusText;
-                // notifyError(`Signup failed: ${msg}`);
+                const errorText = await res.text();
+                notifyError(`Sign up failed: ${errorText}`);
                 return;
             }
-            sessionStorage.setItem('user', JSON.stringify(data));
-            navigate('/mainpage', { replace: true });
+
+            const user = await res.json();
+            notifySuccess("Account created! You can now login.");
+            navigate("/");
         } catch (err) {
-            // notifyError(`Signup failed: ${err.message}`);
+            notifyError(
+                "Sign up failed: " + (err instanceof Error ? err.message : "Unknown error")
+            );
         }
     };
 
