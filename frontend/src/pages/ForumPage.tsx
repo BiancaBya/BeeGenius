@@ -3,7 +3,8 @@ import styled, { createGlobalStyle } from 'styled-components';
 import BeeIcon from '../assets/Logo_cropped.png';
 import BeeText from '../assets/LogoText.png';
 import { FaRegComment } from "react-icons/fa";
-import {useNavigate} from "react-router-dom"; // deja importat
+import { useNavigate } from "react-router-dom";
+import { FiSearch } from "react-icons/fi";
 
 const PostReplies = styled.div`
     margin-top: 10px;
@@ -13,7 +14,6 @@ const PostReplies = styled.div`
     gap: 6px;
     color: #555;
 `;
-
 
 const GlobalStyle = createGlobalStyle`
     @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
@@ -116,7 +116,6 @@ const PageWrapper = styled.div`
 const SectionTitle = styled.h2`
     font-size: 2rem;
     margin: 30px 0 20px;
-    border-bottom: 2px solid #000;
     width: fit-content;
 `;
 
@@ -161,6 +160,61 @@ const PostContent = styled.div`
     margin-top: 6px;
 `;
 
+const Toolbar = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+`;
+
+const ToolbarSection = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 10px;
+`;
+
+const Underline = styled.div`
+    height: 2px;
+    width: 100%;
+    background-color: black;
+    margin: 10px 0 30px;
+`;
+
+const SearchBar = styled.div`
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-radius: 10px;
+    background-color: white;
+    border: 1px solid #ccc;
+    flex: 1;
+    max-width: 500px;
+`;
+
+const SearchInput = styled.input`
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    background: transparent;
+    margin-left: 8px;
+    width: 100%;
+`;
+
+const TagFilter = styled.select`
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    background-color: white;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='14' height='14' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='0,0 14,0 7,7' fill='%23666'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px;
+    min-width: 200px;
+`;
 
 const getTagColor = (tag: string) => {
     switch (tag) {
@@ -173,17 +227,51 @@ const getTagColor = (tag: string) => {
     }
 };
 
+const formatTimeAgo = (timestamp: string | Date) => {
+    const postDate = new Date(timestamp);
+    const now = new Date();
+    const seconds = Math.floor((now.getTime() - postDate.getTime()) / 1000);
+
+    let interval = Math.floor(seconds / 31536000);
+    if (interval >= 1) return `${interval} year${interval > 1 ? 's' : ''} ago`;
+
+    interval = Math.floor(seconds / 2592000);
+    if (interval >= 1) return `${interval} month${interval > 1 ? 's' : ''} ago`;
+
+    interval = Math.floor(seconds / 86400);
+    if (interval >= 1) return `${interval} day${interval > 1 ? 's' : ''} ago`;
+
+    interval = Math.floor(seconds / 3600);
+    if (interval >= 1) return `${interval} hour${interval > 1 ? 's' : ''} ago`;
+
+    interval = Math.floor(seconds / 60);
+    if (interval >= 1) return `${interval} minute${interval > 1 ? 's' : ''} ago`;
+
+    return 'just now';
+};
+
 const ForumPage = () => {
     const [showMenu, setShowMenu] = useState(false);
-    const [posts, setPosts] = useState([]);
+    const [allPosts, setAllPosts] = useState([]);
+    const [search, setSearch] = useState('');
+    const [selectedTag, setSelectedTag] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
         fetch('http://localhost:8080/api/posts')
             .then(res => res.json())
-            .then(data => setPosts(data))
+            .then(data => setAllPosts(data))
             .catch(err => console.error("Eroare la posturi:", err));
     }, []);
+
+    const filteredPosts = allPosts.filter((post: any) => {
+        const matchesSearch =
+            post.title.toLowerCase().includes(search.toLowerCase()) ||
+            post.content.toLowerCase().includes(search.toLowerCase());
+        const matchesTag =
+            !selectedTag || post.tags?.includes(selectedTag);
+        return matchesSearch && matchesTag;
+    });
 
     return (
         <>
@@ -198,23 +286,50 @@ const ForumPage = () => {
                 </Header>
 
                 <Sidebar open={showMenu}>
-                    <div>
-                        <MenuItems>
-                            <MenuItem onClick={()=> navigate('/userprofile')}>Profile</MenuItem>
-                            <MenuItem>Materials</MenuItem>
-                            <MenuItem>Forum</MenuItem>
-                            <MenuItem>Books</MenuItem>
-                            <MenuItem onClick={()=> navigate('/mainpage')}>Home</MenuItem>
-                        </MenuItems>
-                    </div>
-                    <Logout onClick={()=> navigate('/')}>Log Out</Logout>
+                    <MenuItems>
+                        <MenuItem onClick={() => navigate('/userprofile')}>Profile</MenuItem>
+                        <MenuItem onClick={() => navigate('/materials')}>Materials</MenuItem>
+                        <MenuItem onClick={() => navigate('/forum')}>Forum</MenuItem>
+                        <MenuItem onClick={() => navigate('/books')}>Books</MenuItem>
+                        <MenuItem onClick={() => navigate('/mainpage')}>Home</MenuItem>
+                    </MenuItems>
+                    <Logout onClick={() => navigate('/')}>Log Out</Logout>
                 </Sidebar>
 
                 <Container>
-                    <SectionTitle>Forum</SectionTitle>
-                    {posts.map((post: any, index: number) => (
+                    <Toolbar>
+                        <ToolbarSection>
+                            <SectionTitle>Forum</SectionTitle>
+                        </ToolbarSection>
+
+                        <SearchBar>
+                            <FiSearch />
+                            <SearchInput
+                                type="text"
+                                placeholder="Search posts"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
+                        </SearchBar>
+
+                        <TagFilter
+                            value={selectedTag}
+                            onChange={(e) => setSelectedTag(e.target.value)}
+                        >
+                            <option value="">All Tags</option>
+                            <option value="LAW">Law</option>
+                            <option value="COMPUTER_SCIENCE">Computer Science</option>
+                            <option value="MEDICINE">Medicine</option>
+                            <option value="BIOLOGY">Biology</option>
+                            <option value="HISTORY">History</option>
+                        </TagFilter>
+                    </Toolbar>
+
+                    <Underline />
+
+                    {[...filteredPosts].reverse().map((post: any, index: number) => (
                         <ForumPostCard key={index}>
-                            <PostHeader>{post.user?.name || 'Anonim'} • {post.timestamp || 'recent'}</PostHeader>
+                            <PostHeader>{post.user?.name || 'Anonim'} • {post.date ? formatTimeAgo(post.date) : 'just now'}</PostHeader>
                             <PostTitle>{post.title}</PostTitle>
                             <PostContent>{post.content}</PostContent>
                             <InfoRow>
@@ -225,7 +340,6 @@ const ForumPage = () => {
                             <PostReplies>
                                 <FaRegComment /> {post.replies?.length || 0}
                             </PostReplies>
-
                         </ForumPostCard>
                     ))}
                 </Container>
