@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
-import Header from '../components/Header'; // Componenta ta Header
-import Menu from '../components/Menu';     // Componenta ta Menu
+import Header from '../components/Header';
+import Menu from '../components/Menu';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const GlobalStyle = createGlobalStyle`
     body {
@@ -72,9 +74,9 @@ const RequestButton = styled.button`
 `;
 
 const NoData = styled.div`
-  text-align: center;
-  margin-top: 50px;
-  font-size: 1.8rem;
+    text-align: center;
+    margin-top: 50px;
+    font-size: 1.8rem;
 `;
 
 const BookDetailsPage: React.FC = () => {
@@ -96,12 +98,39 @@ const BookDetailsPage: React.FC = () => {
             .catch(err => console.error('Error fetching book:', err));
     }, [id]);
 
+    const handleRequestBook = () => {
+        const storedUser = sessionStorage.getItem('user');
+        if (!storedUser) {
+            toast.error('You must be logged in to request a book.');
+            return;
+        }
+        const user = JSON.parse(storedUser);
+
+        fetch(`http://localhost:8080/api/book-requests?bookId=${id}&requesterId=${user.id}`, {
+            method: 'POST',
+        })
+            .then(response => {
+                if (response.ok) {
+                    toast.success('Request created successfully!');
+                } else if (response.status === 409) {
+                    toast.warning('You already requested this book!');
+                } else {
+                    toast.error('Error creating request.');
+                }
+            })
+            .catch(error => {
+                console.error('Error requesting book:', error);
+                toast.error('Error requesting book.');
+            });
+    };
+
     if (!book) {
         return (
             <>
                 <GlobalStyle />
                 <Header toggleMenu={() => setShowMenu(!showMenu)} />
                 <Menu open={showMenu} />
+                <ToastContainer />
                 <PageContainer>
                     <NoData>Loading book details...</NoData>
                 </PageContainer>
@@ -111,14 +140,14 @@ const BookDetailsPage: React.FC = () => {
 
     const imageUrl = book.photoPath
         ? `http://localhost:8080/${book.photoPath.replace(/\\/g, '/')}`
-        : 'http://localhost:8080/default-book.png'; // fallback default image dacă nu are poza
+        : 'http://localhost:8080/default-book.png';
 
     return (
         <>
             <GlobalStyle />
             <Header toggleMenu={() => setShowMenu(!showMenu)} />
             <Menu open={showMenu} />
-
+            <ToastContainer />
             <PageContainer>
                 <BookDetailsContainer>
                     <BookImage src={imageUrl} alt={book.title || 'Book'} />
@@ -127,7 +156,7 @@ const BookDetailsPage: React.FC = () => {
                         <DetailItem><strong>Author:</strong> {book.author}</DetailItem>
                         <DetailItem><strong>Owner:</strong> {book.owner?.name || 'Unknown'}</DetailItem>
                         <DetailItem><strong>Tags:</strong> {book.tags?.join(', ') || 'None'}</DetailItem>
-                        <RequestButton>Request Book</RequestButton>
+                        <RequestButton onClick={handleRequestBook}>Request Book</RequestButton>
                     </Details>
                 </BookDetailsContainer>
             </PageContainer>
