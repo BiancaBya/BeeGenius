@@ -29,7 +29,7 @@ Content-Type: application/json
   "title": "Primul post",
   "content": "Multe Reply",
   "tags": ["COMPUTER_SCIENCE"],
-  "date": "2025-04-22T18:00:00Z",
+  "date": "2025-04-27T18:00:00Z",
   "user": {
     "id": "680a75720349e52db7c7b36f"
   }

@@ -169,7 +169,7 @@ export default function SignupPage() {
                     </form>
                     <FooterText>
                         Already have an account?
-                        <LoginLink href="/login">Log in!</LoginLink>
+                        <LoginLink href="/">Log in!</LoginLink>
                     </FooterText>
                 </SignupBox>
             </Page>
