@@ -62,7 +62,13 @@ const Menu: React.FC<MenuProps> = ({ open }) => {
                     <MenuItem onClick={() => navigate('/mainpage')}>Home</MenuItem>
                 </MenuItems>
             </div>
-            <Logout onClick={() => navigate('/')}>Log Out</Logout>
+            <Logout
+                onClick={() => {
+                    sessionStorage.removeItem("token");
+                    navigate('/');
+                }}>
+                Log Out
+            </Logout>
         </Sidebar>
     );
 };

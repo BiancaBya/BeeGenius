@@ -1,23 +1,19 @@
-import React, {useState} from 'react';
-import styled, {createGlobalStyle} from 'styled-components';
+import React, { useState } from 'react';
+import styled, { createGlobalStyle } from 'styled-components';
 import LoginBg from '../assets/background.jpg';
-import {useNavigate} from "react-router-dom";
-import {UserDTO} from "../dto/UserDTO";
-import {notifyError} from "../utils/Notify";
-
-
+import { useNavigate } from "react-router-dom";
+import { notifyError } from "../utils/Notify";
 
 const GlobalStyle = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
 
-  body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Josefin Sans', sans-serif;
-  }
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Josefin Sans', sans-serif;
+    }
 `;
 
-// Full-page container with background
 const Page = styled.div`
     display: flex;
     flex-direction: column;
@@ -28,7 +24,6 @@ const Page = styled.div`
     background: url(${LoginBg}) center/cover no-repeat;
 `;
 
-// Site header above the login card
 const Header = styled.div`
     text-align: center;
     margin-bottom: 80px;
@@ -40,14 +35,12 @@ const SiteTitle = styled.h1`
     margin: 0;
 `;
 
-// Thicker subtitle font weight
 const SiteSubtitle = styled.p`
     font-size: 1.5rem;
     font-weight: 500;
     margin: 4px 0;
 `;
 
-// Login card
 const LoginBox = styled.div`
     background: rgba(255, 255, 255, 0.9);
     border: 2px solid #000;
@@ -58,7 +51,6 @@ const LoginBox = styled.div`
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 `;
 
-// Form-specific title
 const FormTitle = styled.h2`
     font-size: 2.5rem;
     margin: 0 0 40px;
@@ -75,7 +67,6 @@ const Input = styled.input`
     font-size: 1rem;
 `;
 
-// Smaller, centered login button
 const Button = styled.button`
     display: block;
     width: 50%;
@@ -102,8 +93,6 @@ const SignUpLink = styled.a`
     margin-left: 4px;
 `;
 
-
-
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -122,19 +111,17 @@ export default function LoginPage() {
             url.searchParams.append("password", password);
 
             const res = await fetch(url.toString(), { method: "POST" });
-
-            // always read the raw body as text
             const text = await res.text();
 
-            // if it’s an error status, show that text
             if (!res.ok) {
                 notifyError(`Login failed: ${text}`);
                 return;
             }
 
-            // otherwise it was a success—parse the JSON user out of the text
-            const user = JSON.parse(text) as UserDTO;
-            sessionStorage.setItem("user", JSON.stringify(user));
+            const data = JSON.parse(text);
+            const token = data.token;
+
+            sessionStorage.setItem("token", token);
             navigate("/mainpage");
         } catch (err) {
             notifyError(
@@ -178,4 +165,3 @@ export default function LoginPage() {
         </>
     );
 }
-
