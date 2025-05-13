@@ -99,15 +99,17 @@ const BookDetailsPage: React.FC = () => {
     }, [id]);
 
     const handleRequestBook = () => {
-        const storedUser = sessionStorage.getItem('user');
-        if (!storedUser) {
+        const token = sessionStorage.getItem('token');
+        if (!token) {
             toast.error('You must be logged in to request a book.');
             return;
         }
-        const user = JSON.parse(storedUser);
 
-        fetch(`http://localhost:8080/api/book-requests?bookId=${id}&requesterId=${user.id}`, {
+        fetch(`http://localhost:8080/api/book-requests?bookId=${id}`, {
             method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
         })
             .then(response => {
                 if (response.ok) {

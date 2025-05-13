@@ -8,6 +8,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,10 +57,33 @@ public class BookService {
     public void deleteBook(String bookId) {
         logger.info("Deleting book with ID: {}", bookId);
         try {
-            bookRepository.deleteById(bookId);
-            logger.info("Book deleted successfully with ID: {}", bookId);
+            Optional<Book> bookOpt = bookRepository.findById(bookId);
+
+            if (bookOpt.isPresent()) {
+                Book book = bookOpt.get();
+                String photoPath = book.getPhotoPath();
+                if (photoPath != null && !photoPath.isEmpty()) {
+                    try {
+                        Path imagePath = Paths.get(photoPath);
+                        boolean deleted = Files.deleteIfExists(imagePath);
+                        if (deleted) {
+                            logger.info("Deleted book image at: {}", photoPath);
+                        } else {
+                            logger.warn("Image file not found or already deleted: {}", photoPath);
+                        }
+                    } catch (IOException e) {
+                        logger.error("Failed to delete image file: {}", photoPath, e);
+                    }
+                }
+                bookRepository.deleteById(bookId);
+                logger.info("Book deleted successfully with ID: {}", bookId);
+            } else {
+                logger.warn("Book not found with ID: {}", bookId);
+            }
+
         } catch (Exception e) {
             logger.error("Error while deleting book with ID {}: {}", bookId, e.getMessage());
+            throw e;
         }
     }
 
