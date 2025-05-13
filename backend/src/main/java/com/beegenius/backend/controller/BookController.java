@@ -5,6 +5,8 @@ import com.beegenius.backend.model.enums.Tags;
 import com.beegenius.backend.service.BookService;
 import com.beegenius.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
@@ -24,6 +26,7 @@ import java.util.UUID;
 public class BookController {
     private final BookService bookService;
     private final UserService userService;
+    private static final Logger logger = LogManager.getLogger(BookController.class);
 
     private static final String IMAGE_UPLOAD_DIR = "uploads/book_images";
 
@@ -33,49 +36,91 @@ public class BookController {
                                         @RequestParam List<Tags> tags,
                                         @RequestParam MultipartFile imageFile,
                                         @RequestParam String userId) throws IOException {
+        logger.info("Adding new book with title: {}", title);
+        try {
+            String filename = UUID.randomUUID() + "" + imageFile.getOriginalFilename();
+            Path imagePath = Paths.get(IMAGE_UPLOAD_DIR, filename);
 
+            Files.write(imagePath, imageFile.getBytes());
 
-        String filename = UUID.randomUUID() + "" + imageFile.getOriginalFilename();
-        Path imagePath = Paths.get(IMAGE_UPLOAD_DIR, filename);
+            Book book = new Book();
+            book.setTitle(title);
+            book.setAuthor(author);
+            book.setTags(tags);
+            book.setPhotoPath(imagePath.toString());
+            book.setOwner(userService.findUserById(userId));
 
-        Files.write(imagePath, imageFile.getBytes());
-
-        Book book = new Book();
-        book.setTitle(title);
-        book.setAuthor(author);
-        book.setTags(tags);
-        book.setPhotoPath(imagePath.toString());
-        book.setOwner(userService.findUserById(userId));
-
-        return ResponseEntity.ok(bookService.addBook(book));
+            Book savedBook = bookService.addBook(book);
+            logger.info("Book added with ID: {}", savedBook.getId());
+            return ResponseEntity.ok(savedBook);
+        } catch (Exception e) {
+            logger.error("Error while adding book with title {}: {}", title, e.getMessage());
+            throw e;
+        }
     }
 
     @GetMapping
     public ResponseEntity<List<Book>> getAllBooks() {
-        return ResponseEntity.ok(bookService.getAllBooks());
+        logger.info("Fetching all books");
+        try {
+            List<Book> books = bookService.getAllBooks();
+            logger.info("Fetched books: {}", books.size());
+            return ResponseEntity.ok(books);
+        } catch (Exception e) {
+            logger.error("Error while fetching all books: {}", e.getMessage());
+            throw e;
+        }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Book> getBookById(@PathVariable String id) {
-        Optional<Book> book = bookService.getBookById(id);
-        return book.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        logger.info("Fetching book with ID: {}", id);
+        try {
+            Optional<Book> book = bookService.getBookById(id);
+            logger.info("Fetched book with ID: {}", id);
+            return book.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            logger.error("Error while fetching book with ID {}: {}", id, e.getMessage());
+            throw e;
+        }
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<Book>> searchBook(@RequestParam String title) {
-        List<Book> foundBooks = bookService.searchBooksByTitle(title);
-        return foundBooks.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(foundBooks);
+        logger.info("Searching books by title: {}", title);
+        try {
+            List<Book> books = bookService.searchBooksByTitle(title);
+            logger.info("Found books with title: {}. Count: {}", title, books.size());
+            return books.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(books);
+        } catch (Exception e) {
+            logger.error("Error while searching books by title {}: {}", title, e.getMessage());
+            throw e;
+        }
     }
 
     @GetMapping("/filter")
     public ResponseEntity<List<Book>> filterBook(@RequestParam Tags tag) {
-        List<Book> foundBooks = bookService.filterBooksByTags(tag);
-        return foundBooks.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(foundBooks);
+        logger.info("Filtering books by tag: {}", tag);
+        try {
+            List<Book> books = bookService.filterBooksByTags(tag);
+            logger.info("Found books with tag: {}. Count: {}", tag, books.size());
+            return books.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(books);
+        } catch (Exception e) {
+            logger.error("Error while filtering books by tag {}: {}", tag, e.getMessage());
+            throw e;
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteBook(@PathVariable String id) {
-        bookService.deleteBook(id);
-        return ResponseEntity.ok("Book deleted successfully");
+        logger.info("Deleting book with ID: {}", id);
+        try {
+            bookService.deleteBook(id);
+            logger.info("Book deleted with ID: {}", id);
+            return ResponseEntity.ok("Book deleted successfully");
+        } catch (Exception e) {
+            logger.error("Error while deleting book with ID {}: {}", id, e.getMessage());
+            throw e;
+        }
     }
 }
