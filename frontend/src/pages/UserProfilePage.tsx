@@ -4,6 +4,7 @@ import { FaBook, FaBoxOpen, FaEnvelope } from 'react-icons/fa';
 import backgroundImage from '../assets/profile_background.png';
 import Header from '../components/Header';
 import Menu from '../components/Menu';
+import {useNavigate} from "react-router-dom";
 
 const PageWrapper = styled.div`
   min-height: 100vh;
@@ -64,6 +65,7 @@ const Button = styled.button`
 const UserProfilePage: React.FC = () => {
     const [user, setUser] = useState<{ name: string; email: string } | null>(null);
     const [showMenu, setShowMenu] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const storedUser = sessionStorage.getItem('user');
@@ -83,7 +85,7 @@ const UserProfilePage: React.FC = () => {
                     <Name>{user?.name}</Name>
                     <Email>{user?.email}</Email>
 
-                    <Button>
+                    <Button onClick={() => navigate('/manage-books')}>
                         <FaBook />
                         Manage Books
                     </Button>
