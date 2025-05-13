@@ -4,7 +4,7 @@ import { FaRegComment } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
 import Header from '../components/Header';
 import Menu from '../components/Menu';
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const GlobalStyle = createGlobalStyle`
     @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
@@ -33,7 +33,7 @@ const SectionTitle = styled.h2`
 `;
 
 const Tag = styled.span<{ color: string }>`
-    background: ${props => props.color};
+    background: ${(props) => props.color};
     color: white;
     border-radius: 15px;
     padding: 4px 12px;
@@ -124,11 +124,6 @@ const TagFilter = styled.select`
     border-radius: 10px;
     border: 1px solid #ccc;
     background-color: white;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg width='14' height='14' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='0,0 14,0 7,7' fill='%23666'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 10px;
     min-width: 200px;
 `;
 
@@ -141,39 +136,24 @@ const PostReplies = styled.div`
     color: #555;
 `;
 
-const getTagColor = (tag: string) => {
-    switch (tag) {
-        case 'LAW': return '#f48c06';
-        case 'COMPUTER_SCIENCE': return '#4ea8de';
-        case 'MEDICINE': return '#3e8e41';
-        case 'BIOLOGY': return '#8e44ad';
-        case 'HISTORY': return '#c2112b';
-        default: return '#6c757d';
+const FloatingButton = styled.button<{ open: boolean }>`
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #ffc107;
+    color: black;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: ${(props) => (props.open ? 999 : 1000)};
+    &:hover {
+        background-color: #e6b800;
     }
-};
-
-const formatTimeAgo = (timestamp: string | Date) => {
-    const postDate = new Date(timestamp);
-    const now = new Date();
-    const seconds = Math.floor((now.getTime() - postDate.getTime()) / 1000);
-
-    let interval = Math.floor(seconds / 31536000);
-    if (interval >= 1) return `${interval} year${interval > 1 ? 's' : ''} ago`;
-
-    interval = Math.floor(seconds / 2592000);
-    if (interval >= 1) return `${interval} month${interval > 1 ? 's' : ''} ago`;
-
-    interval = Math.floor(seconds / 86400);
-    if (interval >= 1) return `${interval} day${interval > 1 ? 's' : ''} ago`;
-
-    interval = Math.floor(seconds / 3600);
-    if (interval >= 1) return `${interval} hour${interval > 1 ? 's' : ''} ago`;
-
-    interval = Math.floor(seconds / 60);
-    if (interval >= 1) return `${interval} minute${interval > 1 ? 's' : ''} ago`;
-
-    return 'just now';
-};
+`;
 
 const ForumPage = () => {
     const [showMenu, setShowMenu] = useState(false);
@@ -184,17 +164,16 @@ const ForumPage = () => {
 
     useEffect(() => {
         fetch('http://localhost:8080/api/posts')
-            .then(res => res.json())
-            .then(data => setAllPosts(data))
-            .catch(err => console.error("Eroare la posturi:", err));
+            .then((res) => res.json())
+            .then((data) => setAllPosts(data))
+            .catch((err) => console.error("Error fetching posts:", err));
     }, []);
 
     const filteredPosts = allPosts.filter((post: any) => {
         const matchesSearch =
             post.title.toLowerCase().includes(search.toLowerCase()) ||
             post.content.toLowerCase().includes(search.toLowerCase());
-        const matchesTag =
-            !selectedTag || post.tags?.includes(selectedTag);
+        const matchesTag = !selectedTag || post.tags?.includes(selectedTag);
         return matchesSearch && matchesTag;
     });
 
@@ -234,10 +213,10 @@ const ForumPage = () => {
                     {[...filteredPosts].reverse().map((post: any, index: number) => (
                         <ForumPostCard
                             key={index}
-                            onClick={() => navigate(`/post/${post.id}`)} // <-- AICI
+                            onClick={() => navigate(`/post/${post.id}`)}
                             style={{ cursor: 'pointer' }}
                         >
-                            <PostHeader>{post.user?.name || 'Anonim'} • {post.date ? formatTimeAgo(post.date) : 'just now'}</PostHeader>
+                            <PostHeader>{post.user?.name || 'Anonim'} • {post.date}</PostHeader>
                             <PostTitle>{post.title}</PostTitle>
                             <PostContent>{post.content}</PostContent>
                             <InfoRow>
@@ -247,16 +226,28 @@ const ForumPage = () => {
                             </InfoRow>
                             <PostReplies>
                                 <FaRegComment />
-                                {post.replies ? (
-                                    post.replies.length + post.replies.reduce((acc: number, reply: any) => acc + (reply.replies?.length || 0), 0)
-                                ) : 0}
+                                {post.replies ? post.replies.length : 0}
                             </PostReplies>
                         </ForumPostCard>
                     ))}
+                    <FloatingButton open={showMenu} onClick={() => navigate("/add-post")}>
+                        Add Post
+                    </FloatingButton>
                 </Container>
             </PageWrapper>
         </>
     );
+};
+
+const getTagColor = (tag: string) => {
+    switch (tag) {
+        case 'LAW': return '#f48c06';
+        case 'COMPUTER_SCIENCE': return '#4ea8de';
+        case 'MEDICINE': return '#3e8e41';
+        case 'BIOLOGY': return '#8e44ad';
+        case 'HISTORY': return '#c2112b';
+        default: return '#6c757d';
+    }
 };
 
 export default ForumPage;
