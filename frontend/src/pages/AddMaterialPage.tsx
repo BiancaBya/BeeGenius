@@ -1,0 +1,243 @@
+// src/pages/AddMaterialPage.tsx
+import React, { useState } from 'react';
+import styled, { createGlobalStyle } from 'styled-components';
+import Header from '../components/Header';
+import Menu from '../components/Menu';
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+
+const GlobalStyle = createGlobalStyle`
+    @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Josefin Sans', sans-serif;
+        background-color: #fcf6e8;
+    }
+`;
+
+const Container = styled.div`
+    padding: 110px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`;
+
+const PageTitle = styled.h2`
+    font-size: 2.25rem;
+    font-weight: 600;
+    margin-bottom: 30px;
+    text-align: center;
+`;
+
+const Form = styled.form`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 400px;
+`;
+
+const Label = styled.label`
+    align-self: flex-start;
+    font-weight: 600;
+    margin-bottom: 6px;
+`;
+
+const Input = styled.input`
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+`;
+
+const Textarea = styled.textarea`
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    width: 100%;
+    box-sizing: border-box;
+`;
+
+const TagSelect = styled.select`
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 120px;
+    background-color: #fff;
+`;
+
+const Button = styled.button`
+    padding: 14px 0;
+    width: 100%;
+    max-width: 400px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    background: #ffc107;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+        background: #e6b800;
+    }
+`;
+
+const tagsList = [
+    'COMPUTER_SCIENCE',
+    'LAW',
+    'MEDICINE',
+    'BIOLOGY',
+    'HISTORY',
+] as const;
+type Tag = typeof tagsList[number];
+
+const formatTag = (t: Tag): string =>
+    t
+        .split('_')
+        .map(w => w[0] + w.slice(1).toLowerCase())
+        .join(' ');
+
+interface JwtPayload {
+    id: string;
+}
+
+const AddMaterialPage: React.FC = () => {
+    const [showMenu, setShowMenu] = useState(false);
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [chosenTags, setChosenTags] = useState<Tag[]>([]);
+    const [file, setFile] = useState<File | null>(null);
+    const navigate = useNavigate();
+
+    const getUserId = (): string | null => {
+        const token = sessionStorage.getItem('token');
+        if (!token) return null;
+        try {
+            const { id } = jwtDecode<JwtPayload>(token);
+            return id;
+        } catch {
+            return null;
+        }
+    };
+
+    const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFile(e.target.files?.[0] || null);
+    };
+
+    const onTagsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selections = Array.from(e.target.selectedOptions).map(
+            opt => opt.value as Tag
+        );
+        setChosenTags(selections);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const userId = getUserId();
+        if (!userId) {
+            alert('You must be logged in');
+            return;
+        }
+        if (!name || !description || !file || chosenTags.length === 0) {
+            alert('Please fill in all fields and pick at least one tag.');
+            return;
+        }
+
+        const ext = file.name.split('.').pop()?.toUpperCase() || '';
+        const form = new FormData();
+        form.append('name', name);
+        form.append('description', description);
+        form.append('type', ext);
+        chosenTags.forEach(tag => form.append('tags', tag));
+        form.append('file', file);
+        form.append('userId', userId);
+
+        try {
+            const res = await fetch('http://localhost:8080/api/materials', {
+                method: 'POST',
+                body: form,
+            });
+            if (!res.ok) {
+                const txt = await res.text();
+                throw new Error(txt || res.statusText);
+            }
+            navigate('/materials');
+        } catch (err: any) {
+            console.error(err);
+            alert('Upload failed: ' + err.message);
+        }
+    };
+
+    return (
+        <>
+            <GlobalStyle />
+            <Header toggleMenu={() => setShowMenu(v => !v)} />
+            <Menu open={showMenu} />
+            <Container>
+                <PageTitle>Add New Material</PageTitle>
+                <Form onSubmit={handleSubmit} encType="multipart/form-data">
+                    <div style={{ width: '100%' }}>
+                        <Label htmlFor="name">Name</Label>
+                        <Input
+                            id="name"
+                            type="text"
+                            value={name}
+                            onChange={e => setName(e.target.value)}
+                        />
+                    </div>
+
+                    <div style={{ width: '100%' }}>
+                        <Label htmlFor="description">Description</Label>
+                        <Textarea
+                            id="description"
+                            rows={4}
+                            value={description}
+                            onChange={e => setDescription(e.target.value)}
+                        />
+                    </div>
+
+                    <div style={{ width: '100%' }}>
+                        <Label htmlFor="file">File</Label>
+                        <Input
+                            id="file"
+                            type="file"
+                            accept=".pdf,.docx,.png,.jpg"
+                            onChange={onFileChange}
+                        />
+                    </div>
+
+                    <div style={{ width: '100%' }}>
+                        <Label htmlFor="tags">Tags</Label>
+                        <TagSelect
+                            id="tags"
+                            multiple
+                            value={chosenTags}
+                            onChange={onTagsChange}
+                        >
+                            {tagsList.map(tag => (
+                                <option key={tag} value={tag}>
+                                    {formatTag(tag)}
+                                </option>
+                            ))}
+                        </TagSelect>
+                    </div>
+
+                    <Button type="submit">Upload Material</Button>
+                </Form>
+            </Container>
+        </>
+    );
+};
+
+export default AddMaterialPage;
