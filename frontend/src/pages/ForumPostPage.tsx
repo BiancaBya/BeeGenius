@@ -4,6 +4,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { FaRegComment } from "react-icons/fa";
 import BeeIcon from '../assets/Logo_cropped.png';
 import BeeText from '../assets/LogoText.png';
+import {jwtDecode} from 'jwt-decode';
+
+export interface JwtPayload{
+    id:string;
+}
 
 const PageWrapper = styled.div`
     position: relative;
@@ -137,18 +142,18 @@ const NewCommentInput = styled.textarea`
 
 
 const SubmitButton = styled.button`
-  margin-top: 10px;
-  padding: 8px 20px;
-  background: #ffc107;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
+    margin-top: 10px;
+    padding: 8px 20px;
+    background: #ffc107;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
 
-  &:hover {
-    background: #e0a800;
-  }
+    &:hover {
+        background: #e0a800;
+    }
 `;
 
 
@@ -165,49 +170,111 @@ export default function ForumPostPage() {
     const navigate = useNavigate();
     const [replyingTo, setReplyingTo] = useState<string | null>(null);
     const [replyContent, setReplyContent] = useState(''); // pentru textul scris
+    const [user, setUser] = useState<{ id: string, name: string } | null>(null);
 
+
+    const getuserId = () => {
+        const token = jwtDecode<JwtPayload>(sessionStorage.getItem('token') as string);
+        return token.id;
+    }
+
+    const getUserData = async () => {
+        try {
+            const userId = getuserId();
+            if (!userId) return null;
+
+            const token = sessionStorage.getItem('token');
+            const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch user data");
+            }
+
+            const user = await response.json();
+            return { id: user.id, name: user.name };
+        } catch (err) {
+            console.error("Error fetching user data:", err);
+            return null;
+        }
+    };
 
     useEffect(() => {
-        fetch(`http://localhost:8080/api/posts/${postId}`)
-            .then(res => res.json())
-            .then(data => setPost(data))
-            .catch(err => console.error("Eroare la post:", err));
+        const fetchData = async () => {
+            try {
+                // Fetch pentru post
+                const postResponse = await fetch(`http://localhost:8080/api/posts/${postId}`);
+                const postData = await postResponse.json();
+                setPost(postData);
+
+                // Fetch pentru user
+                const userData = await getUserData();
+                if (userData) {
+                    setUser(userData);
+                }
+            } catch (err) {
+                console.error("Eroare la fetch:", err);
+            }
+        };
+
+        fetchData();
     }, [postId]);
 
     const handleAddComment = async () => {
-        if (!newComment.trim()) return;
+        if (!newComment.trim() || !user) return;
 
-        await fetch(`http://localhost:8080/api/replies/to-post/${postId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                content: newComment,
-                user: { id: JSON.parse(sessionStorage.getItem('user') || '{}').id }
-            })
-        });
+        try {
+            await fetch(`http://localhost:8080/api/replies/to-post/${postId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    content: newComment,
+                    user: { id: user.id, name: user.name }
+                })
+            });
 
-        setNewComment('');
-        window.location.reload(); // reload ca să vedem noul comentariu (sau poți adăuga smart, fără reload)
+            setNewComment('');
+            window.location.reload(); // sau updatează doar comentariile
+        } catch (err) {
+            console.error("Eroare la adăugare comentariu:", err);
+        }
     };
+
 
     const handleAddReply = async (replyId: string, replyContent: string) => {
-        if (!replyContent.trim()) return;
+        if (!replyContent.trim() || !user) return;
 
-        await fetch(`http://localhost:8080/api/replies/to-reply/${replyId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                content: replyContent,
-                user: { id: JSON.parse(sessionStorage.getItem('user') || '{}').id }
-            })
-        });
+        try {
+            await fetch(`http://localhost:8080/api/replies/to-reply/${replyId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    content: replyContent,
+                    user: { id: user.id, name: user.name }
+                })
+            });
 
-        // După ce trimitem reply-ul, reîncărcăm postarea:
-        fetch(`http://localhost:8080/api/posts/${postId}`)
-            .then(res => res.json())
-            .then(data => setPost(data))
-            .catch(err => console.error("Eroare la reload post:", err));
+            // Reîncarcă postarea pentru a vedea reply-ul
+            fetch(`http://localhost:8080/api/posts/${postId}`)
+                .then(res => res.json())
+                .then(data => setPost(data))
+                .catch(err => console.error("Eroare la reload post:", err));
+
+        } catch (err) {
+            console.error("Eroare la adăugare reply:", err);
+        }
     };
+
 
 
     const renderReplies = (replies: any[]) => {

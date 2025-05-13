@@ -14,6 +14,7 @@ import MaterialDetailsPage from "./pages/MaterialDetailsPage";
 import RequireAuth from "./components/RequireAuth";
 import AddBookPage from "./pages/AddBookPage";
 import ManageBooksPage from "./pages/ManageBooksPage";
+import AddPostPage from "./pages/AddPostPage";
 
 function App() {
     return (
@@ -55,6 +56,12 @@ function App() {
                 <Route path="/post/:postId" element={
                     <RequireAuth>
                         <ForumPostPage />
+                    </RequireAuth>
+                }/>
+
+                <Route path="/add-post" element={
+                    <RequireAuth>
+                        <AddPostPage />
                     </RequireAuth>
                 }/>
 
