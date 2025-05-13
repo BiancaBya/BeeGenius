@@ -9,7 +9,7 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
     const token = sessionStorage.getItem("token");
 
     if (!token) {
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/" replace />;
     }
 
     return <>{children}</>;

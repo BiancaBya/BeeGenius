@@ -89,7 +89,7 @@ const UserProfilePage: React.FC = () => {
                         <FaBook />
                         Manage Books
                     </Button>
-                    <Button>
+                    <Button onClick={() => navigate('/manage-materials')}>
                         <FaBoxOpen />
                         Manage Materials
                     </Button>
