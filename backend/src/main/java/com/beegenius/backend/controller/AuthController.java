@@ -2,6 +2,8 @@ package com.beegenius.backend.controller;
 
 import com.beegenius.backend.model.User;
 import com.beegenius.backend.service.UserService;
+import com.beegenius.backend.utils.JwtUtil;
+import com.beegenius.backend.utils.TokenResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +26,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public Object login(@RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<?> login(@RequestParam String email, @RequestParam String password) {
         try {
-            return ResponseEntity.ok(userService.login(email, password));
-        }catch (IllegalArgumentException e){
+            User user = userService.login(email, password);
+            String token = JwtUtil.generateToken(user.getId());
+            return ResponseEntity.ok(new TokenResponse(token));
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

@@ -11,24 +11,65 @@ import ForumPage from "./pages/ForumPage";
 import BookDetailsPage from "./pages/BookDetailsPage";
 import ForumPostPage from "./pages/ForumPostPage";
 import MaterialDetailsPage from "./pages/MaterialDetailsPage";
+import RequireAuth from "./components/RequireAuth";
 
 function App() {
-  return (
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LoginPage/>} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/mainpage" element={<MainPage/>} />
-            <Route path="/userprofile" element={<UserProfilePage/>} />
-            <Route path="/materials" element={<MaterialsPage/>} />
-            <Route path="/books" element={<BooksPage/>} />
-            <Route path="/forum" element={<ForumPage/>} />
-            <Route path="/post/:postId" element={<ForumPostPage />} />
-            <Route path="/books/:id" element={<BookDetailsPage/>} />
-            <Route path="materials/:id" element={<MaterialDetailsPage />} />
-        </Routes>
-      </BrowserRouter>
-  );
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<LoginPage />} />
+                <Route path="/signup" element={<SignupPage />} />
+
+                <Route path="/mainpage" element={
+                    <RequireAuth>
+                        <MainPage />
+                    </RequireAuth>
+                }/>
+
+                <Route path="/userprofile" element={
+                    <RequireAuth>
+                        <UserProfilePage />
+                    </RequireAuth>
+                }/>
+
+                <Route path="/materials" element={
+                    <RequireAuth>
+                        <MaterialsPage />
+                    </RequireAuth>
+                }/>
+
+                <Route path="/books" element={
+                    <RequireAuth>
+                        <BooksPage />
+                    </RequireAuth>
+                }/>
+
+                <Route path="/forum" element={
+                    <RequireAuth>
+                        <ForumPage />
+                    </RequireAuth>
+                }/>
+
+                <Route path="/post/:postId" element={
+                    <RequireAuth>
+                        <ForumPostPage />
+                    </RequireAuth>
+                }/>
+
+                <Route path="/books/:id" element={
+                    <RequireAuth>
+                        <BookDetailsPage />
+                    </RequireAuth>
+                }/>
+
+                <Route path="/materials/:id" element={
+                    <RequireAuth>
+                        <MaterialDetailsPage />
+                    </RequireAuth>
+                }/>
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App;

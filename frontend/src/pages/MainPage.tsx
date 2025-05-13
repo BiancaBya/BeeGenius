@@ -3,7 +3,7 @@ import styled, { createGlobalStyle } from 'styled-components';
 import Header from '../components/Header';
 import Menu from '../components/Menu';
 import { TiStarFullOutline, TiStarHalfOutline, TiStarOutline } from "react-icons/ti";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const GlobalStyle = createGlobalStyle`
     @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
@@ -135,18 +135,12 @@ interface Material {
 
 const getTagColor = (tag: string) => {
     switch (tag) {
-        case 'LAW':
-            return '#f48c06';
-        case 'COMPUTER_SCIENCE':
-            return '#4ea8de';
-        case 'MEDICINE':
-            return '#3e8e41';
-        case 'BIOLOGY':
-            return '#8e44ad';
-        case 'HISTORY':
-            return '#c2112b';
-        default:
-            return '#6c757d';
+        case 'LAW': return '#f48c06';
+        case 'COMPUTER_SCIENCE': return '#4ea8de';
+        case 'MEDICINE': return '#3e8e41';
+        case 'BIOLOGY': return '#8e44ad';
+        case 'HISTORY': return '#c2112b';
+        default: return '#6c757d';
     }
 };
 
@@ -154,7 +148,6 @@ const renderStars = (rating: number) => {
     const fullStars = Math.floor(rating);
     const hasHalf = rating % 1 >= 0.25 && rating % 1 < 0.75;
     const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
-
     return (
         <>
             {Array(fullStars).fill(0).map((_, i) => <TiStarFullOutline key={`full-${i}`} />)}
@@ -172,6 +165,10 @@ const MainPage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        const token = sessionStorage.getItem("token");
+
+        console.log("Token:", token);
+
         fetch('http://localhost:8080/api/materials')
             .then(response => {
                 if (!response.ok) {
@@ -229,7 +226,7 @@ const MainPage = () => {
                         .map((post: any, i: number) => (
                             <MaterialCard
                                 key={`post-${i}`}
-                                onClick={() => navigate(`/post/${post.id}`)} // <-- ADĂUGAT
+                                onClick={() => navigate(`/post/${post.id}`)}
                                 style={{ cursor: 'pointer' }}
                             >
                                 <MaterialTitle>{post.title}</MaterialTitle>
@@ -255,7 +252,7 @@ const MainPage = () => {
                             .map((book: any, index: number) => (
                                 <BookCard
                                     key={`book-${index}`}
-                                    onClick={() => navigate(`/books/${book.id}`)} // <-- ADĂUGAT
+                                    onClick={() => navigate(`/books/${book.id}`)}
                                     style={{ cursor: 'pointer' }}
                                 >
                                     <BookImage
