@@ -105,6 +105,7 @@ const AddMaterialPage: React.FC = () => {
     const [chosenTags, setChosenTags] = useState<string[]>([]);
     const [file, setFile] = useState<File | null>(null);
     const navigate = useNavigate();
+    const token = sessionStorage.getItem("token");
 
     const getUserId = (): string | null => {
         const token = sessionStorage.getItem('token');
@@ -119,7 +120,11 @@ const AddMaterialPage: React.FC = () => {
 
     const fetchTags = async () => {
         try {
-            const res = await fetch('http://localhost:8080/api/tags');
+            const res = await fetch('http://localhost:8080/api/tags', {
+                method:"GET",
+                headers:{
+                    "Authorization": `Bearer ${token}`,
+                }});
             if (!res.ok) throw new Error('Failed to load tags');
             const tags: string[] = await res.json();
             setAvailableTags(tags);
@@ -167,6 +172,9 @@ const AddMaterialPage: React.FC = () => {
             const res = await fetch('http://localhost:8080/api/materials', {
                 method: 'POST',
                 body: formData,
+                headers:{
+                    "Authorization": `Bearer ${token}`,
+                }
             });
             if (!res.ok) {
                 const txt = await res.text();

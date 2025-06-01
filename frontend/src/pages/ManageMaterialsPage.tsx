@@ -115,6 +115,7 @@ const ManageMaterialsPage: React.FC = () => {
     const [materials, setMaterials] = useState<Material[]>([]);
     const [toDelete, setToDelete] = useState<string | null>(null);
     const navigate = useNavigate();
+    const token = sessionStorage.getItem("token");
 
     const getUserId = (): string | null => {
         const token = sessionStorage.getItem('token');
@@ -133,7 +134,11 @@ const ManageMaterialsPage: React.FC = () => {
             return;
         }
 
-        fetch('http://localhost:8080/api/materials')
+        fetch('http://localhost:8080/api/materials', {
+            method:"GET",
+            headers:{
+                "Authorization": `Bearer ${token}`,
+            }})
             .then(res => (res.ok ? res.json() : Promise.reject()))
             .then((all: Material[]) => {
                 setMaterials(all.filter(m => m.user?.id === uid));
@@ -144,7 +149,10 @@ const ManageMaterialsPage: React.FC = () => {
     const handleDelete = async (id: string) => {
         try {
             const res = await fetch(`http://localhost:8080/api/materials/${id}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers:{
+                    "Authorization": `Bearer ${token}`,
+                }
             });
             if (!res.ok) throw new Error(await res.text());
             setMaterials(ms => ms.filter(m => m.id !== id));
