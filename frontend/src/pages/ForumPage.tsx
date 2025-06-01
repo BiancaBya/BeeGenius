@@ -4,7 +4,26 @@ import { FaRegComment } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
 import Header from '../components/Header';
 import Menu from '../components/Menu';
+import ConfirmModal from '../components/ConfirmModal';
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from 'jwt-decode';
+import "../utils/Notify_style.css";
+import { notifyError, notifySuccess } from "../utils/Notify";
+
+interface JwtPayload { id: string; }
+
+type Post = {
+    id: string;
+    title: string;
+    content: string;
+    timeAgo: string;
+    tags?: string[];
+    user?: {
+        id: string;
+        name: string;
+    };
+    repliesCount: number;
+};
 
 const GlobalStyle = createGlobalStyle`
     @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
@@ -136,6 +155,17 @@ const PostReplies = styled.div`
     color: #555;
 `;
 
+const PostLoadingContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    font-size: 1.2rem;
+    color: #555;
+`;
+
+
+
 const FloatingButton = styled.button<{ open: boolean }>`
     position: fixed;
     bottom: 30px;
@@ -157,25 +187,79 @@ const FloatingButton = styled.button<{ open: boolean }>`
 
 const ForumPage = () => {
     const [showMenu, setShowMenu] = useState(false);
-    const [allPosts, setAllPosts] = useState([]);
+    const [allPosts, setAllPosts] = useState<Post[]>([]);
     const [search, setSearch] = useState('');
     const [selectedTag, setSelectedTag] = useState('');
+    const [userId, setUserId] = useState<string>('');
+    const [postToDelete, setPostToDelete] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
+        const token = sessionStorage.getItem("token");
+        if (token) {
+            const decoded = jwtDecode<JwtPayload>(token);
+            setUserId(decoded.id);
+        }
+
         fetch('http://localhost:8080/api/posts')
             .then((res) => res.json())
-            .then((data) => setAllPosts(data))
-            .catch((err) => console.error("Error fetching posts:", err));
+            .then((data) => {
+                if (Array.isArray(data)) {
+                    setAllPosts(data);
+                } else if (Array.isArray(data.posts)) {
+                    setAllPosts(data.posts);
+                } else {
+                    console.error("Expected an array but got:", data);
+                    setAllPosts([]);
+                }
+            })
+            .catch((err) => {
+                console.error("Error fetching posts:", err);
+                setAllPosts([]);
+            })
+            .finally(() => setLoading(false)); // Aici oprești spinnerul
     }, []);
 
-    const filteredPosts = allPosts.filter((post: any) => {
+
+
+
+
+    const handleDelete = async (id: string) => {
+        const token = sessionStorage.getItem("token");
+        if (!token) return;
+
+        try {
+            const res = await fetch(`http://localhost:8080/api/posts/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (res.ok) {
+                setAllPosts(prev => prev.filter(post => post.id !== id));
+                setPostToDelete(null);
+                notifySuccess("Post deleted successfully");
+            } else {
+                notifyError("Could not delete the post.");
+            }
+        } catch (e) {
+            console.error("Delete error:", e);
+            notifyError("An unexpected error occurred.");
+        }
+    };
+
+    const filteredPosts = allPosts.filter((post) => {
         const matchesSearch =
             post.title.toLowerCase().includes(search.toLowerCase()) ||
             post.content.toLowerCase().includes(search.toLowerCase());
         const matchesTag = !selectedTag || post.tags?.includes(selectedTag);
         return matchesSearch && matchesTag;
     });
+
+
+
 
     return (
         <>
@@ -210,31 +294,61 @@ const ForumPage = () => {
                         </TagFilter>
                     </Toolbar>
                     <Underline />
-                    {[...filteredPosts].reverse().map((post: any, index: number) => (
-                        <ForumPostCard
-                            key={index}
-                            onClick={() => navigate(`/post/${post.id}`)}
-                            style={{ cursor: 'pointer' }}
-                        >
-                            <PostHeader>{post.user?.name || 'Anonim'} • {post.date}</PostHeader>
-                            <PostTitle>{post.title}</PostTitle>
-                            <PostContent>{post.content}</PostContent>
-                            <InfoRow>
-                                {post.tags?.map((tag: string, i: number) => (
-                                    <Tag key={i} color={getTagColor(tag)}>{tag}</Tag>
-                                ))}
-                            </InfoRow>
-                            <PostReplies>
-                                <FaRegComment />
-                                {post.replies ? post.replies.length : 0}
-                            </PostReplies>
-                        </ForumPostCard>
-                    ))}
+                    {loading ? (
+                        <PostLoadingContainer>Loading posts...</PostLoadingContainer>
+                    ) : (
+                        [...filteredPosts].reverse().map((post) => (
+                            <ForumPostCard key={post.id}>
+                                <PostHeader>{post.user?.name || 'Anonymous'} • {post.timeAgo}</PostHeader>
+                                <PostTitle onClick={() => navigate(`/post/${post.id}`)}>{post.title}</PostTitle>
+                                <PostContent onClick={() => navigate(`/post/${post.id}`)}>{post.content}</PostContent>
+                                <InfoRow>
+                                    {post.tags?.map((tag, i) => (
+                                        <Tag key={i} color={getTagColor(tag)}>{tag}</Tag>
+                                    ))}
+                                </InfoRow>
+                                <PostReplies>
+                                    <FaRegComment />
+                                    {post.repliesCount}
+                                </PostReplies>
+
+                                {post.user?.id === userId && (
+                                    <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}>
+                                        <button
+                                            onClick={() => setPostToDelete(post.id)}
+                                            style={{
+                                                background: "#f44336",
+                                                color: "#fcf6e8",
+                                                padding: "6px 14px",
+                                                fontWeight: "bold",
+                                                border: "none",
+                                                borderRadius: "6px",
+                                                cursor: "pointer",
+                                                boxShadow: "0 2px 6px rgba(0,0,0,0.2)"
+                                            }}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                )}
+                            </ForumPostCard>
+                        ))
+                    )}
+
                     <FloatingButton open={showMenu} onClick={() => navigate("/add-post")}>
                         Add Post
                     </FloatingButton>
                 </Container>
             </PageWrapper>
+
+            {postToDelete && (
+                <ConfirmModal
+                    isOpen={true}
+                    message="Are you sure you want to delete this post?"
+                    onCancel={() => setPostToDelete(null)}
+                    onConfirm={() => handleDelete(postToDelete)}
+                />
+            )}
         </>
     );
 };

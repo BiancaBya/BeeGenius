@@ -1,6 +1,7 @@
 package com.beegenius.backend.controller;
 
 import com.beegenius.backend.model.Post;
+import com.beegenius.backend.model.dto.PostDto;
 import com.beegenius.backend.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -42,10 +43,10 @@ public class PostController {
     }
 
     @GetMapping
-    public List<Post> getAllPosts() {
+    public List<PostDto> getAllPosts() {
         logger.info("Fetching all posts");
         try {
-            List<Post> posts = postService.getAllPosts();
+            List<PostDto> posts = postService.getAllPosts();
             logger.info("Fetched posts: {}", posts.size());
             return posts;
         } catch (Exception e) {

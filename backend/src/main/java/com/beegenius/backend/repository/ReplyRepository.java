@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ReplyRepository extends MongoRepository<Reply, String> {
+
+    void deleteAllById(Iterable<? extends String> ids);
 }
