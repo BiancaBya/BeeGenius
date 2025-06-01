@@ -190,14 +190,24 @@ const MainPage: React.FC = () => {
     const [books, setBooks] = useState<Book[]>([]);
     const [loadingPosts, setLoadingPosts] = useState(true);
     const navigate = useNavigate();
+    const token = sessionStorage.getItem("token");
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/materials')
+        fetch('http://localhost:8080/api/materials', {
+            method:"GET",
+            headers:{
+                "Authorization": `Bearer ${token}`,
+            }
+        })
             .then(res => res.json())
             .then(data => setMaterials(data))
             .catch(err => console.error('Error loading materials:', err));
 
-        fetch('http://localhost:8080/api/posts')
+        fetch('http://localhost:8080/api/posts', {
+            method:"GET",
+            headers:{
+                "Authorization": `Bearer ${token}`,
+            }})
             .then(res => res.json())
             .then(data => {
                 if (Array.isArray(data)) {
@@ -209,7 +219,11 @@ const MainPage: React.FC = () => {
             .catch(err => console.error('Error loading posts:', err))
             .finally(() => setLoadingPosts(false));
 
-        fetch('http://localhost:8080/api/books')
+        fetch('http://localhost:8080/api/books', {
+            method:"GET",
+            headers:{
+                "Authorization": `Bearer ${token}`,
+            }})
             .then(res => res.json())
             .then(data => setBooks(data))
             .catch(err => console.error('Error loading books:', err));
