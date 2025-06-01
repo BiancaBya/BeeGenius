@@ -128,26 +128,62 @@ public class MaterialController {
     }
 
     @PutMapping("/rating")
-    public ResponseEntity<String> addRating(@RequestParam String materialId, @RequestParam float rating) {
-        logger.info("Entering addRating - materialId={}, rating={}", materialId, rating);
-        materialService.addRaiting(materialService.getMaterialById(materialId), rating);
-        logger.info("Added rating {} to materialId={}", rating, materialId);
-        logger.info("Exiting addRating with status=200");
-        return ResponseEntity.ok("Rating added successfully");
+    public ResponseEntity<String> addRating(
+            @RequestParam String materialId,
+            @RequestParam String userId,
+            @RequestParam int rating
+    ) {
+        logger.info("Entering addRating - materialId={}, userId={}, rating={}", materialId, userId, rating);
+        try {
+            materialService.addRating(materialId, userId, rating);
+            logger.info("Rating {} added for materialId={} by userId={}", rating, materialId, userId);
+            return ResponseEntity.ok("Rating added successfully");
+        } catch (IllegalStateException e) {
+            // user already rated this material
+            logger.warn("User {} already rated material {}", userId, materialId);
+            return ResponseEntity.status(409).body("You have already rated this material");
+        } catch (Exception e) {
+            logger.error("Error in addRating for materialId={} userId={}", materialId, userId, e);
+            return ResponseEntity.status(500).body("Internal server error");
+        }
     }
 
-    @PutMapping("/update")
+
+    @PutMapping(
+            path = "/update",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
     public ResponseEntity<Material> updateMaterial(
             @RequestParam String materialId,
+            @RequestParam String name,
             @RequestParam String description,
-            @RequestParam List<Tags> tags) {
-        logger.info("Entering updateMaterial - materialId={}", materialId);
+            @RequestParam List<Tags> tags,
+            @RequestParam(required = false) MultipartFile file,
+            @RequestParam MaterialType type
+    ) throws IOException {
         Material material = materialService.getMaterialById(materialId);
+        if (material == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        material.setName(name);
         material.setDescription(description);
         material.setTags(tags);
+        material.setType(type);
+
+        if (file != null && !file.isEmpty()) {
+            Path uploadDir = Paths.get(MATERIAL_UPLOAD_DIR);
+            if (Files.notExists(uploadDir)) {
+                Files.createDirectories(uploadDir);
+            }
+            String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            Path filePath = uploadDir.resolve(filename);
+            Files.write(filePath, file.getBytes());
+
+            material.setPath(filePath.toString());
+        }
+
         Material updated = materialService.updateMaterial(material);
-        logger.info("Updated material id={}", materialId);
-        logger.info("Exiting updateMaterial with status=200");
         return ResponseEntity.ok(updated);
     }
 

@@ -8,6 +8,7 @@ import pngIcon from '../assets/png.png';
 import { TiStarFullOutline, TiStarHalfOutline, TiStarOutline } from 'react-icons/ti';
 import { FiSearch } from 'react-icons/fi';
 import {useNavigate} from "react-router-dom";
+import {jwtDecode} from "jwt-decode";
 
 const GlobalStyle = createGlobalStyle`
     @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
@@ -184,12 +185,58 @@ const renderStars = (rating: number) => {
     );
 };
 
+const FloatingButton = styled.button`
+position: fixed;
+bottom: 30px;
+right: 30px;
+background-color: #ffc107;
+color: black;
+border: none;
+padding: 15px 25px;
+border-radius: 50px;
+font-size: 1rem;
+font-weight: bold;
+cursor: pointer;
+box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+z-index: 1000;
+
+&:hover {
+    background-color: #e6b800;
+}`;
+
+
+export interface JwtPayload {
+    id: string;
+}
+
 export const MaterialsPage: React.FC = () => {
     const [showMenu, setShowMenu] = useState<boolean>(false);
     const [materials, setMaterials] = useState<any[]>([]);
     const [search, setSearch] = useState<string>('');
     const [selectedTag, setSelectedTag] = useState('');
     const navigate = useNavigate();
+    const [user, setUser] = useState<any>(null);
+
+    const getUserId = () => {
+        const token = jwtDecode<JwtPayload>(sessionStorage.getItem('token') as string);
+        return token?.id;
+    }
+
+    const getSessionUser = () => {
+        const id = getUserId();
+        if (!id) return;
+
+        fetch(`http://localhost:8080/api/users/${id}`)
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('User not found');
+                }
+                return res.json();
+            })
+            .then(data => setUser(data))
+            .catch(err => console.error('Error fetching user:', err));
+    }
+
 
     useEffect(() => {
         fetchMaterials();
@@ -288,6 +335,9 @@ export const MaterialsPage: React.FC = () => {
                         </MaterialCard>
                     );
                 })}
+                <FloatingButton onClick={() => navigate("/add-material")}>
+                    Add Material
+                </FloatingButton>
             </Container>
         </>
     );

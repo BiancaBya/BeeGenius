@@ -1,14 +1,20 @@
 package com.beegenius.backend.service;
 
 import com.beegenius.backend.model.Material;
+import com.beegenius.backend.model.Rating;
+import com.beegenius.backend.model.User;
 import com.beegenius.backend.model.enums.Tags;
 import com.beegenius.backend.repository.MaterialRepository;
+import com.beegenius.backend.repository.RatingRepository;
+import com.beegenius.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +22,8 @@ public class MaterialService {
 
     private static final Logger logger = LoggerFactory.getLogger(MaterialService.class);
     private final MaterialRepository materialRepository;
+    private final RatingRepository ratingRepository;
+    private final UserRepository userRepository;
 
     public Material saveMaterial(Material material) {
         logger.info("Entering saveMaterial with material={} ", material);
@@ -94,20 +102,50 @@ public class MaterialService {
         }
     }
 
-    public void addRaiting(Material material, float newRating) {
-        logger.info("Entering addRaiting for materialId={} with newRating={} ", material.getId(), newRating);
-        try {
-            material.setNrRatings(material.getNrRatings() + 1);
-            material.setRating(material.getRating() + newRating);
-            materialRepository.save(material);
-            logger.info("Updated rating for Material id={}, totalRatings={}, cumulativeRating={} ",
-                    material.getId(), material.getNrRatings(), material.getRating());
-            logger.info("Exiting addRaiting");
-        } catch (Exception e) {
-            logger.error("Error in addRaiting for materialId={} ", material.getId(), e);
-            throw e;
+
+    @Transactional
+    public void addRating(String materialId, String userId, int ratingValue) {
+
+        Material material = getMaterialById(materialId);
+        if (material == null) {
+            throw new RuntimeException("Material not found: " + materialId);
         }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+
+        Optional<Rating> existing = ratingRepository.findByUserAndMaterial(user, material);
+        if (existing.isPresent()) {
+            throw new IllegalStateException("User has already rated this material");
+        }
+
+        Rating rating = Rating.builder()
+                .value(ratingValue)
+                .user(user)
+                .material(material)
+                .build();
+        ratingRepository.save(rating);
+
+        material.setNrRatings(material.getNrRatings() + 1);
+        material.setRating(material.getRating() + ratingValue);
+        materialRepository.save(material);
     }
+
+    @Transactional(readOnly = true)
+    public int getUserRatingForMaterial(String materialId, String userId) {
+        Material material = getMaterialById(materialId);
+        if (material == null) {
+            throw new RuntimeException("Material not found: " + materialId);
+        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+
+        return ratingRepository
+                .findByUserAndMaterial(user, material)
+                .map(Rating::getValue)
+                .orElse(0);
+    }
+
 
     public Material getMaterialById(String id) {
         logger.info("Entering getMaterialById with id={} ", id);

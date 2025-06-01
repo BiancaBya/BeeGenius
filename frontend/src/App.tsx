@@ -15,6 +15,9 @@ import RequireAuth from "./components/RequireAuth";
 import AddBookPage from "./pages/AddBookPage";
 import ManageBooksPage from "./pages/ManageBooksPage";
 import AddPostPage from "./pages/AddPostPage";
+import ManageMaterialsPage from "./pages/ManageMaterialsPage";
+import AddMaterialPage from "./pages/AddMaterialPage";
+import UpdateMaterialPage from "./pages/UpdateMaterialPage";
 
 function App() {
     return (
@@ -88,6 +91,24 @@ function App() {
                         <ManageBooksPage />
                     </RequireAuth>
                 } />
+
+                <Route path="/manage-materials" element={
+                    <RequireAuth>
+                        <ManageMaterialsPage />
+                    </RequireAuth>
+                } />
+
+                <Route path="/add-material" element={
+                    <RequireAuth>
+                        <AddMaterialPage />
+                    </RequireAuth>
+                }/>
+
+                <Route path="/update-material/:id" element={
+                    <RequireAuth>
+                        <UpdateMaterialPage />
+                    </RequireAuth>
+                }/>
             </Routes>
 
         </BrowserRouter>
