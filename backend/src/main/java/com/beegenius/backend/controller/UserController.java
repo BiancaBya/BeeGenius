@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,5 +25,11 @@ public class UserController {
         logger.info("User found - user={}", user);
         return ResponseEntity.ok(user);
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getProfile(Authentication authentication) {
+        return ResponseEntity.ok("User ID din JWT: " + authentication.getPrincipal());
+    }
+
 
 }
