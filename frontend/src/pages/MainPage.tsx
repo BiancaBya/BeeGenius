@@ -3,6 +3,7 @@ import styled, { createGlobalStyle } from 'styled-components';
 import Header from '../components/Header';
 import Menu from '../components/Menu';
 import { TiStarFullOutline, TiStarHalfOutline, TiStarOutline } from "react-icons/ti";
+import { FaRegComment } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const GlobalStyle = createGlobalStyle`
@@ -122,7 +123,17 @@ const BookAuthor = styled.div`
     color: #333;
 `;
 
-interface Material {
+const PostLoadingContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    font-size: 1.2rem;
+    color: #555;
+`;
+
+interface MaterialDTO {
+    id: string;
     name: string;
     description?: string;
     type: string;
@@ -131,6 +142,23 @@ interface Material {
     nrRatings: number;
     tags?: string[];
     user?: { name: string };
+}
+
+interface PostDTO {
+    id: string;
+    title: string;
+    content: string;
+    repliesCount: number;
+    tags?: string[];
+    user?: { name: string };
+    timeAgo?: string;
+}
+
+interface Book {
+    id: string;
+    title: string;
+    author: string;
+    photoPath: string;
 }
 
 const getTagColor = (tag: string) => {
@@ -159,30 +187,29 @@ const renderStars = (rating: number) => {
 
 const MainPage = () => {
     const [showMenu, setShowMenu] = useState(false);
-    const [materials, setMaterials] = useState<Material[]>([]);
-    const [posts, setPosts] = useState([]);
-    const [books, setBooks] = useState([]);
+    const [materials, setMaterials] = useState<MaterialDTO[]>([]);
+    const [posts, setPosts] = useState<PostDTO[]>([]);
+    const [books, setBooks] = useState<Book[]>([]);
+    const [loadingPosts, setLoadingPosts] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = sessionStorage.getItem("token");
-
-        console.log("Token:", token);
-
         fetch('http://localhost:8080/api/materials')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Eroare la preluarea materialelor');
-                }
-                return response.json();
-            })
+            .then(res => res.json())
             .then(data => setMaterials(data))
-            .catch(error => console.error('Eroare:', error));
+            .catch(err => console.error('Eroare:', err));
 
         fetch('http://localhost:8080/api/posts')
             .then(res => res.json())
-            .then(data => setPosts(data))
-            .catch(err => console.error("Eroare la posturi:", err));
+            .then(data => {
+                if (Array.isArray(data)) {
+                    setPosts(data);
+                } else if (Array.isArray(data.posts)) {
+                    setPosts(data.posts);
+                }
+            })
+            .catch(err => console.error("Eroare la posturi:", err))
+            .finally(() => setLoadingPosts(false));
 
         fetch('http://localhost:8080/api/books')
             .then(res => res.json())
@@ -202,71 +229,69 @@ const MainPage = () => {
                         const avgA = a.nrRatings > 0 ? a.rating / a.nrRatings : 0;
                         const avgB = b.nrRatings > 0 ? b.rating / b.nrRatings : 0;
                         return avgB - avgA;
-                    }).slice(0, 5).map((material: any, i: number) => {
-                        const averageRating = material.nrRatings > 0 ? material.rating / material.nrRatings : 0;
-                        return (
-                            <MaterialCard
-                                key={`post-${i}`}
-                                onClick={() => navigate(`/materials/${material.id}`)}
-                                style={{ cursor: 'pointer' }}>
-                                <MaterialTitle>{material.name}</MaterialTitle>
-                                <InfoRow>
-                                    <span>Posted by {material.user?.name || 'Unknown'}</span>
-                                    {material.tags?.map((tag: string, index: number) => (
-                                        <Tag key={index} color={getTagColor(tag)}>{tag}</Tag>
-                                    ))}
-                                    <Stars>{renderStars(averageRating)}</Stars>
-                                </InfoRow>
-                            </MaterialCard>
-                        );
-                    })}
+                    }).slice(0, 5).map((material, i) => (
+                        <MaterialCard
+                            key={`post-${i}`}
+                            onClick={() => navigate(`/materials/${material.id}`)}
+                            style={{ cursor: 'pointer' }}>
+                            <MaterialTitle>{material.name}</MaterialTitle>
+                            <InfoRow>
+                                <span>Posted by {material.user?.name || 'Unknown'}</span>
+                                {material.tags?.map((tag, index) => (
+                                    <Tag key={index} color={getTagColor(tag)}>{tag}</Tag>
+                                ))}
+                                <Stars>{renderStars(material.nrRatings > 0 ? material.rating / material.nrRatings : 0)}</Stars>
+                            </InfoRow>
+                        </MaterialCard>
+                    ))}
 
                     <SectionTitle>Most Active Posts</SectionTitle>
-                    {[...posts]
-                        .filter((post: any) => post.replies?.length > 0)
-                        .sort((a: any, b: any) => b.replies.length - a.replies.length)
-                        .slice(0, 5)
-                        .map((post: any, i: number) => (
-                            <MaterialCard
-                                key={`post-${i}`}
-                                onClick={() => navigate(`/post/${post.id}`)}
-                                style={{ cursor: 'pointer' }}
-                            >
-                                <MaterialTitle>{post.title}</MaterialTitle>
-                                <InfoRow>
-                                    <span>Posted by {post.user?.name || 'Unknown'}</span>
-                                    {post.tags?.map((tag: string, index: number) => (
-                                        <Tag key={index} color={getTagColor(tag)}>{tag}</Tag>
-                                    ))}
-                                </InfoRow>
-                                <Description>
-                                    {post.content?.length > 300
-                                        ? post.content.slice(0, 300) + '...'
-                                        : post.content}
-                                </Description>
-                            </MaterialCard>
-                        ))}
+                    {loadingPosts ? (
+                        <PostLoadingContainer>Loading posts...</PostLoadingContainer>
+                    ) : (
+                        [...posts]
+                            .filter(post => post.repliesCount > 0)
+                            .sort((a, b) => b.repliesCount - a.repliesCount)
+                            .slice(0, 5)
+                            .map((post, i) => (
+                                <MaterialCard
+                                    key={`post-${i}`}
+                                    onClick={() => navigate(`/post/${post.id}`)}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    <MaterialTitle>{post.title}</MaterialTitle>
+                                    <InfoRow>
+                                        <span>Posted by {post.user?.name || 'Unknown'}</span>
+                                        {post.tags?.map((tag, index) => (
+                                            <Tag key={index} color={getTagColor(tag)}>{tag}</Tag>
+                                        ))}
+
+                                    </InfoRow>
+                                    <Description>
+                                        {post.content?.length > 300 ? post.content.slice(0, 300) + '...' : post.content}
+                                    </Description>
+                                </MaterialCard>
+                            ))
+                    )}
 
                     <SectionTitle>Latest books</SectionTitle>
                     <BookGrid>
-                        {[...books]
-                            .slice(-5)
-                            .reverse()
-                            .map((book: any, index: number) => (
-                                <BookCard
-                                    key={`book-${index}`}
-                                    onClick={() => navigate(`/books/${book.id}`)}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    <BookImage
-                                        src={`http://localhost:8080/${book.photoPath.replace(/\\/g, '/')}`}
-                                        alt={book.title}
-                                    />
-                                    <BookTitle>{book.title}</BookTitle>
-                                    <BookAuthor>{book.author}</BookAuthor>
-                                </BookCard>
-                            ))}
+                        {[...books].slice(-5).reverse().map((book, index) => (
+                            <BookCard
+                                key={`book-${index}`}
+                                onClick={() => navigate(`/books/${book.id}`)}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <BookImage
+                                    src={`http://localhost:8080/${book.photoPath.replace(/\\/g, '/')}`}
+                                    alt={book.title}
+                                />
+                                <BookTitle>{book.title}</BookTitle>
+                                <BookAuthor>{book.author}</BookAuthor>
+                            </BookCard>
+                        ))}
                     </BookGrid>
+
                 </Container>
             </PageWrapper>
         </>
