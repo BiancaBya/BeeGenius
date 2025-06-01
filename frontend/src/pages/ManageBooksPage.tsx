@@ -121,7 +121,11 @@ const ManageBooksPage: React.FC = () => {
         const decoded = jwtDecode<JwtPayload>(token);
         setUserId(decoded.id);
 
-        fetch('http://localhost:8080/api/books')
+        fetch('http://localhost:8080/api/books', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
             .then(res => res.json())
             .then(data => {
                 const userBooks = data.filter((book: any) => book.owner?.id === decoded.id);

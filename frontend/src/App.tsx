@@ -26,7 +26,6 @@ import {useWebSocket} from "./hooks/useWebSocket";
 function App() {
     const [userId, setUserId] = useState<string | null>(null);
 
-    // 🔄 Ascultă modificările tokenului (ex: la login)
     useEffect(() => {
         const checkToken = () => {
             const token = sessionStorage.getItem("token");
@@ -43,14 +42,13 @@ function App() {
 
         checkToken();
 
-        // 🔁 Verifică tokenul la fiecare 1s (doar dacă userul s-a logat de curând)
         const interval = setInterval(() => {
             const token = sessionStorage.getItem("token");
             if (!token && userId) {
-                setUserId(null); // user s-a delogat
+                setUserId(null);
             }
             if (token && !userId) {
-                checkToken(); // user s-a logat
+                checkToken();
             }
         }, 1000);
 

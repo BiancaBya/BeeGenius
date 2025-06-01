@@ -1,4 +1,3 @@
-// src/pages/AddBookPage.tsx
 import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -101,7 +100,12 @@ const AddBookPage: React.FC = () => {
 
     const fetchTags = async () => {
         try {
-            const res = await fetch('http://localhost:8080/api/tags');
+            const token = sessionStorage.getItem('token');
+            const res = await fetch('http://localhost:8080/api/tags', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             if (!res.ok) throw new Error('Failed to load tags');
             const tags: string[] = await res.json();
             setAvailableTags(tags);

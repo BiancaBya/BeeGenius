@@ -84,11 +84,14 @@ const BookDetailsPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const [book, setBook] = useState<any>(null);
     const [showMenu, setShowMenu] = useState(false);
+    const token = sessionStorage.getItem('token');
 
     useEffect(() => {
         if (!id) return;
 
-        fetch(`http://localhost:8080/api/books/${id}`)
+        fetch(`http://localhost:8080/api/books/${id}`, {
+            headers: token ? { Authorization: `Bearer ${token}` } : {}
+        })
             .then(res => {
                 if (!res.ok) {
                     throw new Error('Book not found');
