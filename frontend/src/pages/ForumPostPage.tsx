@@ -4,10 +4,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { FaRegComment } from "react-icons/fa";
 import BeeIcon from '../assets/Logo_cropped.png';
 import BeeText from '../assets/LogoText.png';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
+import { getTagColor } from '../utils/tagColorGenerator';
 
-export interface JwtPayload{
-    id:string;
+export interface JwtPayload {
+    id: string;
 }
 
 const PageWrapper = styled.div`
@@ -112,21 +113,18 @@ const CommentSection = styled.div`
 const CommentBox = styled.div`
     margin-top: 12px;
     padding-left: 8px;
-    font-size: 1.1rem; /* am mărit fontul aici */
+    font-size: 1.1rem;
 `;
 
 const ReplyBox = styled.div`
     margin-top: 8px;
     margin-left: 20px;
     padding-left: 8px;
-    border-left: 3px solid #4ea8de; /* o culoare mai simpatică */
-    background: #f9f9f9; /* un gri foarte deschis */
+    border-left: 3px solid #4ea8de;
+    background: #f9f9f9;
     font-size: 1.05rem;
     transition: background 0.3s ease;
 `;
-
-
-
 
 const NewCommentInput = styled.textarea`
     width: 99%;
@@ -138,8 +136,6 @@ const NewCommentInput = styled.textarea`
     resize: none;
     border: 1px solid #bbb;
 `;
-
-
 
 const SubmitButton = styled.button`
     margin-top: 10px;
@@ -156,10 +152,21 @@ const SubmitButton = styled.button`
     }
 `;
 
-
 const SectionTitle = styled.h2`
     font-size: 2rem;
     margin: 20px 0;
+`;
+
+const TagPill = styled.span<{ color: string }>`
+  background: ${props => props.color};
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-right: 8px;
+  margin-top: 8px;
+  display: inline-block;
 `;
 
 export default function ForumPostPage() {
@@ -169,18 +176,23 @@ export default function ForumPostPage() {
     const [showMenu, setShowMenu] = useState(false);
     const navigate = useNavigate();
     const [replyingTo, setReplyingTo] = useState<string | null>(null);
-    const [replyContent, setReplyContent] = useState(''); // pentru textul scris
-    const [user, setUser] = useState<{ id: string, name: string } | null>(null);
+    const [replyContent, setReplyContent] = useState('');
+    const [user, setUser] = useState<{ id: string; name: string } | null>(null);
 
-
-    const getuserId = () => {
-        const token = jwtDecode<JwtPayload>(sessionStorage.getItem('token') as string);
-        return token.id;
-    }
+    const getUserId = (): string | null => {
+        try {
+            const tokenRaw = sessionStorage.getItem('token');
+            if (!tokenRaw) return null;
+            const decoded = jwtDecode<JwtPayload>(tokenRaw);
+            return decoded.id;
+        } catch {
+            return null;
+        }
+    };
 
     const getUserData = async () => {
         try {
-            const userId = getuserId();
+            const userId = getUserId();
             if (!userId) return null;
 
             const token = sessionStorage.getItem('token');
@@ -195,8 +207,8 @@ export default function ForumPostPage() {
                 throw new Error("Failed to fetch user data");
             }
 
-            const user = await response.json();
-            return { id: user.id, name: user.name };
+            const userData = await response.json();
+            return { id: userData.id, name: userData.name };
         } catch (err) {
             console.error("Error fetching user data:", err);
             return null;
@@ -206,18 +218,18 @@ export default function ForumPostPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch pentru post
+                // Fetch post
                 const postResponse = await fetch(`http://localhost:8080/api/posts/${postId}`);
                 const postData = await postResponse.json();
                 setPost(postData);
 
-                // Fetch pentru user
+                // Fetch current user
                 const userData = await getUserData();
                 if (userData) {
                     setUser(userData);
                 }
             } catch (err) {
-                console.error("Eroare la fetch:", err);
+                console.error("Error fetching data:", err);
             }
         };
 
@@ -241,15 +253,17 @@ export default function ForumPostPage() {
             });
 
             setNewComment('');
-            window.location.reload(); // sau updatează doar comentariile
+            // Reload only comments
+            const postResponse = await fetch(`http://localhost:8080/api/posts/${postId}`);
+            const updatedPost = await postResponse.json();
+            setPost(updatedPost);
         } catch (err) {
-            console.error("Eroare la adăugare comentariu:", err);
+            console.error("Error adding comment:", err);
         }
     };
 
-
-    const handleAddReply = async (replyId: string, replyContent: string) => {
-        if (!replyContent.trim() || !user) return;
+    const handleAddReply = async (replyId: string, replyText: string) => {
+        if (!replyText.trim() || !user) return;
 
         try {
             await fetch(`http://localhost:8080/api/replies/to-reply/${replyId}`, {
@@ -259,26 +273,22 @@ export default function ForumPostPage() {
                     'Authorization': `Bearer ${sessionStorage.getItem('token')}`
                 },
                 body: JSON.stringify({
-                    content: replyContent,
+                    content: replyText,
                     user: { id: user.id, name: user.name }
                 })
             });
 
-            // Reîncarcă postarea pentru a vedea reply-ul
-            fetch(`http://localhost:8080/api/posts/${postId}`)
-                .then(res => res.json())
-                .then(data => setPost(data))
-                .catch(err => console.error("Eroare la reload post:", err));
-
+            // Reload post to see new reply
+            const postResponse = await fetch(`http://localhost:8080/api/posts/${postId}`);
+            const updatedPost = await postResponse.json();
+            setPost(updatedPost);
         } catch (err) {
-            console.error("Eroare la adăugare reply:", err);
+            console.error("Error adding reply:", err);
         }
     };
 
-
-
     const renderReplies = (replies: any[]) => {
-        return replies.map((reply) => (
+        return replies.map(reply => (
             <CommentBox key={reply.id}>
                 <div style={{ fontSize: '1.1rem' }}>
                     <strong>{reply.user?.name || 'Anonim'}</strong>: {reply.content}
@@ -302,7 +312,7 @@ export default function ForumPostPage() {
                         <NewCommentInput
                             placeholder="Write a reply..."
                             value={replyContent}
-                            onChange={(e) => setReplyContent(e.target.value)}
+                            onChange={e => setReplyContent(e.target.value)}
                             autoFocus
                         />
                         <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
@@ -315,7 +325,6 @@ export default function ForumPostPage() {
                             >
                                 Send
                             </SubmitButton>
-
                             <SubmitButton
                                 style={{ background: '#e0e0e0', color: '#333' }}
                                 onClick={() => {
@@ -326,7 +335,6 @@ export default function ForumPostPage() {
                                 Hide
                             </SubmitButton>
                         </div>
-
                     </>
                 )}
 
@@ -336,11 +344,8 @@ export default function ForumPostPage() {
                     </ReplyBox>
                 )}
             </CommentBox>
-
-
         ));
     };
-
 
     const formatTimeAgo = (timestamp: string | Date) => {
         const postDate = new Date(timestamp);
@@ -376,84 +381,75 @@ export default function ForumPostPage() {
         return count;
     };
 
-    const getTagColor = (tag: string) => {
-        switch (tag) {
-            case 'LAW': return '#f48c06';
-            case 'COMPUTER_SCIENCE': return '#4ea8de';
-            case 'MEDICINE': return '#3e8e41';
-            case 'BIOLOGY': return '#8e44ad';
-            case 'HISTORY': return '#c2112b';
-            default: return '#6c757d';
-        }
-    };
-
-
     return (
-        <>
-            <PageWrapper>
-                <Header>
-                    <LogoContainer>
-                        <LogoImage src={BeeIcon} alt="Bee Icon" />
-                        <LogoImage src={BeeText} alt="BeeGenius Text" />
-                    </LogoContainer>
-                    <MenuButton onClick={() => setShowMenu(!showMenu)}>Menu</MenuButton>
-                </Header>
+        <PageWrapper>
+            <Header>
+                <LogoContainer>
+                    <LogoImage src={BeeIcon} alt="Bee Icon" />
+                    <LogoImage src={BeeText} alt="BeeGenius Text" />
+                </LogoContainer>
+                <MenuButton onClick={() => setShowMenu(!showMenu)}>Menu</MenuButton>
+            </Header>
 
-                <Sidebar open={showMenu}>
-                    <MenuItems>
-                        <MenuItem onClick={() => navigate('/userprofile')}>Profile</MenuItem>
-                        <MenuItem onClick={() => navigate('/materials')}>Materials</MenuItem>
-                        <MenuItem onClick={() => navigate('/forum')}>Forum</MenuItem>
-                        <MenuItem onClick={() => navigate('/books')}>Books</MenuItem>
-                        <MenuItem onClick={() => navigate('/mainpage')}>Home</MenuItem>
-                    </MenuItems>
-                    <Logout onClick={() => navigate('/')}>Log Out</Logout>
-                </Sidebar>
+            <Sidebar open={showMenu}>
+                <MenuItems>
+                    <MenuItem onClick={() => navigate('/userprofile')}>Profile</MenuItem>
+                    <MenuItem onClick={() => navigate('/materials')}>Materials</MenuItem>
+                    <MenuItem onClick={() => navigate('/forum')}>Forum</MenuItem>
+                    <MenuItem onClick={() => navigate('/books')}>Books</MenuItem>
+                    <MenuItem onClick={() => navigate('/mainpage')}>Home</MenuItem>
+                </MenuItems>
+                <Logout onClick={() => navigate('/')}>Log Out</Logout>
+            </Sidebar>
 
-                <Container>
-                    {post && (
-                        <>
-                            <PostContainer>
-                                <h2>{post.title}</h2>
-                                <p><strong>Posted by:</strong> {post.user?.name || 'Anonim'} • {post.date ? formatTimeAgo(post.date) : 'just now'}</p>
+            <Container>
+                {post && (
+                    <>
+                        <PostContainer>
+                            <h2>{post.title}</h2>
+                            <p>
+                                <strong>Posted by:</strong> {post.user?.name || 'Anonim'} •{' '}
+                                {post.date ? formatTimeAgo(post.date) : 'just now'}
+                            </p>
 
-                                <div style={{ marginTop: '10px', marginBottom: '10px', display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                                    {post.tags?.map((tag: string, index: number) => (
-                                        <span key={index} style={{
-                                            background: getTagColor(tag),
-                                            color: 'white',
-                                            padding: '5px 10px',
-                                            borderRadius: '15px',
-                                            fontWeight: 'bold',
-                                            fontSize: '0.9rem'
-                                        }}>
-                {tag}
-            </span>
-                                    ))}
-                                </div>
+                            <div
+                                style={{
+                                    marginTop: '10px',
+                                    marginBottom: '10px',
+                                    display: 'flex',
+                                    flexWrap: 'wrap',
+                                    gap: '8px'
+                                }}
+                            >
+                                {post.tags?.map((tag: string, index: number) => (
+                                    <TagPill key={index} color={getTagColor(tag)}>
+                                        {tag.replace('_', ' ')}
+                                    </TagPill>
+                                ))}
+                            </div>
 
-                                <p><FaRegComment /> {countTotalReplies(post.replies)} comments</p>
+                            <p>
+                                <FaRegComment /> {countTotalReplies(post.replies)} comments
+                            </p>
 
-                                <p>{post.content}</p>
-                            </PostContainer>
+                            <p>{post.content}</p>
+                        </PostContainer>
 
+                        <SectionTitle>Comments</SectionTitle>
 
-                            <SectionTitle>Comments</SectionTitle>
+                        <NewCommentInput
+                            placeholder="Write a comment..."
+                            value={newComment}
+                            onChange={e => setNewComment(e.target.value)}
+                        />
+                        <SubmitButton onClick={handleAddComment}>Post Comment</SubmitButton>
 
-                            <NewCommentInput
-                                placeholder="Write a comment..."
-                                value={newComment}
-                                onChange={(e) => setNewComment(e.target.value)}
-                            />
-                            <SubmitButton onClick={handleAddComment}>Post Comment</SubmitButton>
-
-                            <CommentSection>
-                                {post.replies && renderReplies(post.replies)}
-                            </CommentSection>
-                        </>
-                    )}
-                </Container>
-            </PageWrapper>
-        </>
+                        <CommentSection>
+                            {post.replies && renderReplies(post.replies)}
+                        </CommentSection>
+                    </>
+                )}
+            </Container>
+        </PageWrapper>
     );
 }

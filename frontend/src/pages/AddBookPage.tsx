@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// src/pages/AddBookPage.tsx
+import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
@@ -58,6 +59,7 @@ const Select = styled.select`
     font-size: 1rem;
     border-radius: 8px;
     border: 1px solid #ccc;
+    height: 120px;
 `;
 
 const Button = styled.button`
@@ -79,15 +81,48 @@ const AddBookPage: React.FC = () => {
     const location = useLocation();
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
-    const [tags, setTags] = useState<string[]>([]);
+    const [availableTags, setAvailableTags] = useState<string[]>([]);
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [image, setImage] = useState<File | null>(null);
     const [showMenu, setShowMenu] = useState(false);
 
     const from = (location.state as { from?: string })?.from || '/books';
 
+    const getUserId = (): string | null => {
+        try {
+            const raw = sessionStorage.getItem('token');
+            if (!raw) return null;
+            const decoded = jwtDecode<JwtPayload>(raw);
+            return decoded.id;
+        } catch {
+            return null;
+        }
+    };
+
+    const fetchTags = async () => {
+        try {
+            const res = await fetch('http://localhost:8080/api/tags');
+            if (!res.ok) throw new Error('Failed to load tags');
+            const tags: string[] = await res.json();
+            setAvailableTags(tags);
+        } catch (err) {
+            console.error('Error fetching tags:', err);
+        }
+    };
+
+    useEffect(() => {
+        fetchTags();
+    }, []);
+
+    const handleTagChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const values = Array.from(e.target.selectedOptions, opt => opt.value);
+        setSelectedTags(values);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        // Must be logged in
         const token = sessionStorage.getItem('token');
         if (!token) {
             toast.error('You must be logged in.');
@@ -98,8 +133,13 @@ const AddBookPage: React.FC = () => {
         try {
             const decoded = jwtDecode<JwtPayload>(token);
             userId = decoded.id;
-        } catch (err) {
+        } catch {
             toast.error('Invalid token.');
+            return;
+        }
+
+        if (!title.trim() || !author.trim() || selectedTags.length === 0 || !image) {
+            toast.error('Please fill all fields and select at least one tag.');
             return;
         }
 
@@ -107,16 +147,16 @@ const AddBookPage: React.FC = () => {
         formData.append('title', title);
         formData.append('author', author);
         formData.append('userId', userId);
-        tags.forEach(tag => formData.append('tags', tag));
-        if (image) formData.append('imageFile', image);
+        selectedTags.forEach(tag => formData.append('tags', tag));
+        formData.append('imageFile', image);
 
         try {
             const res = await fetch('http://localhost:8080/api/books', {
                 method: 'POST',
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
                 },
-                body: formData
+                body: formData,
             });
 
             if (res.ok) {
@@ -127,13 +167,9 @@ const AddBookPage: React.FC = () => {
                 toast.error('Failed to add book: ' + errorText);
             }
         } catch (err) {
-            toast.error('Error submitting book.' + String(err));
+            console.error('Error submitting book:', err);
+            toast.error('Error submitting book.');
         }
-    };
-
-    const handleTagChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const value = Array.from(e.target.selectedOptions, option => option.value);
-        setTags(value);
     };
 
     return (
@@ -150,29 +186,38 @@ const AddBookPage: React.FC = () => {
                             type="text"
                             placeholder="Title"
                             value={title}
-                            onChange={(e) => setTitle(e.target.value)}
+                            onChange={e => setTitle(e.target.value)}
                             required
                         />
                         <Input
                             type="text"
                             placeholder="Author"
                             value={author}
-                            onChange={(e) => setAuthor(e.target.value)}
+                            onChange={e => setAuthor(e.target.value)}
                             required
                         />
-                        <Select multiple value={tags} onChange={handleTagChange} required>
-                            <option value="LAW">Law</option>
-                            <option value="COMPUTER_SCIENCE">Computer Science</option>
-                            <option value="MEDICINE">Medicine</option>
-                            <option value="BIOLOGY">Biology</option>
-                            <option value="HISTORY">History</option>
+
+                        <Select
+                            multiple
+                            value={selectedTags}
+                            onChange={handleTagChange}
+                            required
+                        >
+                            <option value="">-- Select Tags --</option>
+                            {availableTags.map(tag => (
+                                <option key={tag} value={tag}>
+                                    {tag.replace('_', ' ')}
+                                </option>
+                            ))}
                         </Select>
+
                         <Input
                             type="file"
                             accept="image/*"
-                            onChange={(e) => setImage(e.target.files?.[0] || null)}
+                            onChange={e => setImage(e.target.files?.[0] || null)}
                             required
                         />
+
                         <Button type="submit">Add Book</Button>
                     </Form>
                 </Container>

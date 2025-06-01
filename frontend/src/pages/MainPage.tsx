@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import Header from '../components/Header';
 import Menu from '../components/Menu';
-import { TiStarFullOutline, TiStarHalfOutline, TiStarOutline } from "react-icons/ti";
-import { FaRegComment } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { TiStarFullOutline, TiStarHalfOutline, TiStarOutline } from 'react-icons/ti';
+import { FaRegComment } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { getTagColor } from '../utils/tagColorGenerator';
 
 const GlobalStyle = createGlobalStyle`
     @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
@@ -161,31 +162,28 @@ interface Book {
     photoPath: string;
 }
 
-const getTagColor = (tag: string) => {
-    switch (tag) {
-        case 'LAW': return '#f48c06';
-        case 'COMPUTER_SCIENCE': return '#4ea8de';
-        case 'MEDICINE': return '#3e8e41';
-        case 'BIOLOGY': return '#8e44ad';
-        case 'HISTORY': return '#c2112b';
-        default: return '#6c757d';
-    }
-};
-
 const renderStars = (rating: number) => {
     const fullStars = Math.floor(rating);
     const hasHalf = rating % 1 >= 0.25 && rating % 1 < 0.75;
     const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
     return (
         <>
-            {Array(fullStars).fill(0).map((_, i) => <TiStarFullOutline key={`full-${i}`} />)}
+            {Array(fullStars)
+                .fill(0)
+                .map((_, i) => (
+                    <TiStarFullOutline key={`full-${i}`} />
+                ))}
             {hasHalf && <TiStarHalfOutline key="half" />}
-            {Array(emptyStars).fill(0).map((_, i) => <TiStarOutline key={`empty-${i}`} />)}
+            {Array(emptyStars)
+                .fill(0)
+                .map((_, i) => (
+                    <TiStarOutline key={`empty-${i}`} />
+                ))}
         </>
     );
 };
 
-const MainPage = () => {
+const MainPage: React.FC = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [materials, setMaterials] = useState<MaterialDTO[]>([]);
     const [posts, setPosts] = useState<PostDTO[]>([]);
@@ -197,7 +195,7 @@ const MainPage = () => {
         fetch('http://localhost:8080/api/materials')
             .then(res => res.json())
             .then(data => setMaterials(data))
-            .catch(err => console.error('Eroare:', err));
+            .catch(err => console.error('Error loading materials:', err));
 
         fetch('http://localhost:8080/api/posts')
             .then(res => res.json())
@@ -208,42 +206,54 @@ const MainPage = () => {
                     setPosts(data.posts);
                 }
             })
-            .catch(err => console.error("Eroare la posturi:", err))
+            .catch(err => console.error('Error loading posts:', err))
             .finally(() => setLoadingPosts(false));
 
         fetch('http://localhost:8080/api/books')
             .then(res => res.json())
             .then(data => setBooks(data))
-            .catch(err => console.error("Eroare la cărți:", err));
+            .catch(err => console.error('Error loading books:', err));
     }, []);
 
     return (
         <>
             <GlobalStyle />
             <PageWrapper>
-                <Header toggleMenu={() => setShowMenu(!showMenu)} />
+                <Header toggleMenu={() => setShowMenu(v => !v)} />
                 <Menu open={showMenu} />
                 <Container>
                     <Title>Highest Rated Materials</Title>
-                    {materials.sort((a, b) => {
-                        const avgA = a.nrRatings > 0 ? a.rating / a.nrRatings : 0;
-                        const avgB = b.nrRatings > 0 ? b.rating / b.nrRatings : 0;
-                        return avgB - avgA;
-                    }).slice(0, 5).map((material, i) => (
-                        <MaterialCard
-                            key={`post-${i}`}
-                            onClick={() => navigate(`/materials/${material.id}`)}
-                            style={{ cursor: 'pointer' }}>
-                            <MaterialTitle>{material.name}</MaterialTitle>
-                            <InfoRow>
-                                <span>Posted by {material.user?.name || 'Unknown'}</span>
-                                {material.tags?.map((tag, index) => (
-                                    <Tag key={index} color={getTagColor(tag)}>{tag}</Tag>
-                                ))}
-                                <Stars>{renderStars(material.nrRatings > 0 ? material.rating / material.nrRatings : 0)}</Stars>
-                            </InfoRow>
-                        </MaterialCard>
-                    ))}
+                    {materials
+                        .sort((a, b) => {
+                            const avgA = a.nrRatings > 0 ? a.rating / a.nrRatings : 0;
+                            const avgB = b.nrRatings > 0 ? b.rating / b.nrRatings : 0;
+                            return avgB - avgA;
+                        })
+                        .slice(0, 5)
+                        .map((material, i) => (
+                            <MaterialCard
+                                key={`mat-${i}`}
+                                onClick={() => navigate(`/materials/${material.id}`)}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <MaterialTitle>{material.name}</MaterialTitle>
+                                <InfoRow>
+                                    <span>Posted by {material.user?.name || 'Unknown'}</span>
+                                    {material.tags?.map((tag, idx) => (
+                                        <Tag key={idx} color={getTagColor(tag)}>
+                                            {tag.replace('_', ' ')}
+                                        </Tag>
+                                    ))}
+                                    <Stars>
+                                        {renderStars(
+                                            material.nrRatings > 0
+                                                ? material.rating / material.nrRatings
+                                                : 0
+                                        )}
+                                    </Stars>
+                                </InfoRow>
+                            </MaterialCard>
+                        ))}
 
                     <SectionTitle>Most Active Posts</SectionTitle>
                     {loadingPosts ? (
@@ -262,36 +272,41 @@ const MainPage = () => {
                                     <MaterialTitle>{post.title}</MaterialTitle>
                                     <InfoRow>
                                         <span>Posted by {post.user?.name || 'Unknown'}</span>
-                                        {post.tags?.map((tag, index) => (
-                                            <Tag key={index} color={getTagColor(tag)}>{tag}</Tag>
+                                        {post.tags?.map((tag, idx) => (
+                                            <Tag key={idx} color={getTagColor(tag)}>
+                                                {tag.replace('_', ' ')}
+                                            </Tag>
                                         ))}
-
                                     </InfoRow>
                                     <Description>
-                                        {post.content?.length > 300 ? post.content.slice(0, 300) + '...' : post.content}
+                                        {post.content?.length > 300
+                                            ? post.content.slice(0, 300) + '...'
+                                            : post.content}
                                     </Description>
                                 </MaterialCard>
                             ))
                     )}
 
-                    <SectionTitle>Latest books</SectionTitle>
+                    <SectionTitle>Latest Books</SectionTitle>
                     <BookGrid>
-                        {[...books].slice(-5).reverse().map((book, index) => (
-                            <BookCard
-                                key={`book-${index}`}
-                                onClick={() => navigate(`/books/${book.id}`)}
-                                style={{ cursor: 'pointer' }}
-                            >
-                                <BookImage
-                                    src={`http://localhost:8080/${book.photoPath.replace(/\\/g, '/')}`}
-                                    alt={book.title}
-                                />
-                                <BookTitle>{book.title}</BookTitle>
-                                <BookAuthor>{book.author}</BookAuthor>
-                            </BookCard>
-                        ))}
+                        {[...books]
+                            .slice(-5)
+                            .reverse()
+                            .map((book, i) => (
+                                <BookCard
+                                    key={`book-${i}`}
+                                    onClick={() => navigate(`/books/${book.id}`)}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    <BookImage
+                                        src={`http://localhost:8080/${book.photoPath.replace(/\\/g, '/')}`}
+                                        alt={book.title}
+                                    />
+                                    <BookTitle>{book.title}</BookTitle>
+                                    <BookAuthor>{book.author}</BookAuthor>
+                                </BookCard>
+                            ))}
                     </BookGrid>
-
                 </Container>
             </PageWrapper>
         </>

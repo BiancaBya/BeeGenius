@@ -1,5 +1,5 @@
 // src/pages/AddMaterialPage.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import Header from '../components/Header';
 import Menu from '../components/Menu';
@@ -93,21 +93,6 @@ const Button = styled.button`
     }
 `;
 
-const tagsList = [
-    'COMPUTER_SCIENCE',
-    'LAW',
-    'MEDICINE',
-    'BIOLOGY',
-    'HISTORY',
-] as const;
-type Tag = typeof tagsList[number];
-
-const formatTag = (t: Tag): string =>
-    t
-        .split('_')
-        .map(w => w[0] + w.slice(1).toLowerCase())
-        .join(' ');
-
 interface JwtPayload {
     id: string;
 }
@@ -116,7 +101,8 @@ const AddMaterialPage: React.FC = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [chosenTags, setChosenTags] = useState<Tag[]>([]);
+    const [availableTags, setAvailableTags] = useState<string[]>([]);
+    const [chosenTags, setChosenTags] = useState<string[]>([]);
     const [file, setFile] = useState<File | null>(null);
     const navigate = useNavigate();
 
@@ -131,19 +117,33 @@ const AddMaterialPage: React.FC = () => {
         }
     };
 
+    const fetchTags = async () => {
+        try {
+            const res = await fetch('http://localhost:8080/api/tags');
+            if (!res.ok) throw new Error('Failed to load tags');
+            const tags: string[] = await res.json();
+            setAvailableTags(tags);
+        } catch (err) {
+            console.error('Error fetching tags:', err);
+        }
+    };
+
+    useEffect(() => {
+        fetchTags();
+    }, []);
+
     const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFile(e.target.files?.[0] || null);
     };
 
     const onTagsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selections = Array.from(e.target.selectedOptions).map(
-            opt => opt.value as Tag
-        );
+        const selections = Array.from(e.target.selectedOptions, opt => opt.value);
         setChosenTags(selections);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
         const userId = getUserId();
         if (!userId) {
             alert('You must be logged in');
@@ -155,18 +155,18 @@ const AddMaterialPage: React.FC = () => {
         }
 
         const ext = file.name.split('.').pop()?.toUpperCase() || '';
-        const form = new FormData();
-        form.append('name', name);
-        form.append('description', description);
-        form.append('type', ext);
-        chosenTags.forEach(tag => form.append('tags', tag));
-        form.append('file', file);
-        form.append('userId', userId);
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('description', description);
+        formData.append('type', ext);
+        chosenTags.forEach(tag => formData.append('tags', tag));
+        formData.append('file', file);
+        formData.append('userId', userId);
 
         try {
             const res = await fetch('http://localhost:8080/api/materials', {
                 method: 'POST',
-                body: form,
+                body: formData,
             });
             if (!res.ok) {
                 const txt = await res.text();
@@ -225,9 +225,9 @@ const AddMaterialPage: React.FC = () => {
                             value={chosenTags}
                             onChange={onTagsChange}
                         >
-                            {tagsList.map(tag => (
+                            {availableTags.map(tag => (
                                 <option key={tag} value={tag}>
-                                    {formatTag(tag)}
+                                    {tag.replace('_', ' ')}
                                 </option>
                             ))}
                         </TagSelect>

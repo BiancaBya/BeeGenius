@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
-import { FaRegComment } from "react-icons/fa";
-import { FiSearch } from "react-icons/fi";
+import { FaRegComment } from 'react-icons/fa';
+import { FiSearch } from 'react-icons/fi';
 import Header from '../components/Header';
 import Menu from '../components/Menu';
 import ConfirmModal from '../components/ConfirmModal';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import "../utils/Notify_style.css";
-import { notifyError, notifySuccess } from "../utils/Notify";
+import { getTagColor } from '../utils/tagColorGenerator';
+import '../utils/Notify_style.css';
+import { notifyError, notifySuccess } from '../utils/Notify';
 
-interface JwtPayload { id: string; }
+interface JwtPayload {
+    id: string;
+}
 
 type Post = {
     id: string;
@@ -164,8 +167,6 @@ const PostLoadingContainer = styled.div`
     color: #555;
 `;
 
-
-
 const FloatingButton = styled.button<{ open: boolean }>`
     position: fixed;
     bottom: 30px;
@@ -185,9 +186,10 @@ const FloatingButton = styled.button<{ open: boolean }>`
     }
 `;
 
-const ForumPage = () => {
+const ForumPage: React.FC = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [allPosts, setAllPosts] = useState<Post[]>([]);
+    const [availableTags, setAvailableTags] = useState<string[]>([]);
     const [search, setSearch] = useState('');
     const [selectedTag, setSelectedTag] = useState('');
     const [userId, setUserId] = useState<string>('');
@@ -196,61 +198,65 @@ const ForumPage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = sessionStorage.getItem("token");
+        fetch('http://localhost:8080/api/tags')
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to load tags');
+                return res.json();
+            })
+            .then((data: string[]) => setAvailableTags(data))
+            .catch(err => console.error('Error loading tags:', err));
+    }, []);
+
+    useEffect(() => {
+        const token = sessionStorage.getItem('token');
         if (token) {
             const decoded = jwtDecode<JwtPayload>(token);
             setUserId(decoded.id);
         }
 
         fetch('http://localhost:8080/api/posts')
-            .then((res) => res.json())
-            .then((data) => {
+            .then(res => res.json())
+            .then(data => {
                 if (Array.isArray(data)) {
                     setAllPosts(data);
                 } else if (Array.isArray(data.posts)) {
                     setAllPosts(data.posts);
                 } else {
-                    console.error("Expected an array but got:", data);
+                    console.error('Expected an array but got:', data);
                     setAllPosts([]);
                 }
             })
-            .catch((err) => {
-                console.error("Error fetching posts:", err);
+            .catch(err => {
+                console.error('Error fetching posts:', err);
                 setAllPosts([]);
             })
-            .finally(() => setLoading(false)); // Aici oprești spinnerul
+            .finally(() => setLoading(false));
     }, []);
 
-
-
-
-
     const handleDelete = async (id: string) => {
-        const token = sessionStorage.getItem("token");
+        const token = sessionStorage.getItem('token');
         if (!token) return;
 
         try {
             const res = await fetch(`http://localhost:8080/api/posts/${id}`, {
                 method: 'DELETE',
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                headers: { Authorization: `Bearer ${token}` },
             });
 
             if (res.ok) {
                 setAllPosts(prev => prev.filter(post => post.id !== id));
                 setPostToDelete(null);
-                notifySuccess("Post deleted successfully");
+                notifySuccess('Post deleted successfully');
             } else {
-                notifyError("Could not delete the post.");
+                notifyError('Could not delete the post.');
             }
         } catch (e) {
-            console.error("Delete error:", e);
-            notifyError("An unexpected error occurred.");
+            console.error('Delete error:', e);
+            notifyError('An unexpected error occurred.');
         }
     };
 
-    const filteredPosts = allPosts.filter((post) => {
+    const filteredPosts = allPosts.filter(post => {
         const matchesSearch =
             post.title.toLowerCase().includes(search.toLowerCase()) ||
             post.content.toLowerCase().includes(search.toLowerCase());
@@ -258,84 +264,101 @@ const ForumPage = () => {
         return matchesSearch && matchesTag;
     });
 
-
-
-
     return (
         <>
             <GlobalStyle />
             <PageWrapper>
-                <Header toggleMenu={() => setShowMenu(!showMenu)} />
+                <Header toggleMenu={() => setShowMenu(v => !v)} />
                 <Menu open={showMenu} />
                 <Container>
                     <Toolbar>
                         <ToolbarSection>
                             <SectionTitle>Forum</SectionTitle>
                         </ToolbarSection>
+
                         <SearchBar>
                             <FiSearch />
                             <SearchInput
                                 type="text"
                                 placeholder="Search posts"
                                 value={search}
-                                onChange={(e) => setSearch(e.target.value)}
+                                onChange={e => setSearch(e.target.value)}
                             />
                         </SearchBar>
+
                         <TagFilter
                             value={selectedTag}
-                            onChange={(e) => setSelectedTag(e.target.value)}
+                            onChange={e => setSelectedTag(e.target.value)}
                         >
                             <option value="">All Tags</option>
-                            <option value="LAW">Law</option>
-                            <option value="COMPUTER_SCIENCE">Computer Science</option>
-                            <option value="MEDICINE">Medicine</option>
-                            <option value="BIOLOGY">Biology</option>
-                            <option value="HISTORY">History</option>
+                            {availableTags.map(tag => (
+                                <option key={tag} value={tag}>
+                                    {tag.replace('_', ' ')}
+                                </option>
+                            ))}
                         </TagFilter>
                     </Toolbar>
+
                     <Underline />
+
                     {loading ? (
                         <PostLoadingContainer>Loading posts...</PostLoadingContainer>
                     ) : (
-                        [...filteredPosts].reverse().map((post) => (
-                            <ForumPostCard key={post.id}>
-                                <PostHeader>{post.user?.name || 'Anonymous'} • {post.timeAgo}</PostHeader>
-                                <PostTitle onClick={() => navigate(`/post/${post.id}`)}>{post.title}</PostTitle>
-                                <PostContent onClick={() => navigate(`/post/${post.id}`)}>{post.content}</PostContent>
-                                <InfoRow>
-                                    {post.tags?.map((tag, i) => (
-                                        <Tag key={i} color={getTagColor(tag)}>{tag}</Tag>
-                                    ))}
-                                </InfoRow>
-                                <PostReplies>
-                                    <FaRegComment />
-                                    {post.repliesCount}
-                                </PostReplies>
+                        [...filteredPosts]
+                            .reverse()
+                            .map(post => (
+                                <ForumPostCard key={post.id}>
+                                    <PostHeader>
+                                        {post.user?.name || 'Anonymous'} • {post.timeAgo}
+                                    </PostHeader>
+                                    <PostTitle onClick={() => navigate(`/post/${post.id}`)}>
+                                        {post.title}
+                                    </PostTitle>
+                                    <PostContent onClick={() => navigate(`/post/${post.id}`)}>
+                                        {post.content}
+                                    </PostContent>
+                                    <InfoRow>
+                                        {post.tags?.map((tag, i) => (
+                                            <Tag key={i} color={getTagColor(tag)}>
+                                                {tag.replace('_', ' ')}
+                                            </Tag>
+                                        ))}
+                                    </InfoRow>
+                                    <PostReplies>
+                                        <FaRegComment />
+                                        {post.repliesCount}
+                                    </PostReplies>
 
-                                {post.user?.id === userId && (
-                                    <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}>
-                                        <button
-                                            onClick={() => setPostToDelete(post.id)}
+                                    {post.user?.id === userId && (
+                                        <div
                                             style={{
-                                                background: "#f44336",
-                                                color: "#fcf6e8",
-                                                padding: "6px 14px",
-                                                fontWeight: "bold",
-                                                border: "none",
-                                                borderRadius: "6px",
-                                                cursor: "pointer",
-                                                boxShadow: "0 2px 6px rgba(0,0,0,0.2)"
+                                                display: 'flex',
+                                                justifyContent: 'flex-end',
+                                                marginTop: '10px',
                                             }}
                                         >
-                                            Delete
-                                        </button>
-                                    </div>
-                                )}
-                            </ForumPostCard>
-                        ))
+                                            <button
+                                                onClick={() => setPostToDelete(post.id)}
+                                                style={{
+                                                    background: '#f44336',
+                                                    color: '#fcf6e8',
+                                                    padding: '6px 14px',
+                                                    fontWeight: 'bold',
+                                                    border: 'none',
+                                                    borderRadius: '6px',
+                                                    cursor: 'pointer',
+                                                    boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+                                                }}
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
+                                    )}
+                                </ForumPostCard>
+                            ))
                     )}
 
-                    <FloatingButton open={showMenu} onClick={() => navigate("/add-post")}>
+                    <FloatingButton open={showMenu} onClick={() => navigate('/add-post')}>
                         Add Post
                     </FloatingButton>
                 </Container>
@@ -351,17 +374,6 @@ const ForumPage = () => {
             )}
         </>
     );
-};
-
-const getTagColor = (tag: string) => {
-    switch (tag) {
-        case 'LAW': return '#f48c06';
-        case 'COMPUTER_SCIENCE': return '#4ea8de';
-        case 'MEDICINE': return '#3e8e41';
-        case 'BIOLOGY': return '#8e44ad';
-        case 'HISTORY': return '#c2112b';
-        default: return '#6c757d';
-    }
 };
 
 export default ForumPage;

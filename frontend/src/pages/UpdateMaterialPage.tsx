@@ -1,3 +1,4 @@
+// src/pages/UpdateMaterialPage.tsx
 import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -6,107 +7,92 @@ import Menu from '../components/Menu';
 import { jwtDecode } from 'jwt-decode';
 
 const GlobalStyle = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
-  body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Josefin Sans', sans-serif;
-    background-color: #fcf6e8;
-  }
+    @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Josefin Sans', sans-serif;
+        background-color: #fcf6e8;
+    }
 `;
 
 const Container = styled.div`
-  padding: 110px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    padding: 110px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 `;
 
 const PageTitle = styled.h2`
-  font-size: 2.25rem;
-  font-weight: 600;
-  margin-bottom: 30px;
-  text-align: center;
+    font-size: 2.25rem;
+    font-weight: 600;
+    margin-bottom: 30px;
+    text-align: center;
 `;
 
 const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-  max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 400px;
 `;
 
 const Label = styled.label`
-  font-weight: 600;
-  margin-bottom: 6px;
+    font-weight: 600;
+    margin-bottom: 6px;
 `;
 
 const Input = styled.input`
-  padding: 12px;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  width: 100%;
-  box-sizing: border-box;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
 `;
 
 const Textarea = styled.textarea`
-  padding: 12px;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  resize: vertical;
-  width: 100%;
-  box-sizing: border-box;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    width: 100%;
+    box-sizing: border-box;
 `;
 
 const FileInput = styled.input`
-  width: 100%;
-  box-sizing: border-box;
+    width: 100%;
+    box-sizing: border-box;
 `;
 
 const TagSelect = styled.select`
-  padding: 12px;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  width: 100%;
-  box-sizing: border-box;
-  min-height: 120px;
-  background: #fff;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 120px;
+    background: #fff;
 `;
 
 const Button = styled.button`
-  padding: 14px 0;
-  width: 100%;
-  font-size: 1.1rem;
-  font-weight: 600;
-  background: #ffc107;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s;
+    padding: 14px 0;
+    width: 100%;
+    font-size: 1.1rem;
+    font-weight: 600;
+    background: #ffc107;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
 
-  &:hover {
-    background: #e6b800;
-  }
+    &:hover {
+        background: #e6b800;
+    }
 `;
-
-const tagsList = [
-    'COMPUTER_SCIENCE',
-    'LAW',
-    'MEDICINE',
-    'BIOLOGY',
-    'HISTORY',
-] as const;
-type Tag = typeof tagsList[number];
-
-const formatTag = (t: Tag): string =>
-    t
-        .split('_')
-        .map(w => w[0] + w.slice(1).toLowerCase())
-        .join(' ');
 
 interface Material {
     id: string;
@@ -127,10 +113,12 @@ const UpdateMaterialPage: React.FC = () => {
 
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [chosenTags, setChosenTags] = useState<Tag[]>([]);
+    const [chosenTags, setChosenTags] = useState<string[]>([]);
     const [file, setFile] = useState<File | null>(null);
     const [originalType, setOriginalType] = useState<string>('');
+    const [availableTags, setAvailableTags] = useState<string[]>([]);
 
+    // Decode current user ID (just to ensure logged in)
     const getUserId = (): string | null => {
         const token = sessionStorage.getItem('token');
         if (!token) return null;
@@ -141,17 +129,18 @@ const UpdateMaterialPage: React.FC = () => {
         }
     };
 
+    // Fetch material data on mount
     useEffect(() => {
         if (!materialId) return;
         fetch(`http://localhost:8080/api/materials/${materialId}`)
             .then(res => {
-                if (!res.ok) throw new Error('Not found');
+                if (!res.ok) throw new Error('Material not found');
                 return res.json();
             })
             .then((m: Material) => {
                 setName(m.name);
                 setDescription(m.description);
-                setChosenTags(m.tags as Tag[]);
+                setChosenTags(m.tags);
                 setOriginalType(m.type);
             })
             .catch(() => {
@@ -160,10 +149,19 @@ const UpdateMaterialPage: React.FC = () => {
             });
     }, [materialId, navigate]);
 
+    // Fetch the list of all tags from backend
+    useEffect(() => {
+        fetch('http://localhost:8080/api/tags')
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to load tags');
+                return res.json();
+            })
+            .then((tags: string[]) => setAvailableTags(tags))
+            .catch(err => console.error('Error fetching tags:', err));
+    }, []);
+
     const onTagsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selections = Array.from(e.target.selectedOptions).map(
-            opt => opt.value as Tag
-        );
+        const selections = Array.from(e.target.selectedOptions, opt => opt.value);
         setChosenTags(selections);
     };
 
@@ -184,7 +182,7 @@ const UpdateMaterialPage: React.FC = () => {
         form.append('description', description);
         chosenTags.forEach(tag => form.append('tags', tag));
 
-        // detect type from new file or use original
+        // Determine type: if new file selected, use its extension; else use original
         const typeToSend = file
             ? file.name.split('.').pop()?.toUpperCase() || originalType
             : originalType;
@@ -197,7 +195,10 @@ const UpdateMaterialPage: React.FC = () => {
         try {
             const res = await fetch(
                 'http://localhost:8080/api/materials/update',
-                { method: 'PUT', body: form }
+                {
+                    method: 'PUT',
+                    body: form
+                }
             );
             if (!res.ok) {
                 const txt = await res.text();
@@ -246,16 +247,17 @@ const UpdateMaterialPage: React.FC = () => {
                             value={chosenTags}
                             onChange={onTagsChange}
                         >
-                            {tagsList.map(tag => (
+                            <option value="">-- select tags --</option>
+                            {availableTags.map(tag => (
                                 <option key={tag} value={tag}>
-                                    {formatTag(tag)}
+                                    {tag.replace('_', ' ')}
                                 </option>
                             ))}
                         </TagSelect>
                     </div>
 
                     <div style={{ width: '100%' }}>
-                        <Label htmlFor="file">Replace File</Label>
+                        <Label htmlFor="file">Replace File (optional)</Label>
                         <FileInput
                             id="file"
                             type="file"
