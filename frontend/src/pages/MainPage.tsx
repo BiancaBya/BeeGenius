@@ -202,14 +202,17 @@ const MainPage = () => {
                         const avgA = a.nrRatings > 0 ? a.rating / a.nrRatings : 0;
                         const avgB = b.nrRatings > 0 ? b.rating / b.nrRatings : 0;
                         return avgB - avgA;
-                    }).slice(0, 5).map((mat: any, i: number) => {
-                        const averageRating = mat.nrRatings > 0 ? mat.rating / mat.nrRatings : 0;
+                    }).slice(0, 5).map((material: any, i: number) => {
+                        const averageRating = material.nrRatings > 0 ? material.rating / material.nrRatings : 0;
                         return (
-                            <MaterialCard key={i}>
-                                <MaterialTitle>{mat.name}</MaterialTitle>
+                            <MaterialCard
+                                key={`post-${i}`}
+                                onClick={() => navigate(`/materials/${material.id}`)}
+                                style={{ cursor: 'pointer' }}>
+                                <MaterialTitle>{material.name}</MaterialTitle>
                                 <InfoRow>
-                                    <span>Posted by {mat.user?.name || 'Unknown'}</span>
-                                    {mat.tags?.map((tag: string, index: number) => (
+                                    <span>Posted by {material.user?.name || 'Unknown'}</span>
+                                    {material.tags?.map((tag: string, index: number) => (
                                         <Tag key={index} color={getTagColor(tag)}>{tag}</Tag>
                                     ))}
                                     <Stars>{renderStars(averageRating)}</Stars>
