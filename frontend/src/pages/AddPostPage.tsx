@@ -16,7 +16,7 @@ const PageWrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #fcf6e8; /* Fundalul paginii */
+    background-color: #fcf6e8;
 `;
 
 const Container = styled.div`
@@ -24,7 +24,7 @@ const Container = styled.div`
     max-width: 500px;
     margin-top: 190px;
     padding: 30px;
-    background-color: #ffffff; /* Fundalul formularului */
+    background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -86,23 +86,30 @@ const SubmitButton = styled.button`
     }
 `;
 
-const AddPostPage = () => {
+const AddPostPage: React.FC = () => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const [tags, setTags] = useState<string[]>([]);
+    const [availableTags, setAvailableTags] = useState<string[]>([]);
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [showMenu, setShowMenu] = useState(false);
     const navigate = useNavigate();
     const [user, setUser] = useState<{ id: string; name: string } | null>(null);
 
-    const getuserId = () => {
-        const token = jwtDecode<JwtPayload>(sessionStorage.getItem("token") as string);
-        return token.id;
+    const getUserId = (): string | null => {
+        try {
+            const raw = sessionStorage.getItem("token");
+            if (!raw) return null;
+            const decoded = jwtDecode<JwtPayload>(raw);
+            return decoded.id;
+        } catch {
+            return null;
+        }
     };
 
-    const getUserData = async () => {
+    const fetchUserData = async () => {
         try {
-            const userId = getuserId();
-            if (!userId) return null;
+            const userId = getUserId();
+            if (!userId) return;
 
             const token = sessionStorage.getItem("token");
             const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
@@ -112,31 +119,37 @@ const AddPostPage = () => {
                 },
             });
 
-            if (!response.ok) {
-                throw new Error("Failed to fetch user data");
-            }
-
-            const user = await response.json();
-            return { id: user.id, name: user.name };
+            if (!response.ok) throw new Error("Failed to load user data");
+            const u = await response.json();
+            setUser({ id: u.id, name: u.name });
         } catch (err) {
             console.error("Error fetching user data:", err);
-            return null;
+        }
+    };
+
+    const fetchTags = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/api/tags");
+            if (!response.ok) throw new Error("Failed to load tags");
+            const tags: string[] = await response.json();
+            setAvailableTags(tags);
+        } catch (err) {
+            console.error("Error loading tags:", err);
         }
     };
 
     useEffect(() => {
-        getUserData().then(userData => {
-            if (userData) {
-                setUser(userData);
-            }
-        });
+        fetchUserData();
+        fetchTags();
     }, []);
 
+    // When the user changes the <select multiple> choices
     const handleTagChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-        setTags(selectedOptions);
+        const chosen = Array.from(e.target.selectedOptions, (opt) => opt.value);
+        setSelectedTags(chosen);
     };
 
+    // Send the POST /api/posts request
     const handleSubmit = async () => {
         if (!title.trim() || !content.trim() || !user) {
             alert("Please fill in all fields.");
@@ -154,7 +167,7 @@ const AddPostPage = () => {
                 body: JSON.stringify({
                     title,
                     content,
-                    tags: tags,
+                    tags: selectedTags,
                     user: { id: user.id, name: user.name },
                 }),
             });
@@ -162,7 +175,7 @@ const AddPostPage = () => {
             if (response.ok) {
                 navigate("/forum");
             } else {
-                console.error("Failed to add post.");
+                console.error("Failed to add post");
             }
         } catch (err) {
             console.error("Error in handleSubmit:", err);
@@ -189,12 +202,16 @@ const AddPostPage = () => {
                     onChange={(e) => setContent(e.target.value)}
                 />
 
-                <TagSelect multiple value={tags} onChange={handleTagChange}>
-                    <option value="LAW">Law</option>
-                    <option value="COMPUTER_SCIENCE">Computer Science</option>
-                    <option value="MEDICINE">Medicine</option>
-                    <option value="BIOLOGY">Biology</option>
-                    <option value="HISTORY">History</option>
+                <TagSelect
+                    multiple
+                    value={selectedTags}
+                    onChange={handleTagChange}
+                >
+                    {availableTags.map((tag) => (
+                        <option key={tag} value={tag}>
+                            {tag.replace("_", " ")}
+                        </option>
+                    ))}
                 </TagSelect>
 
                 <SubmitButton onClick={handleSubmit}>Add Post</SubmitButton>
@@ -204,4 +221,3 @@ const AddPostPage = () => {
 };
 
 export default AddPostPage;
-
