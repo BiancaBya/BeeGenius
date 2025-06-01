@@ -276,13 +276,7 @@ const BooksPage: React.FC = () => {
                                 <BookTitle>{book.title}</BookTitle>
                                 <BookAuthor>{book.author}</BookAuthor>
                                 <BookPoster>Posted by {book.owner?.name || 'Unknown'}</BookPoster>
-                                <TagFilter>
-                                    {book.tags?.map((tag, i) => (
-                                        <Tag key={i} color={getTagColor(tag)}>
-                                            {tag.replace('_', ' ')}
-                                        </Tag>
-                                    ))}
-                                </TagFilter>
+
                             </BookCard>
                         ))}
                     </BookGrid>

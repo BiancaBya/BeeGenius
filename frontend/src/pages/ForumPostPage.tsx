@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaRegComment } from "react-icons/fa";
-import BeeIcon from '../assets/Logo_cropped.png';
-import BeeText from '../assets/LogoText.png';
 import { jwtDecode } from 'jwt-decode';
 import { getTagColor } from '../utils/tagColorGenerator';
+import Header from '../components/Header';
+import Menu from '../components/Menu';
 
 export interface JwtPayload {
     id: string;
@@ -19,84 +19,6 @@ const PageWrapper = styled.div`
 
 const Container = styled.div`
     padding: 110px 40px;
-`;
-
-const Header = styled.div`
-    height: 70px;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1100;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #f7dca0;
-    padding: 15px 40px;
-    border-bottom: 2px solid #000;
-`;
-
-const LogoContainer = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 10px;
-`;
-
-const LogoImage = styled.img`
-    height: 50px;
-    object-fit: contain;
-`;
-
-const MenuButton = styled.button`
-    background: #fff;
-    border: 2px solid #000;
-    border-radius: 10px;
-    padding: 8px 20px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    margin: 0 70px;
-`;
-
-const Sidebar = styled.div<{ open: boolean }>`
-    width: 250px;
-    background: #f7dca0;
-    height: calc(100vh - 70px);
-    border-left: 2px solid #000;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    position: fixed;
-    top: 102px;
-    right: ${props => (props.open ? '0' : '-250px')};
-    transition: right 0.3s ease-in-out;
-    z-index: 1000;
-`;
-
-const MenuItems = styled.div`
-    display: flex;
-    flex-direction: column;
-    padding: 30px 20px;
-    gap: 30px;
-    font-size: 1.4rem;
-    font-weight: 500;
-    border-bottom: 2px solid #000;
-`;
-
-const MenuItem = styled.div`
-    cursor: pointer;
-    &:hover {
-        text-decoration: underline;
-    }
-`;
-
-const Logout = styled.div`
-    padding: 20px;
-    font-size: 1.3rem;
-    font-weight: bold;
-    border-top: 2px solid #000;
-    text-align: center;
-    cursor: pointer;
-    margin-bottom: 40px;
 `;
 
 const PostContainer = styled.div`
@@ -123,7 +45,6 @@ const ReplyBox = styled.div`
     border-left: 3px solid #4ea8de;
     background: #f9f9f9;
     font-size: 1.05rem;
-    transition: background 0.3s ease;
 `;
 
 const NewCommentInput = styled.textarea`
@@ -158,26 +79,26 @@ const SectionTitle = styled.h2`
 `;
 
 const TagPill = styled.span<{ color: string }>`
-  background: ${props => props.color};
-  color: white;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-right: 8px;
-  margin-top: 8px;
-  display: inline-block;
+    background: ${props => props.color};
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-right: 8px;
+    margin-top: 8px;
+    display: inline-block;
 `;
 
 export default function ForumPostPage() {
     const { postId } = useParams<{ postId: string }>();
     const [post, setPost] = useState<any>(null);
     const [newComment, setNewComment] = useState('');
-    const [showMenu, setShowMenu] = useState(false);
-    const navigate = useNavigate();
     const [replyingTo, setReplyingTo] = useState<string | null>(null);
     const [replyContent, setReplyContent] = useState('');
     const [user, setUser] = useState<{ id: string; name: string } | null>(null);
+    const [showMenu, setShowMenu] = useState(false);
+    const navigate = useNavigate();
 
     const getUserId = (): string | null => {
         try {
@@ -203,9 +124,7 @@ export default function ForumPostPage() {
                 }
             });
 
-            if (!response.ok) {
-                throw new Error("Failed to fetch user data");
-            }
+            if (!response.ok) throw new Error("Failed to fetch user data");
 
             const userData = await response.json();
             return { id: userData.id, name: userData.name };
@@ -218,21 +137,16 @@ export default function ForumPostPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch post
                 const postResponse = await fetch(`http://localhost:8080/api/posts/${postId}`);
                 const postData = await postResponse.json();
                 setPost(postData);
 
-                // Fetch current user
                 const userData = await getUserData();
-                if (userData) {
-                    setUser(userData);
-                }
+                if (userData) setUser(userData);
             } catch (err) {
                 console.error("Error fetching data:", err);
             }
         };
-
         fetchData();
     }, [postId]);
 
@@ -253,7 +167,6 @@ export default function ForumPostPage() {
             });
 
             setNewComment('');
-            // Reload only comments
             const postResponse = await fetch(`http://localhost:8080/api/posts/${postId}`);
             const updatedPost = await postResponse.json();
             setPost(updatedPost);
@@ -278,7 +191,6 @@ export default function ForumPostPage() {
                 })
             });
 
-            // Reload post to see new reply
             const postResponse = await fetch(`http://localhost:8080/api/posts/${postId}`);
             const updatedPost = await postResponse.json();
             setPost(updatedPost);
@@ -287,166 +199,71 @@ export default function ForumPostPage() {
         }
     };
 
-    const renderReplies = (replies: any[]) => {
-        return replies.map(reply => (
-            <CommentBox key={reply.id}>
-                <div style={{ fontSize: '1.1rem' }}>
-                    <strong>{reply.user?.name || 'Anonim'}</strong>: {reply.content}
-                    <button
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            color: '#097cff',
-                            cursor: 'pointer',
-                            fontSize: '0.9rem',
-                            marginLeft: '8px'
-                        }}
-                        onClick={() => setReplyingTo(reply.id)}
-                    >
-                        Reply
-                    </button>
-                </div>
-
-                {replyingTo === reply.id && (
-                    <>
-                        <NewCommentInput
-                            placeholder="Write a reply..."
-                            value={replyContent}
-                            onChange={e => setReplyContent(e.target.value)}
-                            autoFocus
-                        />
-                        <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-                            <SubmitButton
-                                onClick={async () => {
-                                    await handleAddReply(reply.id, replyContent);
-                                    setReplyContent('');
-                                    setReplyingTo(null);
-                                }}
-                            >
-                                Send
-                            </SubmitButton>
-                            <SubmitButton
-                                style={{ background: '#e0e0e0', color: '#333' }}
-                                onClick={() => {
-                                    setReplyingTo(null);
-                                    setReplyContent('');
-                                }}
-                            >
-                                Hide
-                            </SubmitButton>
-                        </div>
-                    </>
-                )}
-
-                {reply.replies && reply.replies.length > 0 && (
-                    <ReplyBox>
-                        {renderReplies(reply.replies)}
-                    </ReplyBox>
-                )}
-            </CommentBox>
-        ));
-    };
+    const renderReplies = (replies: any[]): React.ReactNode => replies.map(reply => (
+        <CommentBox key={reply.id}>
+            <div>
+                <strong>{reply.user?.name || 'Anonim'}</strong>: {reply.content}
+                <button onClick={() => setReplyingTo(reply.id)} style={{ marginLeft: 8, color: '#097cff', background: 'none', border: 'none', cursor: 'pointer' }}>Reply</button>
+            </div>
+            {replyingTo === reply.id && (
+                <>
+                    <NewCommentInput
+                        placeholder="Write a reply..."
+                        value={replyContent}
+                        onChange={e => setReplyContent(e.target.value)}
+                        autoFocus
+                    />
+                    <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                        <SubmitButton onClick={async () => { await handleAddReply(reply.id, replyContent); setReplyContent(''); setReplyingTo(null); }}>Send</SubmitButton>
+                        <SubmitButton style={{ background: '#e0e0e0', color: '#333' }} onClick={() => { setReplyingTo(null); setReplyContent(''); }}>Hide</SubmitButton>
+                    </div>
+                </>
+            )}
+            {reply.replies && reply.replies.length > 0 && (
+                <ReplyBox>{renderReplies(reply.replies)}</ReplyBox>
+            )}
+        </CommentBox>
+    ));
 
     const formatTimeAgo = (timestamp: string | Date) => {
         const postDate = new Date(timestamp);
         const now = new Date();
         const seconds = Math.floor((now.getTime() - postDate.getTime()) / 1000);
-
-        let interval = Math.floor(seconds / 31536000);
-        if (interval >= 1) return `${interval} year${interval > 1 ? 's' : ''} ago`;
-
-        interval = Math.floor(seconds / 2592000);
-        if (interval >= 1) return `${interval} month${interval > 1 ? 's' : ''} ago`;
-
-        interval = Math.floor(seconds / 86400);
-        if (interval >= 1) return `${interval} day${interval > 1 ? 's' : ''} ago`;
-
-        interval = Math.floor(seconds / 3600);
-        if (interval >= 1) return `${interval} hour${interval > 1 ? 's' : ''} ago`;
-
-        interval = Math.floor(seconds / 60);
-        if (interval >= 1) return `${interval} minute${interval > 1 ? 's' : ''} ago`;
-
+        const mins = Math.floor(seconds / 60);
+        const hours = Math.floor(seconds / 3600);
+        const days = Math.floor(seconds / 86400);
+        const months = Math.floor(seconds / 2592000);
+        const years = Math.floor(seconds / 31536000);
+        if (years > 0) return `${years} year${years > 1 ? 's' : ''} ago`;
+        if (months > 0) return `${months} month${months > 1 ? 's' : ''} ago`;
+        if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
+        if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+        if (mins > 0) return `${mins} minute${mins > 1 ? 's' : ''} ago`;
         return 'just now';
-    };
-
-    const countTotalReplies = (replies: any[]): number => {
-        if (!replies) return 0;
-        let count = replies.length;
-        replies.forEach(reply => {
-            if (reply.replies && reply.replies.length > 0) {
-                count += countTotalReplies(reply.replies);
-            }
-        });
-        return count;
     };
 
     return (
         <PageWrapper>
-            <Header>
-                <LogoContainer>
-                    <LogoImage src={BeeIcon} alt="Bee Icon" />
-                    <LogoImage src={BeeText} alt="BeeGenius Text" />
-                </LogoContainer>
-                <MenuButton onClick={() => setShowMenu(!showMenu)}>Menu</MenuButton>
-            </Header>
-
-            <Sidebar open={showMenu}>
-                <MenuItems>
-                    <MenuItem onClick={() => navigate('/userprofile')}>Profile</MenuItem>
-                    <MenuItem onClick={() => navigate('/materials')}>Materials</MenuItem>
-                    <MenuItem onClick={() => navigate('/forum')}>Forum</MenuItem>
-                    <MenuItem onClick={() => navigate('/books')}>Books</MenuItem>
-                    <MenuItem onClick={() => navigate('/mainpage')}>Home</MenuItem>
-                </MenuItems>
-                <Logout onClick={() => navigate('/')}>Log Out</Logout>
-            </Sidebar>
-
+            <Header toggleMenu={() => setShowMenu(v => !v)} />
+            <Menu open={showMenu} />
             <Container>
                 {post && (
                     <>
                         <PostContainer>
                             <h2>{post.title}</h2>
-                            <p>
-                                <strong>Posted by:</strong> {post.user?.name || 'Anonim'} •{' '}
-                                {post.date ? formatTimeAgo(post.date) : 'just now'}
-                            </p>
-
-                            <div
-                                style={{
-                                    marginTop: '10px',
-                                    marginBottom: '10px',
-                                    display: 'flex',
-                                    flexWrap: 'wrap',
-                                    gap: '8px'
-                                }}
-                            >
+                            <p><strong>Posted by:</strong> {post.user?.name || 'Anonim'} • {post.date ? formatTimeAgo(post.date) : 'just now'}</p>
+                            <div style={{ margin: '10px 0', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                                 {post.tags?.map((tag: string, index: number) => (
-                                    <TagPill key={index} color={getTagColor(tag)}>
-                                        {tag.replace('_', ' ')}
-                                    </TagPill>
+                                    <TagPill key={index} color={getTagColor(tag)}>{tag.replace('_', ' ')}</TagPill>
                                 ))}
                             </div>
-
-                            <p>
-                                <FaRegComment /> {countTotalReplies(post.replies)} comments
-                            </p>
-
+                            <p><FaRegComment /> {post.replies?.length || 0} comments</p>
                             <p>{post.content}</p>
                         </PostContainer>
-
                         <SectionTitle>Comments</SectionTitle>
-
-                        <NewCommentInput
-                            placeholder="Write a comment..."
-                            value={newComment}
-                            onChange={e => setNewComment(e.target.value)}
-                        />
+                        <NewCommentInput placeholder="Write a comment..." value={newComment} onChange={e => setNewComment(e.target.value)} />
                         <SubmitButton onClick={handleAddComment}>Post Comment</SubmitButton>
-
-                        <CommentSection>
-                            {post.replies && renderReplies(post.replies)}
-                        </CommentSection>
+                        <CommentSection>{post.replies && renderReplies(post.replies)}</CommentSection>
                     </>
                 )}
             </Container>
