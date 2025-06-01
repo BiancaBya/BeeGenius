@@ -1,12 +1,18 @@
 package com.beegenius.backend.service;
 
 import com.beegenius.backend.model.Post;
+import com.beegenius.backend.model.Reply;
+import com.beegenius.backend.model.dto.PostDto;
 import com.beegenius.backend.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -19,6 +25,7 @@ public class PostService {
     public Post addPost(Post post) {
         logger.info("Adding new post with title: {}", post.getTitle());
         try {
+            post.setDate(LocalDate.now());
             Post savedPost = postRepository.save(post);
             logger.info("Post added successfully with ID: {}", savedPost.getId());
             return savedPost;
@@ -38,15 +45,44 @@ public class PostService {
         }
     }
 
-    public List<Post> getAllPosts() {
-        logger.info("Fetching all posts");
-        try {
-            return postRepository.findAll();
-        } catch (Exception e) {
-            logger.error("Error while fetching all posts: {}", e.getMessage());
-            throw e;
-        }
+    private String getTimeAgo(LocalDate date) {
+        LocalDate today = LocalDate.now();
+        long days = ChronoUnit.DAYS.between(date, today);
+
+        if (days == 0) return "today";
+        if (days == 1) return "yesterday";
+        if (days < 30) return days + " days ago";
+        if (days < 365) return (days / 30) + " months ago";
+        return (days / 365) + " years ago";
     }
+
+    private int countRepliesRecursively(List<Reply> replies) {
+        if (replies == null || replies.isEmpty()) return 0;
+
+        int count = replies.size();
+        for (Reply reply : replies) {
+            count += countRepliesRecursively(reply.getReplies());
+        }
+        return count;
+    }
+
+
+    public List<PostDto> getAllPosts() {
+        List<Post> posts = postRepository.findAll();
+        return posts.stream().map(post -> PostDto.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .date(post.getDate())
+                .tags(post.getTags())
+                .user(post.getUser())
+                .repliesCount(countRepliesRecursively(post.getReplies()))
+
+                .timeAgo(getTimeAgo(post.getDate()))
+                .build()
+        ).toList();
+    }
+
 
     public List<Post> searchPostsByTitle(String title) {
         logger.info("Searching posts by title containing: {}", title);
