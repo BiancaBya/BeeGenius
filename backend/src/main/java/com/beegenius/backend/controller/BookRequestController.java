@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -25,6 +26,7 @@ public class BookRequestController {
     private final BookRequestService bookRequestService;
     private final UserService userService;
     private final BookService bookService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @PostMapping
     public ResponseEntity<BookRequest> createBookRequest(@RequestParam String bookId,
@@ -57,6 +59,11 @@ public class BookRequestController {
         logger.info("Entering acceptRequest - id={}", id);
         BookRequest request = bookRequestService.findBookRequestById(id);
         bookRequestService.acceptRequest(request);
+
+        String userId = request.getRequester().getId();
+        String message = "Your request for \"" + request.getBook().getTitle() + "\" was accepted";
+        messagingTemplate.convertAndSend("/topic/book-request/user/" + userId, message);
+
         logger.info("BookRequest accepted successfully - id={}", id);
         logger.info("Exiting acceptRequest with status=200");
         return ResponseEntity.ok("Book request accepted successfully");

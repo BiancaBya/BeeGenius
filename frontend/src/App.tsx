@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css';
 import LoginPage from './pages/LoginPage';
@@ -20,8 +20,45 @@ import AddMaterialPage from "./pages/AddMaterialPage";
 import UpdateMaterialPage from "./pages/UpdateMaterialPage";
 import ManageBookRequestsPage from "./pages/ManageBookRequestsPage";
 import ViewMyRequestsPage from "./pages/ViewMyRequestsPage";
+import {jwtDecode} from "jwt-decode";
+import {useWebSocket} from "./hooks/useWebSocket";
 
 function App() {
+    const [userId, setUserId] = useState<string | null>(null);
+
+    // 🔄 Ascultă modificările tokenului (ex: la login)
+    useEffect(() => {
+        const checkToken = () => {
+            const token = sessionStorage.getItem("token");
+            if (!token) return;
+
+            try {
+                const decoded: any = jwtDecode(token);
+                setUserId(decoded.id);
+            } catch (e) {
+                console.error("Invalid token");
+                setUserId(null);
+            }
+        };
+
+        checkToken();
+
+        // 🔁 Verifică tokenul la fiecare 1s (doar dacă userul s-a logat de curând)
+        const interval = setInterval(() => {
+            const token = sessionStorage.getItem("token");
+            if (!token && userId) {
+                setUserId(null); // user s-a delogat
+            }
+            if (token && !userId) {
+                checkToken(); // user s-a logat
+            }
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [userId]);
+
+    useWebSocket(userId);
+
     return (
         <BrowserRouter>
             <Routes>
