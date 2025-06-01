@@ -217,6 +217,7 @@ export const MaterialsPage: React.FC = () => {
     const [availableTags, setAvailableTags] = useState<string[]>([]);
     const navigate = useNavigate();
     const [user, setUser] = useState<any>(null);
+    const token = sessionStorage.getItem("token");
 
     const getUserId = () => {
         const token = sessionStorage.getItem('token');
@@ -232,7 +233,11 @@ export const MaterialsPage: React.FC = () => {
         const id = getUserId();
         if (!id) return;
 
-        fetch(`http://localhost:8080/api/users/${id}`)
+        fetch(`http://localhost:8080/api/users/${id}`, {
+            method:"GET",
+            headers:{
+                "Authorization": `Bearer ${token}`,
+            }})
             .then(res => {
                 if (!res.ok) {
                     throw new Error('User not found');
@@ -244,7 +249,11 @@ export const MaterialsPage: React.FC = () => {
     };
 
     const fetchMaterials = () => {
-        fetch('http://localhost:8080/api/materials')
+        fetch('http://localhost:8080/api/materials', {
+            method:"GET",
+            headers:{
+                "Authorization": `Bearer ${token}`,
+            }})
             .then(res => {
                 if (!res.ok) throw new Error();
                 return res.json();
@@ -256,7 +265,11 @@ export const MaterialsPage: React.FC = () => {
     useEffect(() => {
         fetchMaterials();
 
-        fetch('http://localhost:8080/api/tags')
+        fetch('http://localhost:8080/api/tags', {
+            method:"GET",
+            headers:{
+                "Authorization": `Bearer ${token}`,
+            }})
             .then(res => {
                 if (!res.ok) throw new Error('Failed to load tags');
                 return res.json();
@@ -278,7 +291,11 @@ export const MaterialsPage: React.FC = () => {
             fetchMaterials();
             return;
         }
-        fetch(`http://localhost:8080/api/materials/filter?tag=${tag}`)
+        fetch(`http://localhost:8080/api/materials/filter?tag=${tag}`, {
+            method:"GET",
+            headers:{
+                "Authorization": `Bearer ${token}`,
+            }})
             .then(res => res.json())
             .then(data => setMaterials(data))
             .catch(err => console.error('Filter error:', err));

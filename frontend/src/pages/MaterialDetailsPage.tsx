@@ -126,6 +126,7 @@ export default function MaterialDetail() {
     const [selectedRating, setSelectedRating] = useState<number>(0);
     const [userRating, setUserRating] = useState<number>(0);
     const [errorMessage, setErrorMessage] = useState<string>('');
+    const token = sessionStorage.getItem("token");
 
     const getUserId = (): string | null => {
         const token = sessionStorage.getItem('token');
@@ -138,7 +139,11 @@ export default function MaterialDetail() {
     };
 
     const loadMaterial = () => {
-        fetch(`http://localhost:8080/api/materials/${id}`)
+        fetch(`http://localhost:8080/api/materials/${id}`, {
+            method:"GET",
+            headers:{
+                "Authorization": `Bearer ${token}`,
+            }})
             .then(res => {
                 if (!res.ok) throw new Error('Material not found');
                 return res.json();
@@ -165,7 +170,11 @@ export default function MaterialDetail() {
         const ext = filename.split('.').pop()!.toLowerCase();
 
         if (ext === 'docx') {
-            fetch(fileUrl)
+            fetch(fileUrl, {
+                method:"GET",
+                headers:{
+                    "Authorization": `Bearer ${token}`,
+                }})
                 .then(res => res.arrayBuffer())
                 .then(ab => mammoth.convertToHtml({ arrayBuffer: ab }))
                 .then(result => setDocHtml(result.value))
@@ -176,7 +185,11 @@ export default function MaterialDetail() {
     useEffect(() => {
         const userId = getUserId();
         if (mat && userId) {
-            fetch(`http://localhost:8080/api/ratings/user-rating?userId=${userId}&materialId=${mat.id}`)
+            fetch(`http://localhost:8080/api/ratings/user-rating?userId=${userId}&materialId=${mat.id}`, {
+                method:"GET",
+                headers:{
+                    "Authorization": `Bearer ${token}`,
+                }})
                 .then(res => {
                     if (!res.ok) throw new Error('Error fetching user rating');
                     return res.json();
@@ -256,7 +269,10 @@ export default function MaterialDetail() {
         setSelectedRating(stars);
 
         fetch(`http://localhost:8080/api/materials/rating?materialId=${mat.id}&userId=${userId}&rating=${stars}`, {
-            method: 'PUT'
+            method: 'PUT',
+            headers:{
+                "Authorization": `Bearer ${token}`,
+            }
         })
             .then(res => {
                 if (res.status === 409) throw new Error('Ai votat deja acest material.');
@@ -276,7 +292,11 @@ export default function MaterialDetail() {
 
     const forceDownload = async () => {
         try {
-            const response = await fetch(fileUrl);
+            const response = await fetch(fileUrl, {
+                method:"GET",
+                headers:{
+                    "Authorization": `Bearer ${token}`,
+                }});
             const blob = await response.blob();
             const tempUrl = URL.createObjectURL(blob);
             const link = document.createElement('a');

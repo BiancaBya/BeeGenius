@@ -117,6 +117,7 @@ const UpdateMaterialPage: React.FC = () => {
     const [file, setFile] = useState<File | null>(null);
     const [originalType, setOriginalType] = useState<string>('');
     const [availableTags, setAvailableTags] = useState<string[]>([]);
+    const token = sessionStorage.getItem("token");
 
     // Decode current user ID (just to ensure logged in)
     const getUserId = (): string | null => {
@@ -132,7 +133,11 @@ const UpdateMaterialPage: React.FC = () => {
     // Fetch material data on mount
     useEffect(() => {
         if (!materialId) return;
-        fetch(`http://localhost:8080/api/materials/${materialId}`)
+        fetch(`http://localhost:8080/api/materials/${materialId}`, {
+            method:"GET",
+            headers:{
+                "Authorization": `Bearer ${token}`,
+            }})
             .then(res => {
                 if (!res.ok) throw new Error('Material not found');
                 return res.json();
@@ -151,7 +156,11 @@ const UpdateMaterialPage: React.FC = () => {
 
     // Fetch the list of all tags from backend
     useEffect(() => {
-        fetch('http://localhost:8080/api/tags')
+        fetch('http://localhost:8080/api/tags', {
+            method:"GET",
+            headers:{
+                "Authorization": `Bearer ${token}`,
+            }})
             .then(res => {
                 if (!res.ok) throw new Error('Failed to load tags');
                 return res.json();
@@ -197,7 +206,10 @@ const UpdateMaterialPage: React.FC = () => {
                 'http://localhost:8080/api/materials/update',
                 {
                     method: 'PUT',
-                    body: form
+                    body: form,
+                    headers:{
+                        "Authorization": `Bearer ${token}`,
+                    }
                 }
             );
             if (!res.ok) {
