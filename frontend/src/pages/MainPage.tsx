@@ -291,6 +291,7 @@ const MainPage = () => {
                             </BookCard>
                         ))}
                     </BookGrid>
+
                 </Container>
             </PageWrapper>
         </>
