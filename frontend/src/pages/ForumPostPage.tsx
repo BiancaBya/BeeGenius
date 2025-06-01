@@ -99,6 +99,7 @@ export default function ForumPostPage() {
     const [user, setUser] = useState<{ id: string; name: string } | null>(null);
     const [showMenu, setShowMenu] = useState(false);
     const navigate = useNavigate();
+    const token = sessionStorage.getItem('token');
 
     const getUserId = (): string | null => {
         try {
@@ -116,7 +117,7 @@ export default function ForumPostPage() {
             const userId = getUserId();
             if (!userId) return null;
 
-            const token = sessionStorage.getItem('token');
+
             const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -137,7 +138,10 @@ export default function ForumPostPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const postResponse = await fetch(`http://localhost:8080/api/posts/${postId}`);
+                const postResponse = await fetch(`http://localhost:8080/api/posts/${postId}`, {headers:{
+                        "Authorization": `Bearer ${token}`,
+                    }
+                });
                 const postData = await postResponse.json();
                 setPost(postData);
 
@@ -158,7 +162,7 @@ export default function ForumPostPage() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     content: newComment,
@@ -167,7 +171,11 @@ export default function ForumPostPage() {
             });
 
             setNewComment('');
-            const postResponse = await fetch(`http://localhost:8080/api/posts/${postId}`);
+            const postResponse = await fetch(`http://localhost:8080/api/posts/${postId}`,{
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             const updatedPost = await postResponse.json();
             setPost(updatedPost);
         } catch (err) {
@@ -183,7 +191,7 @@ export default function ForumPostPage() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     content: replyText,
@@ -191,7 +199,9 @@ export default function ForumPostPage() {
                 })
             });
 
-            const postResponse = await fetch(`http://localhost:8080/api/posts/${postId}`);
+            const postResponse = await fetch(`http://localhost:8080/api/posts/${postId}`, {
+            headers:  {'Authorization': `Bearer ${token}`}
+            });
             const updatedPost = await postResponse.json();
             setPost(updatedPost);
         } catch (err) {
