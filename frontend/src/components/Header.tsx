@@ -3,6 +3,9 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import BeeIcon from '../assets/Logo_cropped.png';
 import BeeText from '../assets/LogoText.png';
+import {jwtDecode} from "jwt-decode";
+import {useWebSocket} from "../hooks/useWebSocket";
+import {ToastContainer} from "react-toastify";
 
 const HeaderContainer = styled.div`
     height: 70px;
@@ -46,13 +49,14 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ toggleMenu }) => {
-    const navigate = useNavigate(); // <--- Aici
+    const navigate = useNavigate();
 
     const handleLogoClick = () => {
         navigate('/mainpage');
     };
 
     return (
+        <>
         <HeaderContainer>
             <LogoContainer onClick={handleLogoClick}>
                 <LogoImage src={BeeIcon} alt="Bee" />
@@ -60,6 +64,8 @@ const Header: React.FC<HeaderProps> = ({ toggleMenu }) => {
             </LogoContainer>
             <MenuButton onClick={toggleMenu}>Menu</MenuButton>
         </HeaderContainer>
+            <ToastContainer/>
+        </>
     );
 };
 
