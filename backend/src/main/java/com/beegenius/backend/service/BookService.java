@@ -54,6 +54,16 @@ public class BookService {
         }
     }
 
+    public List<Book> getBooksWithoutApprovedRequests() {
+        logger.info("Fetching books without approved requests");
+        try {
+            return bookRepository.findBooksWithoutApprovedRequests();
+        } catch (Exception e) {
+            logger.error("Error fetching books without approved requests: {}", e.getMessage());
+            throw e;
+        }
+    }
+
     public void deleteBook(String bookId) {
         logger.info("Deleting book with ID: {}", bookId);
         try {

@@ -85,6 +85,18 @@ public class BookRequestController {
         logger.info("Exiting getBookRequestsOfOwner with status=200");
         return ResponseEntity.ok(bookRequests);
     }
+
+    @GetMapping("/requester/{id}")
+    public ResponseEntity<List<BookRequest>> getRequestsByRequester(@PathVariable String id) {
+        logger.info("Entering getRequestsByRequester - requesterId={}", id);
+        List<BookRequest> requests = bookRequestService.getRequestsByRequester(id);
+        if (requests.isEmpty()) {
+            logger.info("No requests found for requesterId={}", id);
+            return ResponseEntity.noContent().build();
+        }
+        logger.info("Found {} requests for requesterId={}", requests.size(), id);
+        return ResponseEntity.ok(requests);
+    }
 }
 
 

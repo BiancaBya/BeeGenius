@@ -18,6 +18,8 @@ import AddPostPage from "./pages/AddPostPage";
 import ManageMaterialsPage from "./pages/ManageMaterialsPage";
 import AddMaterialPage from "./pages/AddMaterialPage";
 import UpdateMaterialPage from "./pages/UpdateMaterialPage";
+import ManageBookRequestsPage from "./pages/ManageBookRequestsPage";
+import ViewMyRequestsPage from "./pages/ViewMyRequestsPage";
 
 function App() {
     return (
@@ -109,6 +111,19 @@ function App() {
                         <UpdateMaterialPage />
                     </RequireAuth>
                 }/>
+
+                <Route path="/manage-requests" element={
+                <RequireAuth>
+                    <ManageBookRequestsPage />
+                </RequireAuth>
+                }/>
+
+
+                <Route path="/my-requests" element={
+                    <RequireAuth>
+                        <ViewMyRequestsPage />
+                    </RequireAuth>
+                } />
             </Routes>
 
         </BrowserRouter>

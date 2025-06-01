@@ -127,7 +127,7 @@ const AddBookPage: React.FC = () => {
                 toast.error('Failed to add book: ' + errorText);
             }
         } catch (err) {
-            toast.error('Error submitting book.');
+            toast.error('Error submitting book.' + String(err));
         }
     };
 
