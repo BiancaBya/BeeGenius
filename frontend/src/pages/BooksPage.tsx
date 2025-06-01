@@ -184,9 +184,11 @@ const BooksPage: React.FC = () => {
     const [selectedTag, setSelectedTag] = useState('');
     const [availableTags, setAvailableTags] = useState<string[]>([]);
     const [showMenu, setShowMenu] = useState(false);
+    const token = sessionStorage.getItem('token');
+    const headers = { Authorization: `Bearer ${token}` };
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/books')
+        fetch('http://localhost:8080/api/books', { headers })
             .then(res => res.json())
             .then(data => {
                 setAllBooks(data);
@@ -194,7 +196,7 @@ const BooksPage: React.FC = () => {
             })
             .catch(err => console.error('Eroare la cărți:', err));
 
-        fetch('http://localhost:8080/api/tags')
+        fetch('http://localhost:8080/api/tags', { headers })
             .then(res => {
                 if (!res.ok) throw new Error('Failed to load tags');
                 return res.json();
