@@ -184,7 +184,7 @@ const renderStars = (rating: number) => {
     );
 };
 
-const FloatingButton = styled.button`
+const FloatingButton = styled.button<{ open: boolean }>`
   position: fixed;
   bottom: 30px;
   right: 30px;
@@ -197,7 +197,8 @@ const FloatingButton = styled.button`
   font-weight: bold;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  z-index: 1000;
+    z-index: ${props => props.open ? 999 : 1000}; 
+    transition: all 0.2s ease;
 
   &:hover {
     background-color: #e6b800;
@@ -357,7 +358,7 @@ export const MaterialsPage: React.FC = () => {
                     );
                 })}
 
-                <FloatingButton onClick={() => navigate('/add-material')}>
+                <FloatingButton open={showMenu} onClick={() => navigate('/add-material')}>
                     Add Material
                 </FloatingButton>
             </Container>

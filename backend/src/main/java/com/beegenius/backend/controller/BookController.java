@@ -63,7 +63,7 @@ public class BookController {
     public ResponseEntity<List<Book>> getAllBooks() {
         logger.info("Fetching all books");
         try {
-            List<Book> books = bookService.getAllBooks();
+            List<Book> books = bookService.getBooksWithoutApprovedRequests();
             logger.info("Fetched books: {}", books.size());
             return ResponseEntity.ok(books);
         } catch (Exception e) {

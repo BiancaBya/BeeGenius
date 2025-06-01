@@ -4,6 +4,7 @@ import com.beegenius.backend.model.BookRequest;
 import com.beegenius.backend.model.enums.Status;
 import com.beegenius.backend.repository.BookRequestRepository;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,8 @@ public class BookRequestService {
     public List<BookRequest> getAllBookRequestsOfUser(String userId) {
         logger.info("Entering getAllBookRequestsOfUser for userId={} ", userId);
         try {
-            List<BookRequest> list = bookRequestRepository.findAllByBook_Owner_Id(userId);
+            ObjectId objectId = new ObjectId(userId);
+            List<BookRequest> list = bookRequestRepository.findAllByBookOwnerId(objectId);
             logger.info("Found {} requests for userId={}", list.size(), userId);
             logger.info("Exiting getAllBookRequestsOfUser");
             return list;
@@ -58,6 +60,13 @@ public class BookRequestService {
             logger.error("Error in getBookRequestById for id={} ", bookRequestId, e);
             throw e;
         }
+    }
+
+    public List<BookRequest> getRequestsByRequester(String requesterId) {
+        return bookRequestRepository.findAllByRequesterId(requesterId)
+                .stream()
+                .filter(bookRequest -> bookRequest.getStatus().equals(Status.APPROVED))
+                .toList();
     }
 
     public boolean existsPendingRequest(String bookId, String requesterId) {

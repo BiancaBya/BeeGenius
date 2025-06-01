@@ -37,3 +37,9 @@ GET http://localhost:8080/api/books/search?title=Meaa
 ### DELETE
 DELETE http://localhost:8080/api/books/680b5a03cb51032cb5b0bdc1
 
+### GET requests
+GET http://localhost:8080/api/book-requests/680f6ba6c3cd3a414b1abed2
+
+### GET approved
+GET http://localhost:8080/api/book-requests/requester/680f6b4322aa6870f0ad91b3
+

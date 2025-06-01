@@ -93,7 +93,7 @@ const UserProfilePage: React.FC = () => {
                         <FaBoxOpen />
                         Manage Materials
                     </Button>
-                    <Button>
+                    <Button onClick={() => navigate('/manage-requests')}>
                         <FaEnvelope />
                         Manage Requests
                     </Button>

@@ -75,7 +75,14 @@ const BookAuthor = styled.div`
     color: #333;
 `;
 
-const FloatingButton = styled.button`
+const NoResults = styled.div`
+  text-align: center;
+  font-size: 1.5rem;
+  margin-top: 50px;
+  color: #666;
+`;
+
+const FloatingButton = styled.button<{ open: boolean }>`
   position: fixed;
   bottom: 30px;
   right: 30px;
@@ -88,7 +95,8 @@ const FloatingButton = styled.button`
   font-weight: bold;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  z-index: 1000;
+    z-index: ${props => props.open ? 999 : 1000}; 
+    transition: all 0.2s ease;
 
   &:hover {
     background-color: #e6b800;
@@ -165,7 +173,7 @@ const ManageBooksPage: React.FC = () => {
                         ))}
                     </BookGrid>
                 ) : (
-                    <div>No books to manage.</div>
+                    <NoResults>📚 No books found.</NoResults>
                 )}
             </Container>
 
@@ -178,7 +186,7 @@ const ManageBooksPage: React.FC = () => {
                 />
             )}
 
-            <FloatingButton onClick={() => navigate("/add-book", { state: { from: "/manage-books" } })}>
+            <FloatingButton open={showMenu} onClick={() => navigate("/add-book", { state: { from: "/manage-books" } })}>
                 Add Book
             </FloatingButton>
         </>

@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import Menu from '../components/Menu';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { jwtDecode } from 'jwt-decode';
 
 const GlobalStyle = createGlobalStyle`
     body {
@@ -105,25 +106,32 @@ const BookDetailsPage: React.FC = () => {
             return;
         }
 
-        fetch(`http://localhost:8080/api/book-requests?bookId=${id}`, {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
-            .then(response => {
-                if (response.ok) {
-                    toast.success('Request created successfully!');
-                } else if (response.status === 409) {
-                    toast.warning('You already requested this book!');
-                } else {
-                    toast.error('Error creating request.');
+        try {
+            const decoded: any = jwtDecode(token);
+            const requesterId = decoded.id;
+            fetch(`http://localhost:8080/api/book-requests?bookId=${id}&requesterId=${requesterId}`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`
                 }
             })
-            .catch(error => {
-                console.error('Error requesting book:', error);
-                toast.error('Error requesting book.');
-            });
+                .then(response => {
+                    if (response.ok) {
+                        toast.success('Request created successfully!');
+                    } else if (response.status === 409) {
+                        toast.warning('You already requested this book!');
+                    } else {
+                        toast.error('Error creating request.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error requesting book:', error);
+                    toast.error('Error requesting book.');
+                });
+        }
+        catch (e){
+            toast.error("Invalid token");
+        }
     };
 
     if (!book) {
