@@ -94,6 +94,7 @@ const AddPostPage: React.FC = () => {
     const [showMenu, setShowMenu] = useState(false);
     const navigate = useNavigate();
     const [user, setUser] = useState<{ id: string; name: string } | null>(null);
+    const token = sessionStorage.getItem("token");
 
     const getUserId = (): string | null => {
         try {
@@ -111,7 +112,7 @@ const AddPostPage: React.FC = () => {
             const userId = getUserId();
             if (!userId) return;
 
-            const token = sessionStorage.getItem("token");
+
             const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
                 headers: {
                     "Content-Type": "application/json",
@@ -129,7 +130,10 @@ const AddPostPage: React.FC = () => {
 
     const fetchTags = async () => {
         try {
-            const response = await fetch("http://localhost:8080/api/tags");
+            const response = await fetch("http://localhost:8080/api/tags",{headers:{
+                "Authorization": `Bearer ${token}`,
+            }
+        });
             if (!response.ok) throw new Error("Failed to load tags");
             const tags: string[] = await response.json();
             setAvailableTags(tags);

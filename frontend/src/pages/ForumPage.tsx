@@ -196,9 +196,13 @@ const ForumPage: React.FC = () => {
     const [postToDelete, setPostToDelete] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const token = sessionStorage.getItem("token");
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/tags')
+        fetch('http://localhost:8080/api/tags', {headers:{
+                "Authorization": `Bearer ${token}`,
+            }
+        })
             .then(res => {
                 if (!res.ok) throw new Error('Failed to load tags');
                 return res.json();
@@ -214,7 +218,10 @@ const ForumPage: React.FC = () => {
             setUserId(decoded.id);
         }
 
-        fetch('http://localhost:8080/api/posts')
+        fetch('http://localhost:8080/api/posts', {headers:{
+                "Authorization": `Bearer ${token}`,
+            }
+        })
             .then(res => res.json())
             .then(data => {
                 if (Array.isArray(data)) {
