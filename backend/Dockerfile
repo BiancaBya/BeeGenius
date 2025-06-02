@@ -28,7 +28,7 @@ FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
 # Copiem JAR-ul generat în etapa de build
-COPY --from=build /workspace/build/libs/0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /workspace/build/libs/backend-0.0.1-SNAPSHOT.jar app.jar
 
 # Expunem portul pe care Spring Boot ascultă (default 8080)
 EXPOSE 8080
