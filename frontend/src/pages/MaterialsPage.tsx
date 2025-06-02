@@ -285,11 +285,18 @@ export const MaterialsPage: React.FC = () => {
         getSessionUser();
     }, []);
 
-    const filtered = materials.filter(
-        m =>
+    // const filtered = materials.filter(
+    //     m =>
+    //         m.name.toLowerCase().includes(search.toLowerCase()) ||
+    //         (m.description?.toLowerCase() || '').includes(search.toLowerCase())
+    // );
+
+    const filtered = (materials ?? [])
+        .filter(m => m && m.name)
+        .filter(m =>
             m.name.toLowerCase().includes(search.toLowerCase()) ||
             (m.description?.toLowerCase() || '').includes(search.toLowerCase())
-    );
+        );
 
     const handleFilter = (tag: string) => {
         if (!tag) {

@@ -3,9 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import BeeIcon from '../assets/Logo_cropped.png';
 import BeeText from '../assets/LogoText.png';
-import {jwtDecode} from "jwt-decode";
-import {useWebSocket} from "../hooks/useWebSocket";
-import {ToastContainer} from "react-toastify";
+import { ToastContainer } from 'react-toastify';
 
 const HeaderContainer = styled.div`
     height: 70px;
@@ -20,6 +18,11 @@ const HeaderContainer = styled.div`
     background: #f7dca0;
     padding: 15px 40px;
     border-bottom: 2px solid #000;
+
+    @media (max-width: 600px) {
+        padding: 10px 20px;
+        height: 60px;
+    }
 `;
 
 const LogoContainer = styled.div`
@@ -27,11 +30,19 @@ const LogoContainer = styled.div`
     align-items: center;
     gap: 10px;
     cursor: pointer;
+
+    @media (max-width: 600px) {
+        gap: 5px;
+    }
 `;
 
 const LogoImage = styled.img`
     height: 50px;
     object-fit: contain;
+
+    @media (max-width: 600px) {
+        height: 40px;
+    }
 `;
 
 const MenuButton = styled.button`
@@ -41,7 +52,19 @@ const MenuButton = styled.button`
     padding: 8px 20px;
     font-size: 1.2rem;
     cursor: pointer;
-    margin: 0 70px;
+    margin: 0 70px; 
+
+    @media (max-width: 800px) {
+        margin: 0 20px;
+        padding: 6px 16px;
+        font-size: 1rem;
+    }
+    @media (max-width: 600px) {
+        margin: 0 10px;
+        padding: 4px 12px;
+        font-size: 0.9rem;
+        border-radius: 8px;
+    }
 `;
 
 interface HeaderProps {
@@ -57,14 +80,14 @@ const Header: React.FC<HeaderProps> = ({ toggleMenu }) => {
 
     return (
         <>
-        <HeaderContainer>
-            <LogoContainer onClick={handleLogoClick}>
-                <LogoImage src={BeeIcon} alt="Bee" />
-                <LogoImage src={BeeText} alt="Bee Genius" />
-            </LogoContainer>
-            <MenuButton onClick={toggleMenu}>Menu</MenuButton>
-        </HeaderContainer>
-            <ToastContainer/>
+            <HeaderContainer>
+                <LogoContainer onClick={handleLogoClick}>
+                    <LogoImage src={BeeIcon} alt="Bee" />
+                    <LogoImage src={BeeText} alt="Bee Genius" />
+                </LogoContainer>
+                <MenuButton onClick={toggleMenu}>Menu</MenuButton>
+            </HeaderContainer>
+            <ToastContainer />
         </>
     );
 };
