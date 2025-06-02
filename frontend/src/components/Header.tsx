@@ -20,8 +20,7 @@ const HeaderContainer = styled.div`
     border-bottom: 2px solid #000;
 
     @media (max-width: 600px) {
-        padding: 10px 20px;
-        height: 60px;
+        height: 70px;
     }
 `;
 
