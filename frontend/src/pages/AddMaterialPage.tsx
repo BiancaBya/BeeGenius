@@ -108,6 +108,8 @@ const AddMaterialPage: React.FC = () => {
     const navigate = useNavigate();
     const token = sessionStorage.getItem("token");
 
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
     const getUserId = (): string | null => {
         const token = sessionStorage.getItem('token');
         if (!token) return null;
@@ -121,7 +123,7 @@ const AddMaterialPage: React.FC = () => {
 
     const fetchTags = async () => {
         try {
-            const res = await fetch('http://localhost:8080/api/tags', {
+            const res = await fetch(`${BASE_URL}/api/tags`, {
                 method:"GET",
                 headers:{
                     "Authorization": `Bearer ${token}`,
@@ -170,7 +172,7 @@ const AddMaterialPage: React.FC = () => {
         formData.append('userId', userId);
 
         try {
-            const res = await fetch('http://localhost:8080/api/materials', {
+            const res = await fetch(`${BASE_URL}/api/materials`, {
                 method: 'POST',
                 body: formData,
                 headers:{

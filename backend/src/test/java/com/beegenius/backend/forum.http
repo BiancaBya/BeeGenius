@@ -303,7 +303,7 @@ Content-Type: application/json
   "tags": ["HISTORY"],
   "date": "2025-04-18T16:45:00Z",
   "user": {
-    "id": "680f6bee22aa6870f0ad9b19"
+    "id": "680f6b4322aa6870f0ad91b3"
   }
 }
 
@@ -1121,3 +1121,7 @@ Content-Type: application/json
     "id": "680f6c1722aa6870f0ad91bc"
   }
 }
+
+
+###
+DELETE http://localhost:8080/api/replies/680f7524aa1cdd62c8277dd8

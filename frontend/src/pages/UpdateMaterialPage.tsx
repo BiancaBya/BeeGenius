@@ -119,6 +119,7 @@ const UpdateMaterialPage: React.FC = () => {
     const [originalType, setOriginalType] = useState<string>('');
     const [availableTags, setAvailableTags] = useState<string[]>([]);
     const token = sessionStorage.getItem("token");
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     const getUserId = (): string | null => {
         const token = sessionStorage.getItem('token');
@@ -132,7 +133,7 @@ const UpdateMaterialPage: React.FC = () => {
 
     useEffect(() => {
         if (!materialId) return;
-        fetch(`http://localhost:8080/api/materials/${materialId}`, {
+        fetch(`${BASE_URL}/api/materials/${materialId}`, {
             method:"GET",
             headers:{
                 "Authorization": `Bearer ${token}`,
@@ -154,7 +155,7 @@ const UpdateMaterialPage: React.FC = () => {
     }, [materialId, navigate]);
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/tags', {
+        fetch(`${BASE_URL}/api/tags`, {
             method:"GET",
             headers:{
                 "Authorization": `Bearer ${token}`,
@@ -200,7 +201,7 @@ const UpdateMaterialPage: React.FC = () => {
 
         try {
             const res = await fetch(
-                'http://localhost:8080/api/materials/update',
+                `${BASE_URL}/api/materials/update`,
                 {
                     method: 'PUT',
                     body: form,

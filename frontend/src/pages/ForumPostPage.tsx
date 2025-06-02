@@ -100,6 +100,7 @@ export default function ForumPostPage() {
     const [showMenu, setShowMenu] = useState(false);
     const navigate = useNavigate();
     const token = sessionStorage.getItem('token');
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     const getUserId = (): string | null => {
         try {
@@ -118,7 +119,7 @@ export default function ForumPostPage() {
             if (!userId) return null;
 
 
-            const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
+            const response = await fetch(`${BASE_URL}/api/users/${userId}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -138,7 +139,7 @@ export default function ForumPostPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const postResponse = await fetch(`http://localhost:8080/api/posts/${postId}`, {headers:{
+                const postResponse = await fetch(`${BASE_URL}/api/posts/${postId}`, {headers:{
                         "Authorization": `Bearer ${token}`,
                     }
                 });
@@ -158,7 +159,7 @@ export default function ForumPostPage() {
         if (!newComment.trim() || !user) return;
 
         try {
-            await fetch(`http://localhost:8080/api/replies/to-post/${postId}`, {
+            await fetch(`${BASE_URL}api/replies/to-post/${postId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -171,7 +172,7 @@ export default function ForumPostPage() {
             });
 
             setNewComment('');
-            const postResponse = await fetch(`http://localhost:8080/api/posts/${postId}`,{
+            const postResponse = await fetch(`${BASE_URL}/api/posts/${postId}`,{
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -187,7 +188,7 @@ export default function ForumPostPage() {
         if (!replyText.trim() || !user) return;
 
         try {
-            await fetch(`http://localhost:8080/api/replies/to-reply/${replyId}`, {
+            await fetch(`${BASE_URL}/api/replies/to-reply/${replyId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -199,7 +200,7 @@ export default function ForumPostPage() {
                 })
             });
 
-            const postResponse = await fetch(`http://localhost:8080/api/posts/${postId}`, {
+            const postResponse = await fetch(`${BASE_URL}/api/posts/${postId}`, {
             headers:  {'Authorization': `Bearer ${token}`}
             });
             const updatedPost = await postResponse.json();

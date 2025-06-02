@@ -49,6 +49,7 @@ interface JwtPayload {
 const ViewMyRequestsPage: React.FC = () => {
     const [requests, setRequests] = useState<any[]>([]);
     const [showMenu, setShowMenu] = useState(false);
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     useEffect(() => {
         const token = sessionStorage.getItem('token');
@@ -56,7 +57,7 @@ const ViewMyRequestsPage: React.FC = () => {
 
         const decoded = jwtDecode<JwtPayload>(token);
 
-        fetch(`http://localhost:8080/api/book-requests/requester/${decoded.id}`, {
+        fetch(`${BASE_URL}/api/book-requests/requester/${decoded.id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

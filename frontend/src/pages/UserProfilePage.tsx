@@ -72,6 +72,7 @@ const UserProfilePage: React.FC = () => {
     const [showMenu, setShowMenu] = useState(false);
     const navigate = useNavigate();
     const token = sessionStorage.getItem("token");
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     const getUserId = (): string | null => {
         try {
@@ -89,7 +90,7 @@ const UserProfilePage: React.FC = () => {
             const userId = getUserId();
             if (!userId) return;
 
-            const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
+            const response = await fetch(`${BASE_URL}/api/users/${userId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
