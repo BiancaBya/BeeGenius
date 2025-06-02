@@ -253,6 +253,8 @@ export default function ForumPostPage() {
         return 'just now';
     };
 
+    const Icon = FaRegComment as React.ElementType;
+
     return (
         <PageWrapper>
             <Header toggleMenu={() => setShowMenu(v => !v)} />
@@ -268,7 +270,7 @@ export default function ForumPostPage() {
                                     <TagPill key={index} color={getTagColor(tag)}>{tag.replace('_', ' ')}</TagPill>
                                 ))}
                             </div>
-                            <p><FaRegComment /> {post.replies?.length || 0} comments</p>
+                            <p><Icon /> {post.replies?.length || 0} comments</p>
                             <p>{post.content}</p>
                         </PostContainer>
                         <SectionTitle>Comments</SectionTitle>

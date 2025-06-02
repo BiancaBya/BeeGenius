@@ -109,6 +109,10 @@ const UserProfilePage: React.FC = () => {
         fetchUserData();
     }, []);
 
+    const Icon_Book = FaBook as React.ElementType;
+    const Icon_Open = FaBoxOpen as React.ElementType;
+    const Icon_Envelope = FaEnvelope as React.ElementType;
+
     return (
         <PageWrapper>
             <Header toggleMenu={() => setShowMenu(!showMenu)} />
@@ -119,15 +123,15 @@ const UserProfilePage: React.FC = () => {
                     <Email>{user?.email || "..."}</Email>
 
                     <Button onClick={() => navigate('/manage-books')}>
-                        <FaBook />
+                        <Icon_Book />
                         Manage Books
                     </Button>
                     <Button onClick={() => navigate('/manage-materials')}>
-                        <FaBoxOpen />
+                        <Icon_Open />
                         Manage Materials
                     </Button>
                     <Button onClick={() => navigate('/manage-requests')}>
-                        <FaEnvelope />
+                        <Icon_Envelope />
                         Manage Requests
                     </Button>
                 </ProfileCard>

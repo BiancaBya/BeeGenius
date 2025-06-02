@@ -161,6 +161,9 @@ interface Book {
     author: string;
     photoPath: string;
 }
+const Icon_Full = TiStarFullOutline as React.ElementType;
+const Icon_Half = TiStarHalfOutline as React.ElementType;
+const Icon_None = TiStarOutline as React.ElementType;
 
 const renderStars = (rating: number) => {
     const fullStars = Math.floor(rating);
@@ -171,13 +174,13 @@ const renderStars = (rating: number) => {
             {Array(fullStars)
                 .fill(0)
                 .map((_, i) => (
-                    <TiStarFullOutline key={`full-${i}`} />
+                    <Icon_Full key={`full-${i}`} />
                 ))}
-            {hasHalf && <TiStarHalfOutline key="half" />}
+            {hasHalf && <Icon_Half key="half" />}
             {Array(emptyStars)
                 .fill(0)
                 .map((_, i) => (
-                    <TiStarOutline key={`empty-${i}`} />
+                    <Icon_None key={`empty-${i}`} />
                 ))}
         </>
     );
