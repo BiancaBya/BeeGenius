@@ -315,6 +315,9 @@ export const MaterialsPage: React.FC = () => {
             <Header toggleMenu={() => setShowMenu(o => !o)} />
             <Menu open={showMenu} />
             <Container>
+
+
+
                 <Toolbar>
                     <Title>Materials</Title>
                     <SearchBar>
@@ -326,7 +329,6 @@ export const MaterialsPage: React.FC = () => {
                             onChange={e => setSearch(e.target.value)}
                         />
                     </SearchBar>
-
                     <TagFilter
                         value={selectedTag}
                         onChange={e => {
@@ -344,6 +346,12 @@ export const MaterialsPage: React.FC = () => {
                 </Toolbar>
 
                 <Underline />
+                <Description style={{ fontSize: '1.1rem', background: '#f4f0e5', padding: '20px', borderRadius: '12px', margin: '20px 0 40px' }}>
+                    Browse through a rich collection of <strong>educational materials</strong> shared by members of the community.
+                    Whether you're preparing for an exam or simply exploring new topics, this space helps you discover
+                    high-quality resources, organized by ratings and tags. 💡✨ <br />
+                    Don’t forget—you can also contribute valuable content to support our mission of <strong>collaborative education</strong>! 📘🤝
+                </Description>
 
                 {filtered.map((mat, i) => {
                     const avg = mat.nrRatings > 0 ? mat.rating / mat.nrRatings : 0;

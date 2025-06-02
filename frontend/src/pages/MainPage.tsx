@@ -236,6 +236,16 @@ const MainPage: React.FC = () => {
                 <Header toggleMenu={() => setShowMenu(v => !v)} />
                 <Menu open={showMenu} />
                 <Container>
+                    <Title>Welcome to the Knowledge Hub</Title>
+
+                    <Description style={{ fontSize: '1.1rem', background: '#f4f0e5', padding: '20px', borderRadius: '12px', marginBottom: '30px' }}>
+                        At <strong>BeeGenius</strong>, we believe that learning should be accessible, engaging, and collaborative.
+                        This platform empowers students and professionals alike to share <strong>educational materials</strong>, engage in
+                         <strong> forum discussions</strong>, and explore inspiring <strong>books</strong>—all in the spirit of teamwork and curiosity.
+                        Whether you're here to discover top-rated study guides, dive into the hottest topics in the community,
+                        or find your next favorite book, you're in the right place. ✨
+                    </Description>
+
                     <Title>Highest Rated Materials</Title>
                     {materials
                         .sort((a, b) => {
@@ -254,16 +264,10 @@ const MainPage: React.FC = () => {
                                 <InfoRow>
                                     <span>Posted by {material.user?.name || 'Unknown'}</span>
                                     {material.tags?.map((tag, idx) => (
-                                        <Tag key={idx} color={getTagColor(tag)}>
-                                            {tag.replace('_', ' ')}
-                                        </Tag>
+                                        <Tag key={idx} color={getTagColor(tag)}>{tag.replace('_', ' ')}</Tag>
                                     ))}
                                     <Stars>
-                                        {renderStars(
-                                            material.nrRatings > 0
-                                                ? material.rating / material.nrRatings
-                                                : 0
-                                        )}
+                                        {renderStars(material.nrRatings > 0 ? material.rating / material.nrRatings : 0)}
                                     </Stars>
                                 </InfoRow>
                             </MaterialCard>
@@ -287,15 +291,11 @@ const MainPage: React.FC = () => {
                                     <InfoRow>
                                         <span>Posted by {post.user?.name || 'Unknown'}</span>
                                         {post.tags?.map((tag, idx) => (
-                                            <Tag key={idx} color={getTagColor(tag)}>
-                                                {tag.replace('_', ' ')}
-                                            </Tag>
+                                            <Tag key={idx} color={getTagColor(tag)}>{tag.replace('_', ' ')}</Tag>
                                         ))}
                                     </InfoRow>
                                     <Description>
-                                        {post.content?.length > 300
-                                            ? post.content.slice(0, 300) + '...'
-                                            : post.content}
+                                        {post.content?.length > 300 ? post.content.slice(0, 300) + '...' : post.content}
                                     </Description>
                                 </MaterialCard>
                             ))

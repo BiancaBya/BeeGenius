@@ -167,6 +167,13 @@ const FloatingButton = styled.button<{ open: boolean }>`
     }
 `;
 
+const Description = styled.div`
+    margin-top: 8px;
+    font-size: 0.95rem;
+    color: #222;
+    line-height: 1.4;
+`;
+
 interface Book {
     id: string;
     title: string;
@@ -263,6 +270,10 @@ const BooksPage: React.FC = () => {
                     </TagFilter>
                 </Toolbar>
                 <Underline />
+
+                <Description style={{ fontSize: '1.1rem', background: '#f4f0e5', padding: '20px', borderRadius: '12px', margin: '20px 0 40px' }}> 📚✨ Here, members of our community can <strong>donate books</strong> they no longer need and <strong>request books</strong> they’d love to read.
+
+                    Whether you have educational materials to share or you're looking for your next great read, this is the perfect place to <strong>give and receive knowledge</strong>. Click on any book to learn more and make a request! 🤝📖</Description>
                 {filteredBooks.length > 0 ? (
                     <BookGrid>
                         {filteredBooks.map((book, index) => (

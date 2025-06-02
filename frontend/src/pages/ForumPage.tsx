@@ -54,6 +54,19 @@ const SectionTitle = styled.h2`
     width: fit-content;
 `;
 
+const DescriptionBox = styled.div`
+    background-color: #fff4c2;
+    padding: 24px 30px;
+    border-radius: 12px;
+    font-size: 1.15rem;
+    margin-bottom: 30px;
+    color: #333;
+    line-height: 1.7;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+`;
+
+
 const Tag = styled.span<{ color: string }>`
     background: ${(props) => props.color};
     color: white;
@@ -167,6 +180,13 @@ const PostLoadingContainer = styled.div`
     color: #555;
 `;
 
+const Description = styled.div`
+    margin-top: 8px;
+    font-size: 0.95rem;
+    color: #222;
+    line-height: 1.4;
+`;
+
 const FloatingButton = styled.button<{ open: boolean }>`
     position: fixed;
     bottom: 30px;
@@ -199,7 +219,8 @@ const ForumPage: React.FC = () => {
     const token = sessionStorage.getItem("token");
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/tags', {headers:{
+        fetch('http://localhost:8080/api/tags', {
+            headers: {
                 "Authorization": `Bearer ${token}`,
             }
         })
@@ -218,7 +239,8 @@ const ForumPage: React.FC = () => {
             setUserId(decoded.id);
         }
 
-        fetch('http://localhost:8080/api/posts', {headers:{
+        fetch('http://localhost:8080/api/posts', {
+            headers: {
                 "Authorization": `Bearer ${token}`,
             }
         })
@@ -306,7 +328,14 @@ const ForumPage: React.FC = () => {
                         </TagFilter>
                     </Toolbar>
 
+
                     <Underline />
+
+                    <Description style={{ fontSize: '1.1rem', background: '#f4f0e5', padding: '20px', borderRadius: '12px', margin: '20px 0 40px' }}>
+                        This is your space to <strong>ask questions</strong>, <strong>share knowledge</strong>, and <strong>connect with others </strong>
+                         who are just as passionate about learning. Post your thoughts, engage in conversations, and contribute
+                        to a supportive and active educational community. Let’s build wisdom together! 🧠💬
+                    </Description>
 
                     {loading ? (
                         <PostLoadingContainer>Loading posts...</PostLoadingContainer>
