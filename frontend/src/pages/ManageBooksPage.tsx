@@ -154,6 +154,8 @@ const ManageBooksPage: React.FC = () => {
             });
     };
 
+    const Icon = FiTrash2 as React.ElementType;
+
     return (
         <>
             <GlobalStyle />
@@ -166,7 +168,7 @@ const ManageBooksPage: React.FC = () => {
                         {books.map((book) => (
                             <BookCard key={book.id}>
                                 <DeleteButton onClick={() => setBookToDelete(book.id)}>
-                                    <FiTrash2 size={20} />
+                                    <Icon size={20} />
                                 </DeleteButton>
                                 <BookImage
                                     src={book.photoPath}

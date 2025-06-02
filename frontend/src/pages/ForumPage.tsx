@@ -294,6 +294,9 @@ const ForumPage: React.FC = () => {
         return matchesSearch && matchesTag;
     });
 
+    const Icon = FiSearch as React.ElementType;
+    const Icon_Comm = FaRegComment as React.ElementType;
+
     return (
         <>
             <GlobalStyle />
@@ -307,7 +310,7 @@ const ForumPage: React.FC = () => {
                         </ToolbarSection>
 
                         <SearchBar>
-                            <FiSearch />
+                            <Icon />
                             <SearchInput
                                 type="text"
                                 placeholder="Search posts"
@@ -362,7 +365,7 @@ const ForumPage: React.FC = () => {
                                         ))}
                                     </InfoRow>
                                     <PostReplies>
-                                        <FaRegComment />
+                                        <Icon_Comm />
                                         {post.repliesCount}
                                     </PostReplies>
 

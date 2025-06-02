@@ -243,6 +243,10 @@ export default function MaterialDetail() {
         );
     }
 
+    const Icon_Full = TiStarFullOutline as React.ElementType;
+    const Icon_Half = TiStarHalfOutline as React.ElementType;
+    const Icon_None = TiStarOutline as React.ElementType;
+
     const averageRating = mat.nrRatings > 0 ? mat.rating / mat.nrRatings : 0;
     const renderAverageStars = (rating: number) => {
         const full = Math.floor(rating);
@@ -250,9 +254,9 @@ export default function MaterialDetail() {
         const empty = 5 - full - (half ? 1 : 0);
         return (
             <>
-                {Array(full).fill(0).map((_, i) => <TiStarFullOutline key={`avg-full-${i}`} />)}
-                {half && <TiStarHalfOutline key="avg-half" />}
-                {Array(empty).fill(0).map((_, i) => <TiStarOutline key={`avg-empty-${i}`} />)}
+                {Array(full).fill(0).map((_, i) => <Icon_Full key={`avg-full-${i}`} />)}
+                {half && <Icon_Half key="avg-half" />}
+                {Array(empty).fill(0).map((_, i) => <Icon_None key={`avg-empty-${i}`} />)}
             </>
         );
     };
@@ -342,8 +346,8 @@ export default function MaterialDetail() {
                             {Array(5).fill(0).map((_, idx) => {
                                 const starNumber = idx + 1;
                                 return starNumber <= userRating
-                                    ? <TiStarFullOutline key={`static-full-${idx}`} color="#ffc107" />
-                                    : <TiStarOutline key={`static-empty-${idx}`} color="#ccc" />;
+                                    ? <Icon_Full key={`static-full-${idx}`} color="#ffc107" />
+                                    : <Icon_None key={`static-empty-${idx}`} color="#ccc" />;
                             })}
                         </StarsContainer>
                     ) : (
@@ -359,7 +363,7 @@ export default function MaterialDetail() {
                                         onMouseEnter={() => setHoverRating(starNumber)}
                                         onClick={() => handleSubmitRating(starNumber)}
                                     >
-                                        <TiStarFullOutline />
+                                        <Icon_Full />
                                     </StarWrapper>
                                 );
                             })}

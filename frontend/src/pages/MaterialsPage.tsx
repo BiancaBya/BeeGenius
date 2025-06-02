@@ -167,18 +167,22 @@ const renderStars = (rating: number) => {
     const full = Math.floor(rating);
     const half = rating % 1 >= 0.25 && rating % 1 < 0.75;
     const empty = 5 - full - (half ? 1 : 0);
+    const Icon_Full = TiStarFullOutline as React.ElementType;
+    const Icon_Half = TiStarHalfOutline as React.ElementType;
+    const Icon_None = TiStarOutline as React.ElementType;
+
     return (
         <>
             {Array(full)
                 .fill(0)
                 .map((_, i) => (
-                    <TiStarFullOutline key={i} />
+                    <Icon_Full key={i} />
                 ))}
-            {half && <TiStarHalfOutline key="half" />}
+            {half && <Icon_Half key="half" />}
             {Array(empty)
                 .fill(0)
                 .map((_, i) => (
-                    <TiStarOutline key={i} />
+                    <Icon_None key={i} />
                 ))}
         </>
     );
@@ -309,6 +313,7 @@ export const MaterialsPage: React.FC = () => {
         if (ext === 'png' || ext === 'jpg') return pngIcon;
         return pngIcon;
     };
+    const Icon = FiSearch as React.ElementType;
 
     return (
         <>
@@ -322,7 +327,7 @@ export const MaterialsPage: React.FC = () => {
                 <Toolbar>
                     <Title>Materials</Title>
                     <SearchBar>
-                        <FiSearch />
+                        <Icon />
                         <SearchInput
                             type="text"
                             placeholder="Search"

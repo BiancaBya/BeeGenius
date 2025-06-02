@@ -239,6 +239,7 @@ const BooksPage: React.FC = () => {
         setSelectedTag(tag);
         applyFilters(searchTerm, tag);
     };
+    const Icon = FiSearch as React.ElementType;
 
     return (
         <>
@@ -249,7 +250,7 @@ const BooksPage: React.FC = () => {
                 <Toolbar>
                     <Title>Books</Title>
                     <SearchBar>
-                        <FiSearch />
+                        <Icon />
                         <SearchInput
                             placeholder="Search"
                             value={searchTerm}
