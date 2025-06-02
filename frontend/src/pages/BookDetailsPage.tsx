@@ -151,9 +151,7 @@ const BookDetailsPage: React.FC = () => {
         );
     }
 
-    const imageUrl = book.photoPath
-        ? `http://localhost:8080/${book.photoPath.replace(/\\/g, '/')}`
-        : 'http://localhost:8080/default-book.png';
+    const imageUrl = book.photoPath;
 
     return (
         <>

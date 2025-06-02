@@ -70,21 +70,6 @@ public class BookService {
             Optional<Book> bookOpt = bookRepository.findById(bookId);
 
             if (bookOpt.isPresent()) {
-                Book book = bookOpt.get();
-                String photoPath = book.getPhotoPath();
-                if (photoPath != null && !photoPath.isEmpty()) {
-                    try {
-                        Path imagePath = Paths.get(photoPath);
-                        boolean deleted = Files.deleteIfExists(imagePath);
-                        if (deleted) {
-                            logger.info("Deleted book image at: {}", photoPath);
-                        } else {
-                            logger.warn("Image file not found or already deleted: {}", photoPath);
-                        }
-                    } catch (IOException e) {
-                        logger.error("Failed to delete image file: {}", photoPath, e);
-                    }
-                }
                 bookRepository.deleteById(bookId);
                 logger.info("Book deleted successfully with ID: {}", bookId);
             } else {

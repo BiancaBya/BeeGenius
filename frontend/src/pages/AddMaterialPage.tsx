@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import Menu from '../components/Menu';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import {toast} from "react-toastify";
 
 const GlobalStyle = createGlobalStyle`
     @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
@@ -155,7 +156,7 @@ const AddMaterialPage: React.FC = () => {
             return;
         }
         if (!name || !description || !file || chosenTags.length === 0) {
-            alert('Please fill in all fields and pick at least one tag.');
+            toast.error('Please fill in all fields and pick at least one tag.');
             return;
         }
 
@@ -183,7 +184,7 @@ const AddMaterialPage: React.FC = () => {
             navigate('/materials');
         } catch (err: any) {
             console.error(err);
-            alert('Upload failed: ' + err.message);
+            toast.error(err);
         }
     };
 

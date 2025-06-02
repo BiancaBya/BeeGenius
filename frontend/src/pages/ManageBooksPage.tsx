@@ -168,7 +168,7 @@ const ManageBooksPage: React.FC = () => {
                                     <FiTrash2 size={20} />
                                 </DeleteButton>
                                 <BookImage
-                                    src={book.photoPath ? `http://localhost:8080/${book.photoPath.replace(/\\/g, '/')}` : ''}
+                                    src={book.photoPath}
                                     alt={book.title}
                                 />
                                 <BookTitle>{book.title}</BookTitle>

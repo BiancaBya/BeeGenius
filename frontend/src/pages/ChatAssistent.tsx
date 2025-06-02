@@ -204,7 +204,7 @@ const ChatAssistant: React.FC = () => {
                         {messages.map((msg, idx) => (
                             <MessageItem key={idx} role={msg.role}>
                 <span>
-                  {msg.role === 'user' ? 'You' : 'AI'}:
+                  {msg.role === 'user' ? 'You' : 'Honey'}:
                 </span>
                                 <p>{msg.content}</p>
                             </MessageItem>

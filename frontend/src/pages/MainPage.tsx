@@ -313,7 +313,7 @@ const MainPage: React.FC = () => {
                                     style={{ cursor: 'pointer' }}
                                 >
                                     <BookImage
-                                        src={`http://localhost:8080/${book.photoPath.replace(/\\/g, '/')}`}
+                                        src={book.photoPath}
                                         alt={book.title}
                                     />
                                     <BookTitle>{book.title}</BookTitle>
