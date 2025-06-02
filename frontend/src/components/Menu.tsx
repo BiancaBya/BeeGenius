@@ -60,6 +60,7 @@ const Menu: React.FC<MenuProps> = ({ open }) => {
                     <MenuItem onClick={() => navigate('/forum')}>Forum</MenuItem>
                     <MenuItem onClick={() => navigate('/books')}>Books</MenuItem>
                     <MenuItem onClick={() => navigate('/mainpage')}>Home</MenuItem>
+                    <MenuItem onClick={() => navigate('/chat')}>Chatty</MenuItem>
                 </MenuItems>
             </div>
             <Logout
