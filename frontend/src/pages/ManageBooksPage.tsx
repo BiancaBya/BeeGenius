@@ -113,6 +113,7 @@ const ManageBooksPage: React.FC = () => {
     const [userId, setUserId] = useState<string>('');
     const [showMenu, setShowMenu] = useState(false);
     const [bookToDelete, setBookToDelete] = useState<string | null>(null);
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     useEffect(() => {
         const token = sessionStorage.getItem("token");
@@ -121,7 +122,7 @@ const ManageBooksPage: React.FC = () => {
         const decoded = jwtDecode<JwtPayload>(token);
         setUserId(decoded.id);
 
-        fetch('http://localhost:8080/api/books', {
+        fetch(`${BASE_URL}/api/books`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -137,7 +138,7 @@ const ManageBooksPage: React.FC = () => {
         const token = sessionStorage.getItem("token");
         if (!token) return;
 
-        fetch(`http://localhost:8080/api/books/${bookId}`, {
+        fetch(`${BASE_URL}/api/books/${bookId}`, {
             method: 'DELETE',
             headers: {
                 Authorization: `Bearer ${token}`

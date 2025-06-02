@@ -96,6 +96,8 @@ const AddPostPage: React.FC = () => {
     const [user, setUser] = useState<{ id: string; name: string } | null>(null);
     const token = sessionStorage.getItem("token");
 
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
     const getUserId = (): string | null => {
         try {
             const raw = sessionStorage.getItem("token");
@@ -113,7 +115,7 @@ const AddPostPage: React.FC = () => {
             if (!userId) return;
 
 
-            const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
+            const response = await fetch(`${BASE_URL}/api/users/${userId}`, {
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
@@ -130,7 +132,7 @@ const AddPostPage: React.FC = () => {
 
     const fetchTags = async () => {
         try {
-            const response = await fetch("http://localhost:8080/api/tags",{headers:{
+            const response = await fetch(`${BASE_URL}/api/tags`,{headers:{
                 "Authorization": `Bearer ${token}`,
             }
         });
@@ -162,7 +164,7 @@ const AddPostPage: React.FC = () => {
 
         try {
             const token = sessionStorage.getItem("token");
-            const response = await fetch("http://localhost:8080/api/posts", {
+            const response = await fetch(`${BASE_URL}/api/posts`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

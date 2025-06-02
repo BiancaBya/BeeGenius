@@ -85,6 +85,8 @@ const AddBookPage: React.FC = () => {
     const [image, setImage] = useState<File | null>(null);
     const [showMenu, setShowMenu] = useState(false);
 
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
     const from = (location.state as { from?: string })?.from || '/books';
 
     const getUserId = (): string | null => {
@@ -101,7 +103,7 @@ const AddBookPage: React.FC = () => {
     const fetchTags = async () => {
         try {
             const token = sessionStorage.getItem('token');
-            const res = await fetch('http://localhost:8080/api/tags', {
+            const res = await fetch(`${BASE_URL}/api/tags`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -155,7 +157,7 @@ const AddBookPage: React.FC = () => {
         formData.append('imageFile', image);
 
         try {
-            const res = await fetch('http://localhost:8080/api/books', {
+            const res = await fetch(`${BASE_URL}/api/books`, {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${token}`,

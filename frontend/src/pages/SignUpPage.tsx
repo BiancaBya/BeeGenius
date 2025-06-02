@@ -104,6 +104,7 @@ export default function SignupPage() {
     const [password, setPassword] = useState('');
     const [confirm, setConfirm] = useState('');
     const navigate = useNavigate();
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -117,7 +118,7 @@ export default function SignupPage() {
             return;
         }
         try {
-            const res = await fetch('http://localhost:8080/api/auth/signup', {
+            const res = await fetch(`${BASE_URL}/api/auth/signup`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, email, password })

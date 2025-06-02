@@ -86,10 +86,12 @@ const BookDetailsPage: React.FC = () => {
     const [showMenu, setShowMenu] = useState(false);
     const token = sessionStorage.getItem('token');
 
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
     useEffect(() => {
         if (!id) return;
 
-        fetch(`http://localhost:8080/api/books/${id}`, {
+        fetch(`${BASE_URL}/api/books/${id}`, {
             headers: token ? { Authorization: `Bearer ${token}` } : {}
         })
             .then(res => {
@@ -112,7 +114,7 @@ const BookDetailsPage: React.FC = () => {
         try {
             const decoded: any = jwtDecode(token);
             const requesterId = decoded.id;
-            fetch(`http://localhost:8080/api/book-requests?bookId=${id}&requesterId=${requesterId}`, {
+            fetch(`${BASE_URL}/api/book-requests?bookId=${id}&requesterId=${requesterId}`, {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${token}`

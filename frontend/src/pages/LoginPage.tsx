@@ -97,6 +97,7 @@ export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -106,7 +107,7 @@ export default function LoginPage() {
         }
 
         try {
-            const url = new URL("http://localhost:8080/api/auth/login");
+            const url = new URL(`${BASE_URL}/api/auth/login`);
             url.searchParams.append("email", email);
             url.searchParams.append("password", password);
 
