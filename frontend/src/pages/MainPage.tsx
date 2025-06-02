@@ -207,7 +207,7 @@ const MainPage: React.FC = () => {
             .then(data => setMaterials(data))
             .catch(err => console.error('Error loading materials:', err));
 
-        fetch(`http://localhost:8080/api/posts`, {
+        fetch(`${BASE_URL}/api/posts`, {
             method:"GET",
             headers:{
                 "Authorization": `Bearer ${token}`,
