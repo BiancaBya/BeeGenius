@@ -254,7 +254,7 @@ export const MaterialsPage: React.FC = () => {
     };
 
     const fetchMaterials = () => {
-        fetch('${BASE_URL}/api/materials', {
+        fetch(`${BASE_URL}/api/tags`, {
             method:"GET",
             headers:{
                 "Authorization": `Bearer ${token}`,
