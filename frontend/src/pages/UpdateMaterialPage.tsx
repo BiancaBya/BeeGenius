@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Menu from '../components/Menu';
 import { jwtDecode } from 'jwt-decode';
+import {toast} from "react-toastify";
 
 const GlobalStyle = createGlobalStyle`
     @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
@@ -119,7 +120,6 @@ const UpdateMaterialPage: React.FC = () => {
     const [availableTags, setAvailableTags] = useState<string[]>([]);
     const token = sessionStorage.getItem("token");
 
-    // Decode current user ID (just to ensure logged in)
     const getUserId = (): string | null => {
         const token = sessionStorage.getItem('token');
         if (!token) return null;
@@ -130,7 +130,6 @@ const UpdateMaterialPage: React.FC = () => {
         }
     };
 
-    // Fetch material data on mount
     useEffect(() => {
         if (!materialId) return;
         fetch(`http://localhost:8080/api/materials/${materialId}`, {
@@ -149,12 +148,11 @@ const UpdateMaterialPage: React.FC = () => {
                 setOriginalType(m.type);
             })
             .catch(() => {
-                alert('Could not load material');
+                toast.error('Could not load material');
                 navigate('/manage-materials');
             });
     }, [materialId, navigate]);
 
-    // Fetch the list of all tags from backend
     useEffect(() => {
         fetch('http://localhost:8080/api/tags', {
             method:"GET",
@@ -166,7 +164,7 @@ const UpdateMaterialPage: React.FC = () => {
                 return res.json();
             })
             .then((tags: string[]) => setAvailableTags(tags))
-            .catch(err => console.error('Error fetching tags:', err));
+            .catch(err => toast.error(err));
     }, []);
 
     const onTagsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -191,7 +189,6 @@ const UpdateMaterialPage: React.FC = () => {
         form.append('description', description);
         chosenTags.forEach(tag => form.append('tags', tag));
 
-        // Determine type: if new file selected, use its extension; else use original
         const typeToSend = file
             ? file.name.split('.').pop()?.toUpperCase() || originalType
             : originalType;

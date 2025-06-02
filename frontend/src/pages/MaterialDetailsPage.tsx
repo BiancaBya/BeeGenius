@@ -165,7 +165,7 @@ export default function MaterialDetail() {
     useEffect(() => {
         if (!mat) return;
         const normalizedPath = mat.path.replace(/\\/g, '/');
-        const fileUrl = `http://localhost:8080/${normalizedPath}`;
+        const fileUrl = mat.path;
         const filename = normalizedPath.split('/').pop()!;
         const ext = filename.split('.').pop()!.toLowerCase();
 
@@ -206,7 +206,7 @@ export default function MaterialDetail() {
     if (!mat) return <p style={{ padding: 110 }}>Loading…</p>;
 
     const normalizedPath = mat.path.replace(/\\/g, '/');
-    const fileUrl = `http://localhost:8080/${normalizedPath}`;
+    const fileUrl = mat.path;
     const filename = normalizedPath.split('/').pop()!;
     const ext = filename.split('.').pop()!.toLowerCase();
 

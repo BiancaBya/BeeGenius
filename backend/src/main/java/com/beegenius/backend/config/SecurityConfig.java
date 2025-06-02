@@ -36,7 +36,7 @@ public class SecurityConfig {
                     return config;
                 }))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // permite login/signup fără token
+                        .requestMatchers("/api/auth/**",  "/uploads/**").permitAll() // permite login/signup fără token
                         .anyRequest().authenticated()                // restul protejate cu JWT
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

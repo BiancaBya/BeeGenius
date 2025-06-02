@@ -4,6 +4,7 @@ import com.beegenius.backend.model.Material;
 import com.beegenius.backend.model.enums.MaterialType;
 import com.beegenius.backend.model.enums.Tags;
 import com.beegenius.backend.service.MaterialService;
+import com.beegenius.backend.service.SupabaseStorageService;
 import com.beegenius.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -28,6 +29,8 @@ public class MaterialController {
     private static final Logger logger = LogManager.getLogger(MaterialController.class);
     private final MaterialService materialService;
     private final UserService userService;
+    private final SupabaseStorageService storageService;
+
 
     private static final String MATERIAL_UPLOAD_DIR = "uploads/materials";
 
@@ -48,17 +51,15 @@ public class MaterialController {
                 logger.info("Created upload directory {}", uploadDir);
             }
 
-            String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
-            Path filePath = uploadDir.resolve(filename);
-            Files.write(filePath, file.getBytes());
-            logger.info("Uploaded file to {}", filePath);
+            String fileUrl = storageService.uploadFile(file, "materials");
+
 
             Material material = new Material();
             material.setName(name);
             material.setDescription(description);
             material.setType(type);
             material.setTags(tags);
-            material.setPath(filePath.toString());
+            material.setPath(fileUrl);
             material.setRating(0f);
             material.setNrRatings(0);
             material.setUser(userService.findUserById(userId));
@@ -93,10 +94,31 @@ public class MaterialController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteMaterial(@PathVariable String id) {
         logger.info("Entering deleteMaterial - id={}", id);
-        materialService.deleteMaterial(id);
-        logger.info("Deleted material with id={}", id);
-        logger.info("Exiting deleteMaterial with status=200");
-        return ResponseEntity.ok("Material deleted successfully");
+
+        try {
+            Material material = materialService.getMaterialById(id);
+            if (material == null) {
+                logger.warn("Material not found with id={}", id);
+                return ResponseEntity.notFound().build();
+            }
+
+            String filePath = extractPathFromUrl(material.getPath());
+            try {
+                storageService.deleteFile(filePath);
+                logger.info("Deleted file from Supabase: {}", filePath);
+            } catch (Exception e) {
+                logger.warn("Could not delete file from Supabase: {}", filePath);
+            }
+
+            materialService.deleteMaterial(id);
+            logger.info("Deleted material with id={}", id);
+
+            return ResponseEntity.ok("Material deleted successfully");
+
+        } catch (Exception e) {
+            logger.error("Error deleting material with id={}", id, e);
+            throw e;
+        }
     }
 
     @GetMapping("/search")
@@ -172,20 +194,23 @@ public class MaterialController {
         material.setType(type);
 
         if (file != null && !file.isEmpty()) {
-            Path uploadDir = Paths.get(MATERIAL_UPLOAD_DIR);
-            if (Files.notExists(uploadDir)) {
-                Files.createDirectories(uploadDir);
+            if (material.getPath() != null && !material.getPath().isBlank()) {
+                String oldPath = extractPathFromUrl(material.getPath());
+                try {
+                    storageService.deleteFile(oldPath);
+                } catch (Exception e) {
+                    logger.warn("Could not delete old file from Supabase: {}", oldPath);
+                }
             }
-            String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
-            Path filePath = uploadDir.resolve(filename);
-            Files.write(filePath, file.getBytes());
 
-            material.setPath(filePath.toString());
+            String fileUrl = storageService.uploadFile(file, "materials");
+            material.setPath(fileUrl);
         }
 
         Material updated = materialService.updateMaterial(material);
         return ResponseEntity.ok(updated);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Material> getMaterialById(@PathVariable String id) {
@@ -199,6 +224,11 @@ public class MaterialController {
         logger.info("Retrieved material id={}", id);
         logger.info("Exiting getMaterialById with status=200");
         return ResponseEntity.ok(material);
+    }
+
+    private String extractPathFromUrl(String fullUrl) {
+        String[] parts = fullUrl.split("/object/public/");
+        return parts.length > 1 ? parts[1] : "";
     }
 }
 

@@ -3,6 +3,7 @@ package com.beegenius.backend.controller;
 import com.beegenius.backend.model.Book;
 import com.beegenius.backend.model.enums.Tags;
 import com.beegenius.backend.service.BookService;
+import com.beegenius.backend.service.SupabaseStorageService;
 import com.beegenius.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -27,7 +28,7 @@ public class BookController {
     private final BookService bookService;
     private final UserService userService;
     private static final Logger logger = LogManager.getLogger(BookController.class);
-
+    private final SupabaseStorageService storageService;
     private static final String IMAGE_UPLOAD_DIR = "uploads/book_images";
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -38,16 +39,14 @@ public class BookController {
                                         @RequestParam String userId) throws IOException {
         logger.info("Adding new book with title: {}", title);
         try {
-            String filename = UUID.randomUUID() + "" + imageFile.getOriginalFilename();
-            Path imagePath = Paths.get(IMAGE_UPLOAD_DIR, filename);
 
-            Files.write(imagePath, imageFile.getBytes());
+            String imageUrl = storageService.uploadFile(imageFile, "book_images");
 
             Book book = new Book();
             book.setTitle(title);
             book.setAuthor(author);
             book.setTags(tags);
-            book.setPhotoPath(imagePath.toString());
+            book.setPhotoPath(imageUrl);
             book.setOwner(userService.findUserById(userId));
 
             Book savedBook = bookService.addBook(book);
@@ -115,12 +114,31 @@ public class BookController {
     public ResponseEntity<String> deleteBook(@PathVariable String id) {
         logger.info("Deleting book with ID: {}", id);
         try {
+            Optional<Book> bookOpt = bookService.getBookById(id);
+            if (bookOpt.isEmpty()) {
+                logger.warn("Book not found with ID: {}", id);
+                return ResponseEntity.notFound().build();
+            }
+
+            Book book = bookOpt.get();
+
+            if (book.getPhotoPath() != null && !book.getPhotoPath().isBlank()) {
+                String filePath = extractPathFromUrl(book.getPhotoPath());
+                storageService.deleteFile(filePath);
+            }
             bookService.deleteBook(id);
+
             logger.info("Book deleted with ID: {}", id);
             return ResponseEntity.ok("Book deleted successfully");
+
         } catch (Exception e) {
-            logger.error("Error while deleting book with ID {}: {}", id, e.getMessage());
-            throw e;
+            logger.error("Error while deleting book with ID {}: {}", id, e.getMessage(), e);
+            return ResponseEntity.status(500).body("Internal error while deleting book");
         }
+    }
+
+    private String extractPathFromUrl(String fullUrl) {
+        String[] parts = fullUrl.split("/object/public/");
+        return parts.length > 1 ? parts[1] : "";
     }
 }

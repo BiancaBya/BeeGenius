@@ -279,11 +279,7 @@ const BooksPage: React.FC = () => {
                         {filteredBooks.map((book, index) => (
                             <BookCard key={index} onClick={() => navigate(`/books/${book.id}`)}>
                                 <BookImage
-                                    src={
-                                        book.photoPath
-                                            ? `http://localhost:8080/${book.photoPath.replace(/\\/g, '/')}`
-                                            : ''
-                                    }
+                                    src={book.photoPath}
                                     alt={book.title}
                                 />
                                 <BookTitle>{book.title}</BookTitle>
