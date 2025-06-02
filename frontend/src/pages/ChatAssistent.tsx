@@ -132,6 +132,7 @@ const ChatAssistant: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const token = sessionStorage.getItem('token');
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     const getUserId = (): string | null => {
         const tokenInStorage = sessionStorage.getItem('token');
@@ -162,7 +163,7 @@ const ChatAssistant: React.FC = () => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:8080/api/chat', {
+            const response = await fetch(`${BASE_URL}/api/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -194,8 +194,10 @@ const BooksPage: React.FC = () => {
     const token = sessionStorage.getItem('token');
     const headers = { Authorization: `Bearer ${token}` };
 
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
     useEffect(() => {
-        fetch('http://localhost:8080/api/books', { headers })
+        fetch(`${BASE_URL}/api/books`, { headers })
             .then(res => res.json())
             .then(data => {
                 setAllBooks(data);
@@ -203,7 +205,7 @@ const BooksPage: React.FC = () => {
             })
             .catch(err => console.error('Eroare la cărți:', err));
 
-        fetch('http://localhost:8080/api/tags', { headers })
+        fetch(`${BASE_URL}/api/tags`, { headers })
             .then(res => {
                 if (!res.ok) throw new Error('Failed to load tags');
                 return res.json();

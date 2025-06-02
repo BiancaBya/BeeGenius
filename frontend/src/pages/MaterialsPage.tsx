@@ -218,6 +218,7 @@ export const MaterialsPage: React.FC = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState<any>(null);
     const token = sessionStorage.getItem("token");
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     const getUserId = () => {
         const token = sessionStorage.getItem('token');
@@ -233,7 +234,7 @@ export const MaterialsPage: React.FC = () => {
         const id = getUserId();
         if (!id) return;
 
-        fetch(`http://localhost:8080/api/users/${id}`, {
+        fetch(`${BASE_URL}/api/users/${id}`, {
             method:"GET",
             headers:{
                 "Authorization": `Bearer ${token}`,
@@ -249,7 +250,7 @@ export const MaterialsPage: React.FC = () => {
     };
 
     const fetchMaterials = () => {
-        fetch('http://localhost:8080/api/materials', {
+        fetch('${BASE_URL}/api/materials', {
             method:"GET",
             headers:{
                 "Authorization": `Bearer ${token}`,
@@ -265,7 +266,7 @@ export const MaterialsPage: React.FC = () => {
     useEffect(() => {
         fetchMaterials();
 
-        fetch('http://localhost:8080/api/tags', {
+        fetch(`http://localhost:8080/api/tags`, {
             method:"GET",
             headers:{
                 "Authorization": `Bearer ${token}`,
@@ -291,7 +292,7 @@ export const MaterialsPage: React.FC = () => {
             fetchMaterials();
             return;
         }
-        fetch(`http://localhost:8080/api/materials/filter?tag=${tag}`, {
+        fetch(`${BASE_URL}/api/materials/filter?tag=${tag}`, {
             method:"GET",
             headers:{
                 "Authorization": `Bearer ${token}`,

@@ -191,9 +191,10 @@ const MainPage: React.FC = () => {
     const [loadingPosts, setLoadingPosts] = useState(true);
     const navigate = useNavigate();
     const token = sessionStorage.getItem("token");
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/materials', {
+        fetch(`${BASE_URL}/api/materials`, {
             method:"GET",
             headers:{
                 "Authorization": `Bearer ${token}`,
@@ -203,7 +204,7 @@ const MainPage: React.FC = () => {
             .then(data => setMaterials(data))
             .catch(err => console.error('Error loading materials:', err));
 
-        fetch('http://localhost:8080/api/posts', {
+        fetch(`http://localhost:8080/api/posts`, {
             method:"GET",
             headers:{
                 "Authorization": `Bearer ${token}`,
@@ -219,7 +220,7 @@ const MainPage: React.FC = () => {
             .catch(err => console.error('Error loading posts:', err))
             .finally(() => setLoadingPosts(false));
 
-        fetch('http://localhost:8080/api/books', {
+        fetch(`${BASE_URL}/api/books`, {
             method:"GET",
             headers:{
                 "Authorization": `Bearer ${token}`,
