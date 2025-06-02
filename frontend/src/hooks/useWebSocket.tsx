@@ -10,7 +10,8 @@ export const useWebSocket = (userId: string | null) => {
     useEffect(() => {
         if (!userId || stompClientRef.current?.connected) return;
 
-        const socket = new SockJS("http://localhost:8080/ws");
+        const backendURL = process.env.REACT_APP_BACKEND_WS_URL as string;
+        const socket = new SockJS(backendURL);
         const stompClient = Stomp.over(() => socket);
         stompClient.reconnect_delay = 0;
 
