@@ -11,13 +11,13 @@ export const useWebSocket = (userId: string | null) => {
         if (!userId || stompClientRef.current?.connected) return;
 
         const socket = new SockJS("http://localhost:8080/ws");
-        const stompClient = Stomp.over(() => socket); // ✅ correct factory to avoid reconnect warning
-        stompClient.reconnect_delay = 0; // disable auto-reconnect
+        const stompClient = Stomp.over(() => socket);
+        stompClient.reconnect_delay = 0;
 
         stompClient.connect({}, () => {
             console.log(`Connected to WebSocket for user ${userId}`);
 
-            // ✅ clear any previous subscription
+
             if (subscriptionRef.current) {
                 subscriptionRef.current.unsubscribe();
             }

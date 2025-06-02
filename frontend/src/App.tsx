@@ -22,6 +22,7 @@ import ManageBookRequestsPage from "./pages/ManageBookRequestsPage";
 import ViewMyRequestsPage from "./pages/ViewMyRequestsPage";
 import {jwtDecode} from "jwt-decode";
 import {useWebSocket} from "./hooks/useWebSocket";
+import ChatAssistant from "./pages/ChatAssistent";
 
 function App() {
     const [userId, setUserId] = useState<string | null>(null);
@@ -159,7 +160,14 @@ function App() {
                         <ViewMyRequestsPage />
                     </RequireAuth>
                 } />
+
+                <Route path="/chat" element={
+                    <RequireAuth>
+                        <ChatAssistant />
+                    </RequireAuth>
+                } />
             </Routes>
+
 
         </BrowserRouter>
     );
