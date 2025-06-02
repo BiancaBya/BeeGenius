@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
 //                    config.setAllowedOrigins(List.of("http://localhost:3000"));
-                    config.setAllowedOrigins(List.of("https://bee-genius-yi45-74m4zobrg-rebelesbbs-projects.vercel.app/"));
+                    config.setAllowedOrigins(List.of("https://bee-genius-yi45-74m4zobrg-rebelesbbs-projects.vercel.app"));
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
                     config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
                     config.setExposedHeaders(List.of("Authorization"));
