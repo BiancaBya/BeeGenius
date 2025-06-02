@@ -217,9 +217,10 @@ const ForumPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const token = sessionStorage.getItem("token");
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/tags', {
+        fetch(`${BASE_URL}/api/tags`, {
             headers: {
                 "Authorization": `Bearer ${token}`,
             }
@@ -239,7 +240,7 @@ const ForumPage: React.FC = () => {
             setUserId(decoded.id);
         }
 
-        fetch('http://localhost:8080/api/posts', {
+        fetch(`${BASE_URL}/api/posts`, {
             headers: {
                 "Authorization": `Bearer ${token}`,
             }
@@ -267,7 +268,7 @@ const ForumPage: React.FC = () => {
         if (!token) return;
 
         try {
-            const res = await fetch(`http://localhost:8080/api/posts/${id}`, {
+            const res = await fetch(`${BASE_URL}/api/posts/${id}`, {
                 method: 'DELETE',
                 headers: { Authorization: `Bearer ${token}` },
             });

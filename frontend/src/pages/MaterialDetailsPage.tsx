@@ -127,6 +127,7 @@ export default function MaterialDetail() {
     const [userRating, setUserRating] = useState<number>(0);
     const [errorMessage, setErrorMessage] = useState<string>('');
     const token = sessionStorage.getItem("token");
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     const getUserId = (): string | null => {
         const token = sessionStorage.getItem('token');
@@ -139,7 +140,7 @@ export default function MaterialDetail() {
     };
 
     const loadMaterial = () => {
-        fetch(`http://localhost:8080/api/materials/${id}`, {
+        fetch(`${BASE_URL}/api/materials/${id}`, {
             method:"GET",
             headers:{
                 "Authorization": `Bearer ${token}`,
@@ -185,7 +186,7 @@ export default function MaterialDetail() {
     useEffect(() => {
         const userId = getUserId();
         if (mat && userId) {
-            fetch(`http://localhost:8080/api/ratings/user-rating?userId=${userId}&materialId=${mat.id}`, {
+            fetch(`${BASE_URL}/api/ratings/user-rating?userId=${userId}&materialId=${mat.id}`, {
                 method:"GET",
                 headers:{
                     "Authorization": `Bearer ${token}`,
@@ -268,7 +269,7 @@ export default function MaterialDetail() {
         }
         setSelectedRating(stars);
 
-        fetch(`http://localhost:8080/api/materials/rating?materialId=${mat.id}&userId=${userId}&rating=${stars}`, {
+        fetch(`${BASE_URL}/api/materials/rating?materialId=${mat.id}&userId=${userId}&rating=${stars}`, {
             method: 'PUT',
             headers:{
                 "Authorization": `Bearer ${token}`,

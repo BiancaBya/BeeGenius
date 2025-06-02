@@ -79,6 +79,7 @@ const ManageBookRequestsPage: React.FC = () => {
     const [userId, setUserId] = useState('');
     const [showMenu, setShowMenu] = useState(false);
     const navigate = useNavigate();
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     useEffect(() => {
         const token = sessionStorage.getItem('token');
@@ -87,7 +88,7 @@ const ManageBookRequestsPage: React.FC = () => {
         const decoded = jwtDecode<JwtPayload>(token);
         setUserId(decoded.id);
 
-        fetch(`http://localhost:8080/api/book-requests/${decoded.id}`, {
+        fetch(`${BASE_URL}/api/book-requests/${decoded.id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -106,7 +107,7 @@ const ManageBookRequestsPage: React.FC = () => {
         const token = sessionStorage.getItem('token');
         if (!token) return;
 
-        fetch(`http://localhost:8080/api/book-requests/${id}/${action}`, {
+        fetch(`${BASE_URL}/api/book-requests/${id}/${action}`, {
             method: 'PUT',
             headers: {
                 Authorization: `Bearer ${token}`,
