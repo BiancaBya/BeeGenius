@@ -159,7 +159,7 @@ export default function ForumPostPage() {
         if (!newComment.trim() || !user) return;
 
         try {
-            await fetch(`${BASE_URL}api/replies/to-post/${postId}`, {
+            await fetch(`${BASE_URL}/api/replies/to-post/${postId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
