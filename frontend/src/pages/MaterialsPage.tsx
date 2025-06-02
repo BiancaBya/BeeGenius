@@ -270,7 +270,7 @@ export const MaterialsPage: React.FC = () => {
     useEffect(() => {
         fetchMaterials();
 
-        fetch(`http://localhost:8080/api/tags`, {
+        fetch(`${BASE_URL}/api/tags`, {
             method:"GET",
             headers:{
                 "Authorization": `Bearer ${token}`,
