@@ -28,8 +28,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-//                    config.setAllowedOrigins(List.of("http://localhost:3000"));
-                    config.setAllowedOriginPatterns(List.of("https://*.vercel.app")); // în loc de setAllowedOrigins
+                    config.setAllowedOriginPatterns(List.of("https://*.vercel.app"));
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
                     config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
                     config.setExposedHeaders(List.of("Authorization"));
@@ -37,8 +36,8 @@ public class SecurityConfig {
                     return config;
                 }))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**",  "/uploads/**").permitAll() // permite login/signup fără token
-                        .anyRequest().authenticated()                // restul protejate cu JWT
+                        .requestMatchers("/api/auth/**",  "/uploads/**", "/ws/**").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
